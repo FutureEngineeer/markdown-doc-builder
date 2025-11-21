@@ -1,0 +1,148 @@
+# Основная конфигурация сайта
+# config.yaml
+
+# Основные настройки сайта
+site:
+  name: "creapunk"
+  title: "motion control systems"
+  description: "Multi-repository documentation builder for GitHub Pages"
+  baseUrl: "https://futureengineeer.github.io/markdown-doc-builder"
+  language: "en"
+  logoClickUrl: "root.html"  # Ссылка при клике на лого
+
+# Навигация
+navigation:
+  - text: "CLN"
+    url: "#projects"
+  - text: "API"
+    url: "sub/api.html"
+
+# Социальные ссылки
+socials:
+  email: "creapunktech@gmail.com"
+  github: "https://github.com/creapunk"
+  youtube: "https://youtube.com/@creapunk"
+  discord: "https://discord.gg/your-server"
+  kofi: "https://ko-fi.com/creapunk"
+
+# Пути к иконкам
+icons:
+  # Иконки сайта
+  site:
+    logo: "./assets/creapunk-icon.svg"
+    favicon:
+      ico: "./assets/creapunk-icon.png"
+      svg: "./assets/creapunk-icon.png"
+      appleTouchIcon: "./assets/creapunk-icon.png"
+      manifest: "/manifest.webmanifest"
+  
+  # Иконки социальных сетей
+  social:
+    email: "assets/email.svg"
+    github: "assets/github.svg"
+    youtube: "assets/youtube.svg"
+    discord: "assets/discord.svg"
+    kofi: "assets/kofi.svg"
+
+# Внешние ресурсы
+external:
+  # CSS файлы
+  stylesheets:
+    - href: "assets/styles.css"
+      type: "local"
+    - href: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+      type: "cdn"
+      integrity: ""
+
+  # JavaScript файлы
+  scripts:
+    - src: "assets/script.js"
+      type: "local"
+      defer: true
+    - src: "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+      type: "cdn"
+      defer: false
+
+# Аналитика
+analytics:
+  # Google Analytics 4
+  googleAnalytics:
+    enabled: true
+    measurementId: "G-24MWSHH5RK"  # Замените на ваш Measurement ID
+    
+  # Дополнительные настройки отслеживания
+  tracking:
+    # Отслеживание кликов по внешним ссылкам
+    externalLinks: true
+    # Отслеживание скачиваний файлов
+    downloads: true
+    # Отслеживание прокрутки страницы
+    scrollTracking: true
+    # Отслеживание времени на странице
+    timeOnPage: true
+
+# Ключевые слова для парсинга секций
+sections:
+  keywords:
+    overview: ["project overview", "product overview"]
+    features: ["features"]
+    specifications: ["specifications", "specs"]
+    applications: ["applications", "usage", "use cases"]
+    resources: ["resources"]
+    examples: ["examples"]
+    guide: ["guide"]
+
+# Настройки билда
+build:
+  # Список разрешенных репозиториев для парсинга
+  allowedRepositories:
+    - url: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
+      description: "Closed-loop drivers for NEMA motors"
+      alias: "CLN"  # Псевдоним для сокращения длинного названия
+    # Добавьте сюда другие репозитории, которые можно парсить
+  
+  # Входные файлы и папки
+  input:
+    # Основные файлы для парсинга
+    # files:
+    #   - "./test-files/main.md"
+    #   - "./test-files/root.md"
+    #   - "./test-files/specs.md"
+    #   - "./test-files/setup.md"
+    #   - "./test-files/troubleshooting.md"
+    #   - "./test-files/examples.md"
+    #   - "./test-files/sub/api.md"
+    #   - "./test-files/cross-links-test.md"
+    #   - "./test-files/no-overview.md"
+    #   - "./test-files/github-links-test.md"
+    
+    # Папки для парсинга
+    directories:
+      - "./test-files"
+      - "./test-files/project-alpha"
+      - "./test-files/project-beta"
+    
+    # GitHub репозитории для скачивания
+    githubRepositories:
+      - url: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
+        description: "Closed-loop drivers for NEMA motors"
+        alias: "CLN"  # Псевдоним для сокращения длинного названия
+      - url: "https://github.com/creapunk/RadiX"
+        description: "RadiX project"
+        alias: "RadiX"  # Псевдоним (может совпадать с названием)
+
+  # Выходные настройки
+  output:
+    directory: "./dist"
+    copyAssets: true
+    assetsDir: "./assets"
+
+# Настройки обработки ссылок
+linkProcessing:
+  # Если ссылка ведет на .md файл репозитория, которого НЕТ в allowedRepositories,
+  # то ссылка остается неизменной на исходный файл в репозитории
+  preserveExternalLinks: true
+  # Конвертировать .md ссылки в .html для разрешенных репозиториев
+  convertMdToHtml: true
+  # Базовый путь для относительных ссылок
+  basePath: "./"

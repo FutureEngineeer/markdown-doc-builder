@@ -1,0 +1,166 @@
+/* ==================== CODE BLOCKS ==================== */
+
+/* Inline code */
+code {
+    background: rgba(47, 182, 90, 0.1);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: var(--font-inline-code);
+    font-weight: 500;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    font-size: var(--font-code-block);
+}
+
+
+/* Основной контейнер блока кода */
+.code-block {
+    position: relative;
+    background: #282a36;
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+}
+
+/* Индикатор языка */
+.code-lang {
+    position: absolute;
+    top: 0.75rem;
+    left: 50px;
+    color: #2FB65A;
+    padding: 0.25rem 0rem;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    z-index: 10;
+    display: none;
+}
+
+.code-lang.active {
+    display: block;
+}
+
+/* Кнопка копирования - КРУГЛАЯ */
+.code-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.code-copy-btn:hover {
+    background: #2FB65A;
+}
+
+/* Контент блока - по умолчанию БЕЗ верхнего паддинга */
+.code-block pre {
+    padding: 12px 0 12px 0;
+    overflow-x: auto;
+    margin: 0;
+    position: relative;
+    transition: padding 0.2s ease;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Если ЕСТЬ язык, добавляем верхний padding */
+.code-block.has-lang pre {
+    padding-top: 3rem;
+}
+
+/* Для Firefox */
+.code-block pre {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Фон для колонки с номерами строк */
+.code-block pre::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    background: #21222c;
+    z-index: 1;
+}
+
+/* Контейнер кода */
+.code-block code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    display: block;
+    position: relative;
+}
+
+/* Обертка для каждой строки */
+.code-line-wrapper {
+    display: flex;
+    align-items: stretch;
+    min-height: 1.5em;
+    position: relative;
+}
+
+.code-line-wrapper:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.code-line-wrapper:hover .code-line-num {
+    background: rgba(255, 255, 255, 0.05);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+/* Номер строки - ФИКСИРОВАННЫЙ при прокрутке */
+.code-line-num {
+    position: sticky;
+    left: 0;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: right;
+    padding: 0 0.75em 0 0;
+    color: #6272a4;
+    user-select: none;
+    background: transparent;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+/* Сама строка кода */
+.code-line {
+    flex: 1;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5em;
+    padding-right: 1.5em;
+    min-width: 0;
+}
+
+/* Переопределяем цвета highlight.js */
+.hljs {
+    background: transparent !important;
+    padding: 0 !important;
+}

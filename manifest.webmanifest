@@ -1,0 +1,21 @@
+{
+  "name": "CREAPUNK Documentation",
+  "short_name": "CREAPUNK Docs",
+  "description": "Documentation for CREAPUNK projects and tools",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "./assets/creapunk-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/creapunk-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

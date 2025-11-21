@@ -1,0 +1,87 @@
+name: Build and Deploy
+
+on:
+  # Запуск при пуше в main ветку
+  push:
+    branches: [ main, master ]
+  
+  # Запуск по расписанию каждые 12 часов
+  schedule:
+    - cron: '0 */12 * * *'
+  
+  # Ручной запуск
+  workflow_dispatch:
+
+# Разрешения для GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Разрешить только один одновременный деплой
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Setup cache for repositories
+      uses: actions/cache@v3
+      with:
+        path: |
+          .temp/repos
+          .temp/repos-cache.json
+        key: repos-cache-${{ hashFiles('config.yaml') }}-${{ github.run_number }}
+        restore-keys: |
+          repos-cache-${{ hashFiles('config.yaml') }}-
+          repos-cache-
+    
+    - name: Check for changes in repositories
+      id: check-changes
+      run: node .github/scripts/check-repo-changes.js
+    
+    - name: Build site
+      run: |
+        if [ "${{ steps.check-changes.outputs.force-rebuild }}" = "true" ]; then
+          echo "Force rebuilding all files..."
+          node build-all.js --force-rebuild
+        else
+          echo "Building with cache..."
+          node build-all.js
+        fi
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

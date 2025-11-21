@@ -1,0 +1,47 @@
+{
+    "name": "creapunk-docs-builder",
+    "version": "1.0.0",
+    "description": "Multi-repository documentation builder for GitHub Pages",
+    "main": "builder.js",
+    "scripts": {
+        "build": "node converter.js readme.md dist/index.html assets/styles.css",
+        "build:all": "node build-all.js",
+        "build:netlify": "node build-all.js",
+        "build:force": "node build-all.js --force-rebuild",
+        "build:clean": "node scripts/clean-build.js && npm run build:all",
+        "build:test": "node scripts/test-build.js",
+        "build:multi": "node cli.js --multi --config export-config.yaml",
+        "cache:clear": "node scripts/clear-cache.js",
+        "cache:info": "node scripts/cache-info.js",
+        "watch": "nodemon --watch readme.md --exec npm run build",
+        "watch:multi": "node cli.js --watch --multi --config export-config.yaml",
+        "serve": "node cli.js --serve --config export-config.yaml",
+        "dev": "node cli.js --watch --serve --config export-config.yaml"
+    },
+    "dependencies": {
+        "@mdit/plugin-alert": "^0.22.3",
+        "chalk": "^4.1.2",
+        "fs-extra": "^11.3.2",
+        "glob": "^10.4.5",
+        "js-yaml": "^4.1.1",
+        "katex": "^0.16.25",
+        "markdown-it": "^14.1.0",
+        "markdown-it-attrs": "^4.3.1",
+        "markdown-it-container": "^4.0.0",
+        "markdown-it-emoji": "^3.0.0",
+        "markdown-it-katex": "^2.0.3",
+        "markdown-it-mark": "^4.0.0",
+        "markdown-it-sub": "^2.0.0",
+        "markdown-it-sup": "^2.0.0",
+        "markdown-it-task-lists": "^2.1.1",
+        "simple-git": "^3.30.0"
+    },
+    "devDependencies": {
+        "@actions/core": "^1.10.1",
+        "chokidar": "^3.5.3",
+        "gh-pages": "^6.1.0",
+        "http-server": "^14.1.1",
+        "mime-types": "^2.1.35",
+        "nodemon": "^3.0.2"
+    }
+}

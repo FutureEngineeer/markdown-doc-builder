@@ -1,0 +1,106 @@
+/* ==================== СЕЛЕКТОРЫ ==================== */
+
+.selector-wrapper {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding:  18px 30px;
+    margin: 1rem 0;
+    border: 2px solid transparent;
+}
+
+.selector-wrapper:hover {
+    border: 2px solid rgba(47, 182, 90, 0.2);
+}
+
+.selector-hint {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 1.1em;
+    font-weight: 500;
+    text-align: center;
+}
+
+.segment-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+.segment-group {
+    display: flex;
+    border-radius: 12px;
+    background: #1a1b24;
+    padding: 4px;
+    gap: 4px;
+    position: relative;
+    width: auto;
+    max-width: 100%;
+}
+
+.slider-bg {
+    position: absolute;
+    background: var(--accent);
+    border-radius: 8px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+}
+
+.segment {
+    padding: 8px 20px; /* Уменьшенные боковые отступы */
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: color 0.25s ease;
+    position: relative;
+    z-index: 1;
+    font-size: 1.05em;
+    white-space: nowrap;
+    flex: 1 1 0; /* Важно: 0 в качестве базовой ширины */
+    min-width: 0;
+    text-align: center;
+    display: flex; /* Добавлено */
+    align-items: center; /* Добавлено */
+    justify-content: center; /* Добавлено */
+}
+
+
+.segment.active {
+    color: #fff;
+}
+
+.segment:not(.active):hover {
+    color: var(--text-bright);
+}
+
+/* Контейнер контента */
+.content-container {
+    position: relative;
+    overflow: hidden;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.content-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.content-panel.active {
+    position: relative;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    visibility: visible;
+    transition: opacity 0.4s ease 0.15s, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+}

@@ -1,0 +1,161 @@
+/* ==================== FOOTER ==================== */
+
+footer {
+    background: var(--header-footer-bg);
+    padding: var(--footer-padding);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: var(--bp-max-width);
+    z-index: 1000;
+    transition: border-radius var(--speed-smooth) var(--ease-smooth);
+    animation: slideUpFooter 0.5s ease-out;
+    flex-shrink: 0;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent 0%, var(--bg) 85%, var(--bg) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes slideUpFooter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    transition: all var(--speed-smooth) var(--ease-smooth);
+}
+
+.social-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 0.5rem;
+    transition: all var(--speed-smooth) var(--ease-smooth);
+    text-decoration: none;
+    color: var(--text-primary);
+    border: 2px solid transparent;
+    min-width: 40px;
+    min-height: 40px;
+    cursor: pointer;
+}
+
+.social-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.social-pill.kofi {
+    background: var(--kofi);
+    border-color: var(--kofi);
+}
+
+.social-pill.github:hover {
+    border-color: var(--github);
+}
+
+.social-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.social-pill.kofi:hover {
+    background: var(--kofi);
+    border-color: var(--kofi);
+}
+
+.social-pill.github {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.social-pill.github:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--github);
+}
+
+.social-pill.discord {
+    background: var(--discord);
+    border-color: var(--discord);
+}
+
+.social-pill.youtube {
+    background: rgba(255, 0, 0, 0.2);
+}
+
+.social-pill.youtube:hover {
+    background: var(--youtube);
+    border-color: var(--youtube);
+}
+
+.social-pill.email {
+    background: rgba(74, 144, 226, 0.2);
+}
+
+.social-pill.email:hover {
+    background: var(--email);
+    border-color: var(--email);
+}
+
+.social-icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+    transition: fill var(--speed-smooth) var(--ease-smooth);
+    fill: currentColor;
+}
+
+.social-label {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-left: 0;
+    transition: all var(--speed-smooth) var(--ease-smooth);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 799px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+
+@media (min-width: 1201px) {
+    footer {
+        border-top-left-radius: var(--border-radius);
+        border-top-right-radius: var(--border-radius);
+    }
+}
