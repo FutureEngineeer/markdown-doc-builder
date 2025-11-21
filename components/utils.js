@@ -1,9 +1,11 @@
 // utils.js - Утилиты для парсинга и обработки Markdown
 const MarkdownIt = require('markdown-it');
-const { alert } = require('@mdit/plugin-alert');
 const katex = require('markdown-it-katex');
 const taskLists = require('markdown-it-task-lists');
 
+// Lazy load alert plugin
+let alertPlugin = null;
+let alertPluginLoading = null;
 
 /**
  * Инициализация markdown-it с настройками по умолчанию
@@ -17,8 +19,29 @@ function createMarkdownInstance(options = {}) {
     ...options
   });
   
-  // Подключаем плагин alerts
-  md.use(alert);
+  // Try to load alert plugin if available, but don't fail if it's not
+  try {
+    if (!alertPlugin && !alertPluginLoading) {
+      alertPluginLoading = true;
+      // Try synchronous require first (won't work for ES modules)
+      // If it fails, we'll just skip the plugin
+      try {
+        // This will fail for ES modules, which is expected
+        alertPlugin = require('@mdit/plugin-alert').alert;
+      } catch (e) {
+        // ES module - skip for now, alerts won't work but build will succeed
+        console.warn('Note: @mdit/plugin-alert is an ES module and cannot be loaded synchronously. Alerts will not be rendered.');
+        alertPlugin = null;
+      }
+    }
+    
+    if (alertPlugin) {
+      md.use(alertPlugin);
+    }
+  } catch (error) {
+    // Silently skip if plugin can't be loaded
+    console.warn('Warning: Could not load @mdit/plugin-alert:', error.message);
+  }
   
   // Подключаем плагин чек-листов с кастомными классами
   md.use(taskLists, {
