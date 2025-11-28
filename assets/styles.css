@@ -4,6 +4,8 @@
 
 @import url('styles/footer.css');
 
+@import url('styles/navigation.css');
+
 @import url('styles/alerts.css');
 
 @import url('styles/table.css');
@@ -11,6 +13,10 @@
 @import url('styles/checklist.css');
 
 @import url('styles/selector.css');
+
+@import url('styles/spoiler.css');
+
+@import url('styles/search.css');
 
 
 @property --gradient-angle {
@@ -29,18 +35,27 @@
 
 :root {
     /* Layout */
-    --bp-max-width: 1200px;
+    --bp-max-width: 1250px;
+    --sidebar-width: 200px;
 
-    /* Colors */
+    /* Main Colors */
     --bg: #1B1C28;
     --accent: #2FB65A;
+    --accent-hover: #26a04d;
     --header-footer-bg: #000000;
     --card-bg: #262736;
-    --discord: #5865F2;
-    --youtube: #FF0000;
-    --github: #ffffff;
-    --kofi: #FF5E5B;
-    --email: #4A90E2;
+    
+    /* Social Colors - будут переопределены из config.yaml */
+    --social-discord: #5865F2;
+    --social-discord-hover: #4752C4;
+    --social-youtube: #FF0000;
+    --social-youtube-hover: #CC0000;
+    --social-github: #ffffff;
+    --social-github-hover: #e0e0e0;
+    --social-kofi: #FF5E5B;
+    --social-kofi-hover: #E54E4B;
+    --social-email: #4A90E2;
+    --social-email-hover: #3A7BC8;
 
     /* Status colors */
     --status-note: #888888;
@@ -80,7 +95,7 @@
     /* Spacing */
     --header-padding: 0.75rem 1.5rem;
     --footer-padding: 0.8rem 1.5rem;
-    --main-padding: 2rem;
+    --main-padding: 1rem;
     --border-radius: 16px;
     --cards-grid-gap: 24px;
 
@@ -123,32 +138,42 @@
 
 /* ==================== BASE STYLES ==================== */
 
-
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height для мобильных браузеров */
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Центрирование по горизонтали */
     padding: 0;
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .site-wrapper {
     width: 100%;
     min-width: 350px;
-    max-width: var(--bp-max-width);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    overflow: visible;
-    /* Убираем overflow: hidden */
+    max-width: 1250px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+        "header"
+        "scope";
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height для мобильных браузеров */
+    overflow: hidden;
     position: relative;
+}
+
+.site-wrapper > header {
+    grid-area: header;
+}
+
+.site-wrapper > .scope {
+    grid-area: scope;
+    display: grid;
 }
 
 
@@ -192,40 +217,14 @@ body {
 
 /* ==================== STANDARD MARKDOWN ELEMENTS ==================== */
 
-/* Headings - h1-h3 with left border (only outside cards, except spec-card) */
-.section-content>h1:not(.spec-card h1),
-.section-content>h2:not(.spec-card h2),
-.section-content>h3:not(.spec-card h3),
-.subsection>h1:not(.card h1):not(.spec-card h1),
-.subsection>h2:not(.card h2):not(.spec-card h2),
-.subsection>h3:not(.card h3):not(.spec-card h3),
-main>h1:not(.card-title):not(.spec-card-title):not(.card h1),
-main>h2:not(.card-title):not(.spec-card-title):not(.card h2),
-main>h3:not(.card-title):not(.spec-card-title):not(.card h3),
-.spec-card h1,
-.spec-card h2,
-.spec-card h3,
-/* Добавляем все H2 кроме card-title */
-h2:not(.card-title):not(.spec-card-title) {
+/* Headings - h1-h3 with left border by default */
+h1, h2, h3 {
     display: flex;
     align-items: stretch;
     gap: 10px;
 }
 
-.section-content>h1:not(.spec-card h1)::before,
-.section-content>h2:not(.spec-card h2)::before,
-.section-content>h3:not(.spec-card h3)::before,
-.subsection>h1:not(.card h1):not(.spec-card h1)::before,
-.subsection>h2:not(.card h2):not(.spec-card h2)::before,
-.subsection>h3:not(.card h3):not(.spec-card h3)::before,
-main>h1:not(.card-title):not(.spec-card-title):not(.card h1)::before,
-main>h2:not(.card-title):not(.spec-card-title):not(.card h2)::before,
-main>h3:not(.card-title):not(.spec-card-title):not(.card h3)::before,
-.spec-card h1::before,
-.spec-card h2::before,
-.spec-card h3::before,
-/* Добавляем all H2 кроме card-title */
-h2:not(.card-title):not(.spec-card-title)::before {
+h1::before, h2::before, h3::before {
     content: '';
     width: var(--heading-border-width);
     min-height: 100%;
@@ -236,24 +235,20 @@ h2:not(.card-title):not(.spec-card-title)::before {
     transition: width var(--speed-fast) var(--ease-smooth);
 }
 
-.section-content>h1:not(.spec-card h1):hover::before,
-.section-content>h2:not(.spec-card h2):hover::before,
-.section-content>h3:not(.spec-card h3):hover::before,
-.subsection>h1:not(.card h1):not(.spec-card h1):hover::before,
-.subsection>h2:not(.card h2):not(.spec-card h2):hover::before,
-.subsection>h3:not(.card h3):not(.spec-card h3):hover::before,
-main>h1:not(.card-title):not(.spec-card-title):not(.card h1):hover::before,
-main>h2:not(.card-title):not(.spec-card-title):not(.card h2):hover::before,
-main>h3:not(.card-title):not(.spec-card-title):not(.card h3):hover::before,
-.spec-card h1:hover::before,
-.spec-card h2:hover::before,
-.spec-card h3:hover::before,
-/* Добавляем all H2 кроме card-title */
-h2:not(.card-title):not(.spec-card-title):hover::before {
+h1:hover::before, h2:hover::before, h3:hover::before {
     width: var(--heading-border-width-hover);
 }
 
-/* Заголовки внутри обычных card (не spec-card) - без полоски */
+/* Убираем полоску только для card-title и spec-card-title */
+.card-title, .spec-card-title {
+    display: block;
+}
+
+.card-title::before, .spec-card-title::before {
+    display: none;
+}
+
+/* Убираем полоску для заголовков внутри обычных card (не spec-card) */
 .card:not(.spec-card) h1,
 .card:not(.spec-card) h2,
 .card:not(.spec-card) h3 {
@@ -317,6 +312,59 @@ h6 {
     font-size: 1.1em;
 }
 
+/* Адаптивные размеры заголовков для мобильных устройств */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.2em;
+    }
+    
+    h2 {
+        font-size: 1.5em;
+    }
+    
+    .product-card h1 {
+        font-size: 1.5em;
+    }
+    
+    h3 {
+        font-size: 1.4em;
+    }
+    
+    h4 {
+        font-size: 1.25em;
+    }
+    
+    h5 {
+        font-size: 1.1em;
+    }
+    
+    h6 {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    h2 {
+        font-size: 1.3em;
+    }
+    
+    .product-card h1 {
+        font-size: 1.3em;
+    }
+    
+    h3 {
+        font-size: 1.2em;
+    }
+    
+    h4 {
+        font-size: 1.1em;
+    }
+}
+
 /* Paragraphs */
 p {
     margin-bottom: 0.5em;
@@ -331,40 +379,10 @@ blockquote {
     border-left: var(--blockquote-border-width) solid var(--accent);
     border-radius: 8px;
     padding: var(--blockquote-padding);
-    margin: 1.5em 0;
+    margin: 1em 0;
     color: var(--text-tertiary);
 }
 
-blockquote p {
-    margin-bottom: 0.5em;
-}
-
-blockquote p:last-child {
-    margin-bottom: 0;
-}
-
-blockquote ul,
-blockquote ol {
-    list-style-position: inside;
-    margin: 0.5em 0;
-}
-
-blockquote li {
-    position: relative;
-    padding-left: 20px;
-    font-size: 14px;
-    color: var(--text-tertiary);
-    margin-bottom: 3px;
-}
-
-blockquote li::marker {
-    color: var(--accent);
-    font-weight: bold;
-}
-
-blockquote li:last-child {
-    margin-bottom: 0;
-}
 
 
 /* Images - fit to content */
@@ -408,7 +426,7 @@ img {
 /* Lists */
 ul,
 ol {
-    margin: 1em 0;
+    margin: 0.5em 0;
     padding-left: 2em;
     color: var(--text-tertiary);
 }
@@ -478,9 +496,6 @@ sup {
 }
 
 
-
-
-
 /* ==================== LINKS ==================== */
 
 a {
@@ -543,14 +558,14 @@ a:active {
 }
 
 .discord-btn {
-    background: var(--discord);
-    border-color: var(--discord);
+    background: var(--social-discord);
+    border-color: var(--social-discord);
     color: var(--text-primary);
 }
 
 .discord-btn:hover {
-    background: #4752C4;
-    border-color: #4752C4;
+    background: var(--social-discord-hover);
+    border-color: var(--social-discord-hover);
     transform: scale(1);
 }
 
@@ -559,14 +574,14 @@ a:active {
 }
 
 .kofi-btn {
-    background: var(--kofi);
-    border-color: var(--kofi);
+    background: var(--social-kofi);
+    border-color: var(--social-kofi);
     color: var(--text-primary);
 }
 
 .kofi-btn:hover {
-    background: #E54E4B;
-    border-color: #E54E4B;
+    background: var(--social-kofi-hover);
+    border-color: var(--social-kofi-hover);
     transform: scale(1);
 }
 
@@ -589,26 +604,199 @@ a:active {
     white-space: nowrap;
 }
 
+/* ==================== SCOPE WRAPPER ==================== */
+
+.scope {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    margin-top: 0;
+    transition: margin-top 0.3s ease;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: grid;
+}
+
+/* Градиентный blur эффект через несколько слоев */
+.scope::before {
+    content: '';
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    height: 100px;
+    pointer-events: none;
+    z-index: 100;
+    background: 
+        linear-gradient(to bottom, 
+            rgba(27, 28, 40, 1) 0%, 
+            rgba(27, 28, 40, 0.95) 10%,
+            rgba(27, 28, 40, 0.85) 20%,
+            rgba(27, 28, 40, 0.7) 30%,
+            rgba(27, 28, 40, 0.5) 45%,
+            rgba(27, 28, 40, 0.3) 60%,
+            rgba(27, 28, 40, 0.15) 75%,
+            rgba(27, 28, 40, 0.05) 90%,
+            transparent 100%
+        );
+
+}
+
+/* Нижний градиент не нужен - footer имеет свой фон и z-index */
+
+/* Мобильная версия < 700px: только main, footer прокручивается */
+@media (max-width: 700px) {
+    .scope {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+        grid-template-areas: 
+            "content"
+            "footer";
+    }
+    
+    .scope .section-map {
+        display: none;
+    }
+    
+    .scope main {
+        grid-area: content;
+    }
+    
+    .scope > footer {
+        grid-area: footer;
+    }
+}
+
+/* При ширине 701-1000px: только main, footer sticky */
+@media (min-width: 701px) and (max-width: 1000px) {
+    .scope {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        grid-template-areas: 
+            "content"
+            "footer";
+        overflow-y: hidden;
+    }
+    
+    .scope .section-map {
+        display: none;
+    }
+    
+    .scope main {
+        grid-area: content;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    .scope > footer {
+        grid-area: footer;
+    }
+}
+
+/* При ширине > 1000px БЕЗ section-map: только main, footer sticky */
+@media (min-width: 1001px) {
+    .scope:not(.has-section-map) {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        grid-template-areas: 
+            "content"
+            "footer";
+        overflow-y: hidden;
+    }
+    
+    .scope:not(.has-section-map) .section-map {
+        display: none;
+    }
+    
+    .scope:not(.has-section-map) main {
+        grid-area: content;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    .scope:not(.has-section-map) > footer {
+        grid-area: footer;
+    }
+}
+
+/* При ширине > 1000px С section-map: сетка 2x2 с section-map слева и main справа, footer sticky внизу на обеих ячейках */
+@media (min-width: 1001px) {
+    .scope.has-section-map {
+        grid-template-columns: var(--sidebar-width) 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-areas: 
+            "sidebar content"
+            "footer footer";
+        overflow-y: hidden;
+    }
+    
+    .scope.has-section-map .section-map {
+        display: flex;
+        grid-area: sidebar;
+        align-self: stretch;  /* Растягиваем на всю высоту grid-ячейки */
+        height: 100%;  /* Занимаем всю высоту */
+        overflow: hidden;  /* Скрываем переполнение на уровне section-map */
+    }
+    
+    .scope.has-section-map main {
+        grid-area: content;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+    }
+    
+    .scope.has-section-map > footer {
+        grid-area: footer;
+    }
+}
+
 /* ==================== MAIN CONTENT ==================== */
 
 main {
-    flex: 1;
     padding: var(--main-padding);
     width: 100%;
     max-width: 100%;
     min-width: 0;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    overflow-y: visible;
-    /* Не блокируем скролл здесь */
-    overflow-x: hidden;
-    margin-top: 90px;
-    margin-bottom: 0;
     padding-bottom: 20px;
-    /* Анимация появления main контента */
+    position: relative;
+    z-index: 1;
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
+    
+    /* Плавное размытие контента под header и footer */
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.2) 5px,
+        rgba(0, 0, 0, 0.5) 12px,
+        rgba(0, 0, 0, 0.8) 20px,
+        black 30px,
+        black calc(100% - 30px),
+        rgba(0, 0, 0, 0.8) calc(100% - 20px),
+        rgba(0, 0, 0, 0.5) calc(100% - 12px),
+        rgba(0, 0, 0, 0.2) calc(100% - 5px),
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.2) 5px,
+        rgba(0, 0, 0, 0.5) 12px,
+        rgba(0, 0, 0, 0.8) 20px,
+        black 30px,
+        black calc(100% - 30px),
+        rgba(0, 0, 0, 0.8) calc(100% - 20px),
+        rgba(0, 0, 0, 0.5) calc(100% - 12px),
+        rgba(0, 0, 0, 0.2) calc(100% - 5px),
+        transparent 100%
+    );
 }
 
 main.loaded {
@@ -616,9 +804,38 @@ main.loaded {
     transform: translateY(0);
 }
 
-/* Scrollbar behaviour: main always scrollable */
-main {
-    scrollbar-width: thin;
+/* На мобильных устройствах main не имеет overflow, прокручивается scope */
+@media (max-width: 700px) {
+    main {
+        overflow: visible;
+        /* Уменьшенная высота градиента для мобильных */
+        mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(0, 0, 0, 0.2) 3px,
+            rgba(0, 0, 0, 0.5) 6px,
+            rgba(0, 0, 0, 0.8) 10px,
+            black 15px,
+            black calc(100% - 15px),
+            rgba(0, 0, 0, 0.8) calc(100% - 10px),
+            rgba(0, 0, 0, 0.5) calc(100% - 6px),
+            rgba(0, 0, 0, 0.2) calc(100% - 3px),
+            transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(0, 0, 0, 0.2) 3px,
+            rgba(0, 0, 0, 0.5) 6px,
+            rgba(0, 0, 0, 0.8) 10px,
+            black 15px,
+            black calc(100% - 15px),
+            rgba(0, 0, 0, 0.8) calc(100% - 10px),
+            rgba(0, 0, 0, 0.5) calc(100% - 6px),
+            rgba(0, 0, 0, 0.2) calc(100% - 3px),
+            transparent 100%
+        );
+    }
 }
 
 /* Custom scrollbar styling */
@@ -1184,7 +1401,7 @@ main {
     gap: 6px;
 }
 
-@container product-card (max-width: 750px) {
+@container product-card (max-width: 560px) {
     .product-content {
         grid-template-columns: 1fr;
         gap: 24px;
@@ -1449,53 +1666,46 @@ main {
     }
 }
 
-@media (max-width: 499px) {
-    .site-title-wrapper {
-        max-width: 0;
-        opacity: 0;
-        margin: 0;
-        padding: 0;
-    }
+/* Всегда показываем sitename и breadcrumb */
+.site-title-wrapper {
+    max-width: 300px;
+    opacity: 1;
 }
 
-@media (min-width: 500px) {
-    .site-title-wrapper {
-        max-width: 300px;
-    }
+.sitename {
+    display: block;
 }
 
-@media (min-width: 700px) {
-    .community-btn {
+.breadcrumb {
+    display: block;
+}
+
+@media (max-width: 650px) {
+    .site-title-wrapper {
         max-width: 200px;
-        gap: 0.5rem;
+        margin: 0 0 0 0.5rem;
     }
+    
+    .sitename {
+        font-size: 1.5rem;
+    }
+    
+    .breadcrumb {
+        font-size: 0.75rem;
+    }
+}
 
+/* Адаптивность для community buttons в header */
+@media (min-width: 1001px) {
     .nav-section {
         gap: 2rem;
     }
 }
 
-@media (max-width: 699px) {
-    .nav-section {
-        gap: 0rem;
-    }
-
-    .community-buttons {
-        max-width: 0;
-        gap: 0;
-        padding: 0;
-        margin: 0;
-        opacity: 0;
-    }
-
+@media (min-width: 769px) {
     .community-btn {
-        max-width: 0;
-        opacity: 0;
-        padding: 0;
-        margin: 0;
-        min-width: 0;
-        gap: 0;
-        border-width: 0;
+        max-width: 200px;
+        gap: 0.5rem;
     }
 }
 
@@ -1504,18 +1714,8 @@ main {
         grid-template-columns: 1fr;
         gap: 24px;
     }
-}
 
-@media (min-width: 768px) {
-    .grid-2 {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-
-
-@media (max-width: 899px) {
-    .community-buttons {
+        .community-buttons {
         gap: 0.5rem;
     }
 
@@ -1529,6 +1729,17 @@ main {
         padding: 0.6rem;
         gap: 0rem;
     }
+}
+
+@media (min-width: 768px) {
+    .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+
+@media (max-width: 899px) {
 
     .specs-grid {
         grid-template-columns: 1fr;
@@ -1549,11 +1760,7 @@ main {
     }
 }
 
-@media (max-width: 968px) {
-    .product-content {
-        grid-template-columns: 1fr;
-    }
-}
+/* Убрано - теперь используется container query в @container product-card */
 
 @media (min-width: 1000px) {
     .grid-4 {
@@ -1595,151 +1802,53 @@ main {
 }
 
 
+/* ==================== PROGRESS BAR ==================== */
 
+progress {
+    width: 100%;
+    height: 24px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
 
+/* Webkit (Chrome, Safari) */
+progress::-webkit-progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
 
+progress::-webkit-progress-value {
+    background: var(--accent);
+    border-radius: 12px;
+    transition: width var(--speed-smooth) var(--ease-smooth);
+}
+
+/* Firefox */
+progress::-moz-progress-bar {
+    background: var(--accent);
+    border-radius: 12px;
+    transition: width var(--speed-smooth) var(--ease-smooth);
+}
+
+/* Progress fill after - заполняет оставшуюся ширину */
+progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: var(--progress-value, 0%);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0 12px 12px 0;
+}
 
 /* Включаем поддержку анимации auto-высоты */
 @supports (interpolate-size: allow-keywords) {
     :root {
         interpolate-size: allow-keywords;
-    }
-}
-
-/* ==================== DETAILS/SUMMARY COLLAPSIBLE SECTIONS ==================== */
-
-details {
-    background: rgba(47, 182, 90, 0.08);
-    border-left: 4px solid var(--accent);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin: 1.5em 0;
-    transition: background var(--speed-smooth) var(--ease-smooth),
-        border-color var(--speed-smooth) var(--ease-smooth);
-}
-
-details:hover {
-    background: rgba(47, 182, 90, 0.12);
-    border-left-color: var(--accent);
-}
-
-details[open] {
-    background: rgba(47, 182, 90, 0.1);
-}
-
-/* Summary element - clickable header */
-summary {
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--text-primary);
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    list-style: none;
-    transition: color var(--speed-slow) ease;
-    padding: 4px 0;
-}
-
-summary:hover {
-    color: var(--accent);
-}
-
-/* Remove default marker/triangle */
-summary::-webkit-details-marker,
-summary::marker {
-    display: none;
-}
-
-/* Custom arrow indicator using ::before */
-summary::before {
-    content: '▶';
-    color: var(--accent);
-    font-size: 14px;
-    flex-shrink: 0;
-    transition: transform var(--speed-smooth) var(--ease-smooth);
-    display: inline-block;
-}
-
-details[open]>summary::before {
-    transform: rotate(90deg);
-}
-
-/* АНИМАЦИЯ ОТКРЫТИЯ И ЗАКРЫТИЯ через ::details-content */
-::details-content {
-    display: block;
-    overflow: hidden;
-    block-size: 0;
-    opacity: 0;
-
-    /* При ЗАКРЫТИИ: сначала исчезает текст (0ms), потом сжимается высота */
-    transition:
-        content-visibility var(--speed-smooth) allow-discrete,
-        block-size var(--speed-smooth) var(--ease-smooth) 0ms,
-        opacity 240ms ease-in 0ms;
-    /* текст исчезает сразу и быстро */
-}
-
-/* При ОТКРЫТИИ: сначала расширяется высота, потом появляется текст */
-details[open]::details-content {
-    block-size: auto;
-    opacity: 1;
-
-    transition:
-        content-visibility var(--speed-smooth) allow-discrete,
-        block-size var(--speed-smooth) var(--ease-smooth) 0ms,
-        opacity 280ms ease-out 240ms;
-    /* текст появляется с задержкой 240ms */
-}
-
-/* Внутренний контент */
-details>*:not(summary) {
-    margin-top: 12px;
-    padding-left: 26px;
-}
-
-details>p:not(:last-child) {
-    margin-bottom: 0.75em;
-}
-
-details>p:last-child {
-    margin-bottom: 0;
-}
-
-/* Lists inside details */
-details ul,
-details ol {
-    margin: 0.5em 0;
-    padding-left: 1.5em;
-}
-
-details li {
-    margin-bottom: 0.25em;
-    font-size: 14px;
-    color: var(--text-tertiary);
-}
-
-details li::marker {
-    color: var(--accent);
-}
-
-/* Mobile responsive */
-@media (max-width: 449px) {
-    details {
-        padding: 12px 16px;
-    }
-
-    summary {
-        font-size: 15px;
-        gap: 10px;
-    }
-
-    summary::before {
-        font-size: 12px;
-    }
-
-    details>*:not(summary) {
-        padding-left: 22px;
     }
 }

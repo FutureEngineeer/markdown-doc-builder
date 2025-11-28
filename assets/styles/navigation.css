@@ -1,0 +1,428 @@
+/* ==================== SHARED NAVIGATION STYLES ==================== */
+/* Общие стили для section-map и hamburger-menu */
+
+/* Базовые списки */
+.section-map-nav,
+.hamburger-menu-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.section-map-nav > li,
+.hamburger-menu-nav > li {
+    margin: 3px 0;
+}
+
+.section-map-nav ul,
+.hamburger-menu-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.section-map-nav li,
+.hamburger-menu-nav li {
+    margin: 3px 0;
+}
+
+/* Контейнер элемента */
+.section-map-nav .item-content,
+.hamburger-menu-nav .item-content {
+    padding: 8px 36px 8px 12px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--speed-fast) ease;
+    overflow: hidden;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+/* Градиентный оверлей при наведении */
+.section-map-nav .item-content::before,
+.hamburger-menu-nav .item-content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.15) 0%, rgba(157, 74, 255, 0.15) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+}
+
+.section-map-nav .item-content:hover::before,
+.hamburger-menu-nav .item-content:hover::before {
+    opacity: 1;
+}
+
+/* Текст - базовое состояние */
+.section-map-nav .item-content > .link,
+.section-map-nav .item-content > .folder-only,
+.hamburger-menu-nav .item-content > .link,
+.hamburger-menu-nav .item-content > .folder-only {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+    color: var(--text-primary);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+}
+
+/* Link (кликабельный элемент) */
+.section-map-nav .link,
+.hamburger-menu-nav .link {
+    cursor: pointer;
+}
+
+/* Folder-only БЕЗ курсива */
+.section-map-nav .folder-only,
+.hamburger-menu-nav .folder-only {
+    color: #999;
+}
+
+/* При hover - ТОЛЬКО link сдвигается */
+.section-map-nav .item-content:hover > .link,
+.hamburger-menu-nav .item-content:hover > .link {
+    transform: translateX(8px);
+    color: var(--accent);
+}
+
+/* Вертикальная линия - базовое состояние исчезает */
+.section-map-nav .item-content::after,
+.hamburger-menu-nav .item-content::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: height 0.3s ease;
+    z-index: 1;
+}
+
+/* При hover - линия появляется С задержкой, только для link */
+.section-map-nav .item-content:has(.link):hover::after,
+.hamburger-menu-nav .item-content:has(.link):hover::after {
+    height: 70%;
+    transition: height 0.3s ease 0.15s;
+}
+
+/* Активная ссылка - эффект как при hover (градиент, сдвиг, линия, цвет) */
+.section-map-nav .item-content.active::before,
+.hamburger-menu-nav .item-content.active::before {
+    opacity: 1;
+}
+
+.section-map-nav .item-content.active > .link,
+.hamburger-menu-nav .item-content.active > .link {
+    transform: translateX(8px);
+    color: var(--accent) !important;
+}
+
+.section-map-nav .item-content.active::after,
+.hamburger-menu-nav .item-content.active::after {
+    height: 70%;
+}
+
+/* Треугольник СПРАВА для элементов с детьми */
+.section-map-nav .triangle,
+.hamburger-menu-nav .triangle {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+    z-index: 9;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* Сам треугольник через ::before */
+.section-map-nav .triangle::before,
+.hamburger-menu-nav .triangle::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid var(--accent);
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+}
+
+.section-map-nav .has-children.expanded > .item-content .triangle::before,
+.hamburger-menu-nav .has-children.expanded > .item-content .triangle::before {
+    transform: rotate(90deg);
+}
+
+/* Дочерние элементы */
+.section-map-nav .children,
+.hamburger-menu-nav .children {
+    display: none;
+    padding-left: 10px;
+    margin-top: 2px;
+}
+
+.section-map-nav .has-children.expanded > .children,
+.hamburger-menu-nav .has-children.expanded > .children {
+    display: block;
+}
+
+/* Вложенные уровни - базовые размеры */
+.section-map-nav .children .link,
+.section-map-nav .children .folder-only {
+    font-size: 0.8rem;
+}
+
+.section-map-nav .children .children .link,
+.section-map-nav .children .children .folder-only {
+    font-size: 0.75rem;
+}
+
+.hamburger-menu-nav .children .link,
+.hamburger-menu-nav .children .folder-only {
+    font-size: 0.85rem;
+}
+
+.hamburger-menu-nav .children .children .link,
+.hamburger-menu-nav .children .children .folder-only {
+    font-size: 0.8rem;
+}
+
+
+/* ==================== HAMBURGER MENU (ПОЛНАЯ СТРУКТУРА САЙТА) ==================== */
+
+/* Hamburger menu - полная карта сайта слева */
+.hamburger-menu {
+    position: fixed;
+    top: 60px;  /* Под header */
+    left: -350px;  /* Скрыт слева */
+    width: 300px;
+    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px); /* Dynamic viewport height для мобильных браузеров */
+    background: var(--header-footer-bg);
+    padding: 0 1.5rem 1.5rem 1.5rem;  /* Убираем верхний padding */
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    z-index: 1100;  /* Выше header::after и footer::before */
+    transition: left var(--speed-smooth) var(--ease-smooth);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+    -webkit-overflow-scrolling: touch;  /* Плавная прокрутка на iOS */
+}
+
+/* Показываем hamburger menu при активации только на узких экранах */
+.hamburger-menu.active {
+    left: 0;
+}
+
+/* Скрываем hamburger menu на широких экранах */
+@media (min-width: 1001px) {
+    .hamburger-menu {
+        display: none !important;
+    }
+}
+
+/* Для узких экранов делаем меню на всю ширину */
+@media (max-width: 400px) {
+    .hamburger-menu {
+        width: 100%;
+        left: -100%;
+    }
+}
+
+/* Заголовок Site Map */
+.hamburger-menu-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 1rem 0.75rem 0.5rem 0.75rem;  /* Увеличиваем верхний padding */
+    border-bottom: 2px solid var(--accent);
+    text-align: center;
+    position: sticky;
+    top: 0;
+    background: var(--header-footer-bg);
+    z-index: 10;
+}
+
+/* Размеры шрифтов для hamburger-menu */
+.hamburger-menu-nav .item-content > .link,
+.hamburger-menu-nav .item-content > .folder-only {
+    font-size: 0.95rem;
+}
+
+/* Вложенные уровни */
+.hamburger-menu-nav .children .link,
+.hamburger-menu-nav .children .folder-only {
+    font-size: 0.85rem;
+}
+
+.hamburger-menu-nav .children .children .link,
+.hamburger-menu-nav .children .children .folder-only {
+    font-size: 0.8rem;
+}
+
+/* Кнопки социальных сетей в hamburger menu */
+.hamburger-menu .community-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(47, 182, 90, 0.2);
+}
+
+.hamburger-menu .community-btn {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.hamburger-menu .btn-text {
+    max-width: 200px;
+    opacity: 1;
+    margin-left: 0.5rem;
+}
+
+/* Скроллбар для hamburger menu */
+.hamburger-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.hamburger-menu::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.hamburger-menu::-webkit-scrollbar-thumb {
+    background: rgba(47, 182, 90, 0.4);
+    border-radius: 3px;
+}
+
+.hamburger-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(47, 182, 90, 0.6);
+}
+
+
+/* ==================== SECTION MAP (LEFT SIDEBAR) ==================== */
+
+/* Section Map - карта текущего раздела слева от main */
+.section-map {
+    display: none;  /* По умолчанию скрыт */
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: transparent;  /* Без фона */
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Показываем section-map при ширине > 1000px */
+@media (min-width: 1001px) {
+    .section-map {
+        display: flex;
+    }
+}
+
+/* Заголовок Section Map */
+.section-map-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--accent);
+    background: var(--bg-primary);  /* Фон для заголовка */
+    flex-shrink: 0;  /* Заголовок не сжимается */
+}
+
+/* Контейнер для прокручиваемого контента */
+.section-map-content {
+    overflow-y: auto;  /* Вертикальная прокрутка */
+    flex: 1;  /* Занимает оставшееся пространство */
+    min-height: 0;  /* Важно для работы flex с overflow */
+    /* Плавное размытие контента сверху и снизу */
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.2) 10px,
+        rgba(0, 0, 0, 0.5) 25px,
+        rgba(0, 0, 0, 0.8) 40px,
+        black 60px,
+        black calc(100% - 60px),
+        rgba(0, 0, 0, 0.8) calc(100% - 40px),
+        rgba(0, 0, 0, 0.5) calc(100% - 25px),
+        rgba(0, 0, 0, 0.2) calc(100% - 10px),
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.2) 10px,
+        rgba(0, 0, 0, 0.5) 25px,
+        rgba(0, 0, 0, 0.8) 40px,
+        black 60px,
+        black calc(100% - 60px),
+        rgba(0, 0, 0, 0.8) calc(100% - 40px),
+        rgba(0, 0, 0, 0.5) calc(100% - 25px),
+        rgba(0, 0, 0, 0.2) calc(100% - 10px),
+        transparent 100%
+    );
+}
+
+/* Hamburger Menu navigation */
+.hamburger-menu-nav {
+    padding: 1rem 0.75rem 2rem 0.75rem;
+}
+
+/* Section Map navigation */
+.section-map-nav {
+    padding: 1rem 0.75rem 2rem 0.75rem;
+}
+
+/* Размеры шрифтов для section-map */
+.section-map-nav .item-content > .link,
+.section-map-nav .item-content > .folder-only {
+    font-size: 0.85rem;
+}
+
+/* Вложенные уровни */
+.section-map-nav .children .link,
+.section-map-nav .children .folder-only {
+    font-size: 0.8rem;
+}
+
+.section-map-nav .children .children .link,
+.section-map-nav .children .children .folder-only {
+    font-size: 0.75rem;
+}
+
+/* Скроллбар для section-map-content */
+.section-map-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.section-map-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.section-map-content::-webkit-scrollbar-thumb {
+    background: rgba(47, 182, 90, 0.3);
+    border-radius: 2px;
+}
+
+.section-map-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(47, 182, 90, 0.5);
+}

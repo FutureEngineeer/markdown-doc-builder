@@ -37,7 +37,8 @@
     flex-shrink: 0;
     margin-top: 2px;
     transition: all 0.3s ease;
-    cursor: pointer;
+    cursor: default;
+    pointer-events: none;
 }
 
 /* Состояние: не отмечено */
@@ -210,9 +211,10 @@ blockquote .checklist-item.checked .checklist-checkbox::after {
 
 /* ==================== MARKDOWN-IT-TASK-LISTS INTEGRATION ==================== */
 
-/* Скрываем стандартные чекбоксы */
+/* Скрываем стандартные чекбоксы и делаем их некликабельными */
 .task-list-item-checkbox {
     display: none;
+    pointer-events: none;
 }
 
 /* Стили для элементов task-list - БЕЗ display: flex */
@@ -232,6 +234,8 @@ blockquote .checklist-item.checked .checklist-checkbox::after {
     position: relative;
     padding-left: 30px;
     min-height: 22px;
+    cursor: default;
+    pointer-events: none;
 }
 
 /* Кастомный чекбокс */
@@ -246,6 +250,7 @@ blockquote .checklist-item.checked .checklist-checkbox::after {
     border-radius: 4px;
     background: transparent;
     transition: all 0.3s ease;
+    pointer-events: none;
 }
 
 /* Состояние: отмечено - зеленое заполнение */
@@ -284,6 +289,8 @@ blockquote .checklist-item.checked .checklist-checkbox::after {
     padding-left: 30px;
     display: block;
     min-height: 22px;
+    cursor: default;
+    pointer-events: none;
 }
 
 /* Кастомный чекбокс для жирного текста */
@@ -298,6 +305,7 @@ blockquote .checklist-item.checked .checklist-checkbox::after {
     border-radius: 4px;
     background: transparent;
     transition: all 0.3s ease;
+    pointer-events: none;
 }
 
 /* Состояние: отмечено для жирного текста */
@@ -496,17 +504,17 @@ blockquote .task-list-item-checkbox:checked+.task-list-item-label::after {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
     bottom: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
-    animation: progressShine 2s infinite;
+    width: 500%;
+    background: linear-gradient(90deg, transparent 0%, transparent 25%, rgba(255, 255, 255, 0.2) 50%, transparent 75%, transparent 100%);
+    animation: progressShine 5s ease-in-out infinite;
 }
 
 @keyframes progressShine {
     0% {
         transform: translateX(-100%);
     }
-
+    
     100% {
         transform: translateX(100%);
     }

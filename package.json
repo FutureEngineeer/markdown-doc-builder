@@ -4,19 +4,20 @@
     "description": "Multi-repository documentation builder for GitHub Pages",
     "main": "builder.js",
     "scripts": {
-        "build": "node converter.js readme.md dist/index.html assets/styles.css",
-        "build:all": "node build-all.js",
-        "build:netlify": "node build-all.js",
-        "build:force": "node build-all.js --force-rebuild",
+        "build": "node build-all-v2.js",
+        "build:all": "node build-all-v2.js",
+        "build:netlify": "node build-all-v2.js",
         "build:clean": "node scripts/clean-build.js && npm run build:all",
         "build:test": "node scripts/test-build.js",
-        "build:multi": "node cli.js --multi --config export-config.yaml",
+        "build:optimized": "npm run build && npm run optimize",
+        "optimize": "node scripts/optimize.js",
+        "optimize:images": "node scripts/optimize-images.js",
+        "optimize:analyze": "node scripts/optimize.js && npm run optimize:images",
+        "analyze": "node scripts/optimize.js",
         "cache:clear": "node scripts/clear-cache.js",
         "cache:info": "node scripts/cache-info.js",
-        "watch": "nodemon --watch readme.md --exec npm run build",
-        "watch:multi": "node cli.js --watch --multi --config export-config.yaml",
-        "serve": "node cli.js --serve --config export-config.yaml",
-        "dev": "node cli.js --watch --serve --config export-config.yaml"
+        "index:check": "node scripts/check-index.js",
+        "search:test": "node scripts/test-search.js"
     },
     "dependencies": {
         "@mdit/plugin-alert": "0.12.0",
@@ -25,6 +26,7 @@
         "glob": "^10.4.5",
         "js-yaml": "^4.1.1",
         "katex": "^0.16.25",
+        "lunr": "^2.3.9",
         "markdown-it": "^14.1.0",
         "markdown-it-attrs": "^4.3.1",
         "markdown-it-container": "^4.0.0",
@@ -41,6 +43,8 @@
         "chokidar": "^3.5.3",
         "gh-pages": "^6.1.0",
         "http-server": "^14.1.1",
+        "imagemin": "^9.0.1",
+        "imagemin-webp": "^8.0.0",
         "mime-types": "^2.1.35",
         "nodemon": "^3.0.2"
     }

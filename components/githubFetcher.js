@@ -24,7 +24,6 @@ function loadCacheFromFile() {
         const maxCacheAge = 12 * 60 * 60 * 1000; // 12 часов в миллисекундах
         
         if (cacheAge > maxCacheAge) {
-          console.log(`⏰ Кеш репозитория ${key} устарел (${Math.round(cacheAge / (60 * 60 * 1000))} часов), пропускаем`);
           continue;
         }
         
@@ -35,16 +34,8 @@ function loadCacheFromFile() {
           
           if (allFilesExist) {
             downloadedReposCache.set(key, repoData);
-          } else {
-            console.log(`⚠️  Файлы репозитория ${key} не найдены, удаляем из кеша`);
           }
-        } else {
-          console.log(`⚠️  Папка репозитория ${key} не найдена, удаляем из кеша`);
         }
-      }
-      
-      if (downloadedReposCache.size > 0) {
-        console.log(`📋 Загружен кеш: ${downloadedReposCache.size} репозиториев`);
       }
     }
   } catch (error) {
@@ -144,12 +135,12 @@ async function getGitHubRepoFiles(owner, repo, branch = 'main') {
     const data = JSON.parse(response);
     
     if (data.tree) {
-      // Фильтруем .md файлы и изображения
+      // Фильтруем .md файлы и изображения (игнорируем регистр для .md)
       const files = data.tree
         .filter(item => {
           if (item.type !== 'blob') return false;
           
-          const isMarkdown = item.path.endsWith('.md');
+          const isMarkdown = /\.md$/i.test(item.path);
           const isImage = /\.(png|jpg|jpeg|gif|svg|webp|bmp|ico)$/i.test(item.path);
           
           return isMarkdown || isImage;
@@ -158,7 +149,7 @@ async function getGitHubRepoFiles(owner, repo, branch = 'main') {
           path: item.path,
           url: `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${item.path}`,
           sha: item.sha,
-          type: item.path.endsWith('.md') ? 'markdown' : 'image'
+          type: /\.md$/i.test(item.path) ? 'markdown' : 'image'
         }));
       
       return files;
@@ -170,12 +161,10 @@ async function getGitHubRepoFiles(owner, repo, branch = 'main') {
     
     // Пробуем с веткой master если main не работает
     if (branch === 'main') {
-      console.log(`Пробуем ветку master для ${owner}/${repo}...`);
       return getGitHubRepoFiles(owner, repo, 'master');
     }
     
     // Если API недоступен, пробуем загрузить только README
-    console.log(`API недоступен, пробуем загрузить только README для ${owner}/${repo}...`);
     return tryDownloadReadmeOnly(owner, repo, branch);
   }
 }
@@ -242,7 +231,6 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
   
   // Проверяем кеш
   if (downloadedReposCache.has(cacheKey)) {
-    console.log(`📋 Используем кешированный репозиторий: ${owner}/${repo}`);
     const cachedResult = downloadedReposCache.get(cacheKey);
     // Обновляем псевдоним в кешированном результате если он изменился
     if (cachedResult.alias !== alias) {
@@ -251,10 +239,12 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
     return cachedResult;
   }
   
-  console.log(`📥 Скачиваем файлы из ${owner}/${repo}...`);
+  const displayName = alias || `${owner}/${repo}`;
+  console.log(`📥 ${displayName}`);
 
-  // Создаем папку для проекта (используем псевдоним если есть)
-  const projectDirName = alias || `${owner}-${repo}`;
+  // В temp всегда используем исходное имя репозитория
+  // Alias используется только для dist при создании HTML страниц
+  const projectDirName = `${owner}-${repo}`;
   const projectDir = path.join(outputDir, projectDirName);
   if (!fs.existsSync(projectDir)) {
     fs.mkdirSync(projectDir, { recursive: true });
@@ -271,16 +261,30 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
     return result;
   }
 
-  console.log(`📄 Найдено ${files.length} .md файлов`);
-
   const downloadedFiles = [];
+  const totalFiles = files.length;
+  let downloadedCount = 0;
+
+  // Функция для отображения прогресс-бара
+  function showProgress(current, total) {
+    const percentage = Math.round((current / total) * 100);
+    const barLength = 30;
+    const filledLength = Math.round((barLength * current) / total);
+    const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
+    
+    // Используем \r для перезаписи строки
+    process.stdout.write(`   [${bar}] ${percentage}% (${current}/${total})\r`);
+    
+    // Если загрузка завершена, переходим на новую строку
+    if (current === total) {
+      process.stdout.write('\n');
+    }
+  }
 
   // Скачиваем каждый файл
   for (const file of files) {
     try {
       if (file.type === 'markdown') {
-        console.log(`  📄 Скачиваем: ${file.path}`);
-        
         const content = await downloadFile(file.url);
         
         // Определяем локальный путь (сохраняем полную структуру)
@@ -306,9 +310,10 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
           type: 'markdown'
         });
         
-      } else if (file.type === 'image') {
-        console.log(`  🖼️  Скачиваем изображение: ${file.path}`);
+        downloadedCount++;
+        showProgress(downloadedCount, totalFiles);
         
+      } else if (file.type === 'image') {
         // Сохраняем изображения в dist/assets/images с исходной структурой папок
         const assetsImagesDir = path.join(process.cwd(), 'dist', 'assets', 'images');
         const imageRelativePath = file.path; // Сохраняем полный путь
@@ -331,14 +336,19 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
           url: file.url,
           type: 'image'
         });
+        
+        downloadedCount++;
+        showProgress(downloadedCount, totalFiles);
       }
       
     } catch (error) {
-      console.warn(`  ❌ Ошибка скачивания ${file.path}:`, error.message);
+      console.warn(`\n  ❌ Ошибка скачивания ${file.path}:`, error.message);
+      downloadedCount++;
+      showProgress(downloadedCount, totalFiles);
     }
   }
 
-  console.log(`✅ Скачано ${downloadedFiles.length} файлов в ${projectDir}`);
+  console.log(`   ✓ Скачано: ${downloadedFiles.length} из ${totalFiles} файлов`);
   
   const result = {
     projectDir,
@@ -365,8 +375,6 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
 function findMainFile(files, subPath = '') {
   const priorities = ['README.md', 'readme.md', 'Readme.md', 'index.md', 'main.md'];
   
-  console.log(`🔍 Ищем главный файл для subPath: "${subPath}"`);
-  
   // Сначала ищем в корне указанного пути
   for (const priority of priorities) {
     const found = files.find(file => {
@@ -383,7 +391,6 @@ function findMainFile(files, subPath = '') {
     });
     
     if (found) {
-      console.log(`✅ Найден главный файл: ${found.originalPath}`);
       return found;
     }
   }
@@ -401,8 +408,6 @@ function findMainFile(files, subPath = '') {
   });
   
   const mainFile = rootFiles.length > 0 ? rootFiles[0] : files[0];
-  console.log(`✅ Выбран главный файл: ${mainFile?.originalPath || 'не найден'}`);
-  
   return mainFile;
 }
 
@@ -489,7 +494,14 @@ async function createGitHubProjectOverviewFromRepo(githubUrl, tempDir) {
  */
 function getHtmlPathForRepoFile(repoPath, owner, repo, alias = null) {
   // Конвертируем путь .md файла в .html путь
-  const htmlPath = repoPath.replace(/\.md$/, '.html');
+  let htmlPath = repoPath.replace(/\.md$/, '.html');
+  
+  // Если файл называется readme.html (любой регистр), заменяем на index.html
+  const fileName = path.basename(htmlPath);
+  if (/^readme\.html$/i.test(fileName)) {
+    const dirPath = path.dirname(htmlPath);
+    htmlPath = path.posix.join(dirPath, 'index.html');
+  }
   
   // Пытаемся получить псевдоним из глобальной карты если не передан явно
   if (!alias) {
@@ -614,7 +626,14 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
     
     if (fileExistsInRepo) {
       // Файл есть в текущем репозитории - создаем относительную ссылку
-      const htmlPath = targetPath.replace(/\.md$/, '.html');
+      let htmlPath = targetPath.replace(/\.md$/, '.html');
+      
+      // Если файл называется readme.html (любой регистр), заменяем на index.html
+      const fileName = path.basename(htmlPath);
+      if (/^readme\.html$/i.test(fileName)) {
+        const dirPath = path.dirname(htmlPath);
+        htmlPath = path.posix.join(dirPath, 'index.html');
+      }
       
       // Вычисляем относительный путь от текущего файла к целевому файлу
       const currentDir = path.dirname(currentFilePath);
@@ -632,7 +651,15 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
       }
       
       // Файл не найден - оставляем как есть, но конвертируем в .html
-      const htmlPath = targetPath.replace(/\.md$/, '.html');
+      let htmlPath = targetPath.replace(/\.md$/, '.html');
+      
+      // Если файл называется readme.html (любой регистр), заменяем на index.html
+      const fileName = path.basename(htmlPath);
+      if (/^readme\.html$/i.test(fileName)) {
+        const dirPath = path.dirname(htmlPath);
+        htmlPath = path.posix.join(dirPath, 'index.html');
+      }
+      
       return `](${htmlPath}${anchor ? '#' + anchor : ''})`;
     }
   });
@@ -707,8 +734,6 @@ function clearRepoCache() {
   } catch (error) {
     console.warn('⚠️  Ошибка удаления файла кеша:', error.message);
   }
-  
-  console.log('🗑️  Кеш репозиториев очищен');
 }
 
 /**

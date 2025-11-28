@@ -381,7 +381,7 @@ async function renderProjectCards(projects, baseDir = '.', relativeRoot = './', 
           // Если есть subPath, ссылаемся на конкретный файл в репозитории
           const subPathFile = findMainFile(overview.projectData.files, subPath);
           if (subPathFile) {
-            const htmlPath = subPathFile.originalPath.replace(/\.md$/, '.html');
+            const htmlPath = subPathFile.originalPath.replace(/\.md$/i, '.html');
             targetLink = `${relativeRoot}${projectDirName}/${htmlPath}`;
           } else {
             targetLink = `${relativeRoot}${projectDirName}/index.html`;
@@ -397,7 +397,7 @@ async function renderProjectCards(projects, baseDir = '.', relativeRoot = './', 
       }
     } else if (!project.link.startsWith('http')) {
       // Локальные проекты
-      targetLink = project.link.replace(/\.md$/, '.html');
+      targetLink = project.link.replace(/\.md$/i, '.html');
       buttonAction = `window.location.href='${targetLink}'`;
     } else {
       // Другие внешние ссылки
@@ -448,14 +448,14 @@ async function createGitHubProjectPages(projectData, outputDir, converter, allDo
   const projectName = alias || `${owner}-${repo}`;
   const projectOutputDir = path.join(outputDir, projectName);
   
+  console.log(`   DEBUG: alias=${alias}, projectName=${projectName}, outputDir=${outputDir}, projectOutputDir=${projectOutputDir}`);
+  
   // Создаем уникальный ключ для кеша HTML генерации (используем псевдоним как основной ключ)
   const projectDirName = alias || `${owner}-${repo}`;
   const htmlCacheKey = `${projectDirName}@${branch || 'main'}`;
   
   // Проверяем, были ли уже созданы HTML страницы для этого проекта
   if (generatedHtmlCache.has(htmlCacheKey)) {
-    const displayName = alias || `${owner}/${repo}`;
-    console.log(`📋 HTML страницы для ${displayName} уже созданы (используем кеш)`);
     return;
   }
 
@@ -464,7 +464,8 @@ async function createGitHubProjectPages(projectData, outputDir, converter, allDo
     fs.mkdirSync(projectOutputDir, { recursive: true });
   }
 
-  console.log(`📄 Создаем HTML страницы для ${owner}/${repo}...`);
+  const displayName = alias || `${owner}/${repo}`;
+  console.log(`\n📄 ${displayName}`);
 
   // Находим главный файл для создания index.html (корневой README)
   const { findMainFile, processGitHubMarkdownLinks } = require('./githubFetcher');
@@ -482,8 +483,15 @@ async function createGitHubProjectPages(projectData, outputDir, converter, allDo
       if (file === mainFile) {
         outputRelativePath = 'index.html'; // Главный файл становится index.html
       } else {
-        // Сохраняем структуру папок
-        outputRelativePath = file.localRelativePath.replace(/\.md$/, '.html');
+        // Сохраняем структуру папок (игнорируем регистр .md)
+        outputRelativePath = file.localRelativePath.replace(/\.md$/i, '.html');
+        
+        // Если файл называется README.md (любой регистр), заменяем на index.html
+        const fileName = path.basename(outputRelativePath);
+        if (/^readme\.html$/i.test(fileName)) {
+          const dirPath = path.dirname(outputRelativePath);
+          outputRelativePath = path.join(dirPath, 'index.html');
+        }
       }
       
       const outputPath = path.join(projectOutputDir, outputRelativePath);
@@ -499,23 +507,27 @@ async function createGitHubProjectPages(projectData, outputDir, converter, allDo
       
       // Используем правильную функцию для конвертации содержимого
       const { convertSingleProjectFile } = require('../converter');
-      // Используем псевдоним для breadcrumb если он есть, иначе только название репозитория
-      const breadcrumbTitle = alias || repo;
-      const htmlContent = convertSingleProjectFile(content, outputRelativePath, breadcrumbTitle, fullOutputPath);
+      // Формируем breadcrumb: проект / название файла
+      const projectDisplayName = alias || repo;
+      const fileNameWithoutExt = path.basename(outputRelativePath, '.html');
+      
+      // Для index.html (главного файла) используем "readme"
+      let breadcrumbFileName = fileNameWithoutExt === 'index' ? 'readme' : fileNameWithoutExt;
+      
+      const breadcrumbTitle = `${projectDisplayName} / ${breadcrumbFileName}`;
+      const htmlContent = convertSingleProjectFile(content, breadcrumbFileName, breadcrumbTitle, fullOutputPath);
       
       // Сохраняем файл
       fs.writeFileSync(outputPath, htmlContent);
-      console.log(`  ✅ Создан: ${outputRelativePath}`);
+      console.log(`   ✓ ${outputRelativePath}`);
 
     } catch (error) {
-      console.warn(`  ❌ Ошибка создания HTML для ${file.originalPath}:`, error.message);
+      console.warn(`   ✗ ${file.originalPath}: ${error.message}`);
     }
   }
 
   // Добавляем в кеш созданных HTML страниц
   generatedHtmlCache.add(htmlCacheKey);
-  
-  console.log(`✅ Создано HTML страниц для ${owner}/${repo} в ${projectOutputDir}`);
 }
 
 /**
@@ -546,9 +558,11 @@ async function createHtmlPagesForDirectory(dirPath, outputDir, converter, preser
         fs.mkdirSync(subOutputDir, { recursive: true });
       }
       await createHtmlPagesForDirectory(fullPath, subOutputDir, converter, preserveStructure);
-    } else if (file.name.endsWith('.md')) {
-      // Конвертируем .md файл в .html
-      const htmlFileName = file.name.replace(/\.md$/, '.html');
+    } else if (/\.md$/i.test(file.name)) {
+      // Конвертируем .md файл в .html (игнорируем регистр)
+      // Если файл README.md (любой регистр), то создаем index.html
+      const isReadme = /^readme\.md$/i.test(file.name);
+      const htmlFileName = isReadme ? 'index.html' : file.name.replace(/\.md$/i, '.html');
       const outputPath = path.join(outputDir, htmlFileName);
 
       // Убеждаемся, что папка для выходного файла существует
@@ -560,9 +574,9 @@ async function createHtmlPagesForDirectory(dirPath, outputDir, converter, preser
       try {
         const markdownContent = fs.readFileSync(fullPath, 'utf8');
         const htmlContent = await converter(fullPath, outputPath);
-        console.log(`Created: ${outputPath}`);
+        console.log(`✓ ${path.relative(process.cwd(), outputPath)}`);
       } catch (error) {
-        console.warn(`Error converting ${fullPath}:`, error.message);
+        console.warn(`❌ Error converting ${fullPath}:`, error.message);
       }
     }
   }
@@ -573,7 +587,6 @@ async function createHtmlPagesForDirectory(dirPath, outputDir, converter, preser
  */
 function clearHtmlGenerationCache() {
   generatedHtmlCache.clear();
-  console.log('🗑️  Кеш генерации HTML очищен');
 }
 
 /**

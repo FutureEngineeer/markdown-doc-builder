@@ -30,7 +30,7 @@ pre code {
 /* Индикатор языка */
 .code-lang {
     position: absolute;
-    top: 0.75rem;
+    top: 0.25rem;
     left: 50px;
     color: #2FB65A;
     padding: 0.25rem 0rem;
@@ -49,7 +49,7 @@ pre code {
 .code-copy-btn {
     position: absolute;
     top: 8px;
-    right: 1rem;
+    right: 8px;
     background: rgba(255, 255, 255, 0.1);
     color: #e0e0e0;
     border: none;
@@ -83,7 +83,7 @@ pre code {
 
 /* Если ЕСТЬ язык, добавляем верхний padding */
 .code-block.has-lang pre {
-    padding-top: 3rem;
+    padding-top: 2.5rem;
 }
 
 /* Для Firefox */

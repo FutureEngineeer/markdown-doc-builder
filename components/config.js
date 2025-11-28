@@ -192,7 +192,13 @@ function getSiteConfig() {
     breadcrumb: 'Home / Projects',
     favicon: config.icons.site.favicon,
     navigation: config.navigation,
-    socials: config.socials
+    socials: config.socials,
+    footer: config.footer || {
+      copyright: {
+        line1: 'Copyright © 2023-Present',
+        line2: 'creapunk community'
+      }
+    }
   };
 }
 

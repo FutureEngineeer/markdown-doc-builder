@@ -1,0 +1,19 @@
+# doc-config.yaml для секции project-beta
+
+# Иерархия файлов в секции
+hierarchy:
+  - file: overview.md
+    title: "Project Beta Overview"
+    alias: "overview"
+    description: "Main documentation for Project Beta"
+  
+  - file: api-reference.md
+    title: "API Reference"
+    alias: "api-reference"
+    description: "API documentation for Project Beta"
+
+  - repository: "https://github.com/creapunk/RadiX"
+    alias: "RadiX"
+    title: "RadiX Project"
+    section: true
+  

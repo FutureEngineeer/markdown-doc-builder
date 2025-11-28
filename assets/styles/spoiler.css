@@ -1,0 +1,139 @@
+/* ==================== DETAILS/SUMMARY COLLAPSIBLE SECTIONS ==================== */
+
+details {
+    background: rgba(47, 182, 90, 0.08);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 1.5em 0;
+    transition: background var(--speed-smooth) var(--ease-smooth),
+        border-color var(--speed-smooth) var(--ease-smooth);
+    position: relative;
+    z-index: 1;
+}
+
+details:hover {
+    background: rgba(47, 182, 90, 0.12);
+    border-left-color: var(--accent);
+}
+
+details[open] {
+    background: rgba(47, 182, 90, 0.1);
+}
+
+/* Summary element - clickable header */
+summary {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    list-style: none;
+    transition: color var(--speed-slow) ease;
+    padding: 4px 0;
+}
+
+summary:hover {
+    color: var(--accent);
+}
+
+/* Remove default marker/triangle */
+summary::-webkit-details-marker,
+summary::marker {
+    display: none;
+}
+
+/* Custom arrow indicator using ::before */
+summary::before {
+    content: '▶';
+    color: var(--accent);
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: transform var(--speed-smooth) var(--ease-smooth);
+    display: inline-block;
+}
+
+details[open]>summary::before {
+    transform: rotate(90deg);
+}
+
+/* АНИМАЦИЯ ОТКРЫТИЯ И ЗАКРЫТИЯ через ::details-content */
+::details-content {
+    display: block;
+    overflow: hidden;
+    block-size: 0;
+    opacity: 0;
+
+    /* При ЗАКРЫТИИ: сначала исчезает текст (0ms), потом сжимается высота */
+    transition:
+        content-visibility var(--speed-smooth) allow-discrete,
+        block-size var(--speed-smooth) var(--ease-smooth) 0ms,
+        opacity 240ms ease-in 0ms;
+    /* текст исчезает сразу и быстро */
+}
+
+/* При ОТКРЫТИИ: сначала расширяется высота, потом появляется текст */
+details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+
+    transition:
+        content-visibility var(--speed-smooth) allow-discrete,
+        block-size var(--speed-smooth) var(--ease-smooth) 0ms,
+        opacity 280ms ease-out 240ms;
+    /* текст появляется с задержкой 240ms */
+}
+
+/* Внутренний контент */
+details>*:not(summary) {
+    margin-top: 12px;
+    padding-left: 26px;
+}
+
+details>p:not(:last-child) {
+    margin-bottom: 0.75em;
+}
+
+details>p:last-child {
+    margin-bottom: 0;
+}
+
+/* Lists inside details */
+details ul,
+details ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+details li {
+    margin-bottom: 0.25em;
+    font-size: 14px;
+    color: var(--text-tertiary);
+}
+
+details li::marker {
+    color: var(--accent);
+}
+
+/* Mobile responsive */
+@media (max-width: 449px) {
+    details {
+        padding: 12px 16px;
+    }
+
+    summary {
+        font-size: 15px;
+        gap: 10px;
+    }
+
+    summary::before {
+        font-size: 12px;
+    }
+
+    details>*:not(summary) {
+        padding-left: 22px;
+    }
+}

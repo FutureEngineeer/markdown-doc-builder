@@ -3,28 +3,15 @@
 footer {
     background: var(--header-footer-bg);
     padding: var(--footer-padding);
-    position: fixed;
-    bottom: 0;
     width: 100%;
-    max-width: var(--bp-max-width);
-    z-index: 1000;
+    z-index: 100;
     transition: border-radius var(--speed-smooth) var(--ease-smooth);
     animation: slideUpFooter 0.5s ease-out;
     flex-shrink: 0;
+    min-height: 76px;  /* Минимальная высота footer, может расти */
 }
 
-footer::before {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 30px;
-    background: linear-gradient(to bottom, transparent 0%, var(--bg) 85%, var(--bg) 100%);
-    pointer-events: none;
-    z-index: 1;
-}
+/* Переход теперь реализован через mask-image на main */
 
 @keyframes slideUpFooter {
     from {
@@ -45,6 +32,33 @@ footer::before {
     gap: 1rem;
 }
 
+.copyright {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.copyright-line1,
+.copyright-line2 {
+    white-space: nowrap;
+}
+
+/* Для узких экранов уменьшаем шрифт */
+@media (max-width: 480px) {
+    .copyright {
+        font-size: 0.8rem;
+    }
+}
+
+/* Для очень узких экранов еще меньше */
+@media (max-width: 300px) {
+    .copyright {
+        font-size: 0.7rem;
+    }
+}
+
 .social-links {
     display: flex;
     gap: 0.75rem;
@@ -52,81 +66,64 @@ footer::before {
     transition: all var(--speed-smooth) var(--ease-smooth);
 }
 
+/* Унифицированные стили для всех social pills */
 .social-pill {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
     padding: 0.5rem;
     transition: all var(--speed-smooth) var(--ease-smooth);
     text-decoration: none;
-    color: var(--text-primary);
-    border: 2px solid transparent;
+    background: transparent;
+    border: 2px solid var(--pill-color);
     min-width: 40px;
     min-height: 40px;
     cursor: pointer;
 }
 
 .social-pill:hover {
-    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+    background: var(--pill-hover-color);
+    border-color: var(--pill-hover-color);
 }
 
-.social-pill.kofi {
-    background: var(--kofi);
-    border-color: var(--kofi);
+.social-pill:hover .social-icon,
+.social-pill:hover .social-label {
+    color: white !important;
 }
 
-.social-pill.github:hover {
-    border-color: var(--github);
+/* Filled вариант - всегда с заливкой */
+.social-pill.filled {
+    background: var(--pill-color);
+    border: 2px solid var(--pill-color);
 }
 
-.social-pill:hover {
-    background: rgba(255, 255, 255, 0.1);
+.social-pill.filled .social-icon,
+.social-pill.filled .social-label {
+    color: white !important;
 }
 
-.social-pill.kofi:hover {
-    background: var(--kofi);
-    border-color: var(--kofi);
-}
-
-.social-pill.github {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.social-pill.github:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: var(--github);
-}
-
-.social-pill.discord {
-    background: var(--discord);
-    border-color: var(--discord);
-}
-
-.social-pill.youtube {
-    background: rgba(255, 0, 0, 0.2);
-}
-
-.social-pill.youtube:hover {
-    background: var(--youtube);
-    border-color: var(--youtube);
-}
-
-.social-pill.email {
-    background: rgba(74, 144, 226, 0.2);
-}
-
-.social-pill.email:hover {
-    background: var(--email);
-    border-color: var(--email);
+.social-pill.filled:hover {
+    background: var(--pill-hover-color);
+    border-color: var(--pill-hover-color);
 }
 
 .social-icon {
     width: var(--icon-size);
     height: var(--icon-size);
     flex-shrink: 0;
-    transition: fill var(--speed-smooth) var(--ease-smooth);
+    transition: all var(--speed-smooth) var(--ease-smooth);
+    color: inherit;
+}
+
+.social-icon svg {
+    fill: currentColor;
+    width: 100%;
+    height: 100%;
+}
+
+.social-icon svg path {
     fill: currentColor;
 }
 
@@ -140,11 +137,28 @@ footer::before {
     font-size: 0.9rem;
 }
 
-@media (max-width: 799px) {
+/* НЕ раскрываем social pills на узких экранах - только иконки */
+@media (max-width: 450px) {
+    .social-pill {
+        padding: 0.5rem;
+    }
+    
+    .social-label {
+        display: none;
+    }
+}
+
+@media (max-width: 650px) {
+    footer {
+        min-height: auto;  /* Убираем минимальную высоту на мобильных */
+        padding: 1.5rem 1rem;  /* Увеличиваем padding для мобильных */
+    }
+
     .footer-container {
         flex-direction: column;
         text-align: center;
         justify-content: center;
+        gap: 1.5rem;  /* Увеличиваем gap между элементами */
     }
 
     .social-links {
@@ -153,7 +167,7 @@ footer::before {
 }
 
 
-@media (min-width: 1201px) {
+@media (min-width: 1251px) {
     footer {
         border-top-left-radius: var(--border-radius);
         border-top-right-radius: var(--border-radius);

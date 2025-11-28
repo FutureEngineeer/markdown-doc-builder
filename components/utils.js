@@ -47,7 +47,10 @@ function createMarkdownInstance(options = {}) {
   md.use(taskLists, {
     enabled: true,
     label: true,
-    labelAfter: true
+    labelAfter: true,
+    // Чекбоксы не должны менять состояние (disabled)
+    // Их состояние задается только через .md файл
+    disabled: true
   });
 
   // ============================================

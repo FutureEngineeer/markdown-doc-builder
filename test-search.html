@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест поиска</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Тест поискового движка</h1>
+    
+    <div class="test-section">
+        <h2>1. Проверка наличия файлов</h2>
+        <button onclick="testIndexFile()">Проверить search-index.json</button>
+        <button onclick="testSearchScript()">Проверить search.js</button>
+        <div id="files-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Проверка загрузки Lunr.js</h2>
+        <button onclick="testLunr()">Проверить Lunr.js</button>
+        <div id="lunr-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Загрузка индекса</h2>
+        <button onclick="testLoadIndex()">Загрузить индекс</button>
+        <div id="index-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Тестовый поиск</h2>
+        <input type="text" id="test-query" placeholder="Введите запрос..." style="width: 300px; padding: 8px;">
+        <button onclick="testSearch()">Искать</button>
+        <div id="search-result" class="result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script>
+    <script>
+        let testIndex = null;
+        let testDocuments = null;
+
+        async function testIndexFile() {
+            const result = document.getElementById('files-result');
+            try {
+                const response = await fetch('./dist/search-index.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = `<span class="success">✅ Индекс найден! Документов: ${data.documents.length}</span>`;
+                } else {
+                    result.innerHTML = `<span class="error">❌ Ошибка: ${response.status} ${response.statusText}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Ошибка: ${error.message}</span>`;
+            }
+        }
+
+        async function testSearchScript() {
+            const result = document.getElementById('files-result');
+            try {
+                const response = await fetch('./dist/assets/scripts/search.js');
+                if (response.ok) {
+                    result.innerHTML += '<br><span class="success">✅ search.js найден!</span>';
+                } else {
+                    result.innerHTML += `<br><span class="error">❌ search.js не найден: ${response.status}</span>`;
+                }
+            } catch (error) {
+                result.innerHTML += `<br><span class="error">❌ Ошибка: ${error.message}</span>`;
+            }
+        }
+
+        function testLunr() {
+            const result = document.getElementById('lunr-result');
+            if (typeof lunr !== 'undefined') {
+                result.innerHTML = `<span class="success">✅ Lunr.js загружен! Версия: ${lunr.version || 'неизвестна'}</span>`;
+            } else {
+                result.innerHTML = '<span class="error">❌ Lunr.js не загружен!</span>';
+            }
+        }
+
+        async function testLoadIndex() {
+            const result = document.getElementById('index-result');
+            try {
+                result.innerHTML = '⏳ Загрузка индекса...';
+                
+                const response = await fetch('./dist/search-index.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                testIndex = lunr.Index.load(data.index);
+                testDocuments = data.documents;
+                
+                result.innerHTML = `<span class="success">✅ Индекс загружен!<br>
+                    Документов: ${testDocuments.length}<br>
+                    Полей: ${data.index.fields ? data.index.fields.length : 'N/A'}<br>
+                    Версия Lunr: ${data.index.version || 'N/A'}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Ошибка загрузки: ${error.message}</span>`;
+            }
+        }
+
+        function testSearch() {
+            const result = document.getElementById('search-result');
+            const query = document.getElementById('test-query').value;
+            
+            if (!testIndex) {
+                result.innerHTML = '<span class="error">❌ Сначала загрузите индекс!</span>';
+                return;
+            }
+            
+            if (!query || query.length < 2) {
+                result.innerHTML = '<span class="error">❌ Введите минимум 2 символа</span>';
+                return;
+            }
+            
+            try {
+                const searchResults = testIndex.search(query + '*');
+                
+                if (searchResults.length === 0) {
+                    result.innerHTML = '<span class="error">❌ Ничего не найдено</span>';
+                    return;
+                }
+                
+                let html = `<span class="success">✅ Найдено результатов: ${searchResults.length}</span><br><br>`;
+                
+                searchResults.slice(0, 5).forEach((res, idx) => {
+                    const doc = testDocuments[parseInt(res.ref)];
+                    html += `<strong>${idx + 1}. ${doc.title}</strong><br>`;
+                    html += `URL: ${doc.url}<br>`;
+                    html += `Breadcrumb: ${doc.breadcrumb}<br>`;
+                    html += `Score: ${res.score.toFixed(3)}<br><br>`;
+                });
+                
+                result.innerHTML = html;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ Ошибка поиска: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

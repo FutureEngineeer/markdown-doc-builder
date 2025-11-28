@@ -1,6 +1,6 @@
 [build]
-  # Команда для сборки
-  command = "npm run build:netlify"
+  # Команда для сборки с оптимизацией
+  command = "npm run build:optimized"
   
   # Папка с результатом сборки
   publish = "dist"
@@ -9,37 +9,81 @@
   environment = { NODE_VERSION = "18" }
 
 [build.processing]
-  # Не обрабатывать CSS и JS (у нас уже готовые файлы)
+  # Включаем обработку для дополнительной оптимизации
   skip_processing = false
 
 [build.processing.css]
-  bundle = false
+  bundle = true
   minify = true
 
 [build.processing.js]
-  bundle = false
+  bundle = true
   minify = true
 
 [build.processing.html]
   pretty_urls = true
 
-# Настройки для SPA (если нужно)
+[build.processing.images]
+  compress = true
+
+# Custom error pages
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
-  conditions = {Role = ["admin"]}
+  to = "/assets/errors/404.html"
+  status = 404
 
-# Кеширование статических ресурсов
+# Server error page
+[[redirects]]
+  from = "/*"
+  to = "/assets/errors/500.html"
+  status = 500
+
+# Кеширование CSS и JS (immutable - никогда не меняются)
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+# Кеширование статических ресурсов (изображения, шрифты)
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
 
+# HTML файлы - всегда проверять актуальность
 [[headers]]
-  for = "*.html"
+  for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Service Worker - короткое кеширование для быстрых обновлений
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# Preload критических ресурсов
+[[headers]]
+  for = "/"
+  [headers.values]
+    Link = '''
+    </assets/styles.min.css>; rel=preload; as=style,
+    </assets/logo.png>; rel=preload; as=image,
+    </assets/scripts/core.js>; rel=preload; as=script
+    '''
 
 # Настройки для GitHub webhook (автоматическая пересборка)
 [build.environment]
@@ -52,3 +96,7 @@
   
   [plugins.inputs]
     buildDir = "dist"
+
+# Оптимизация изображений (если установлен плагин)
+# [[plugins]]
+#   package = "netlify-plugin-image-optim"

@@ -1,4 +1,4 @@
-const { buildAll } = require('../build-all.js');
+const { buildAll } = require('../build-all-v2.js');
 const { getCacheInfo } = require('../components/githubFetcher');
 const fs = require('fs');
 const path = require('path');

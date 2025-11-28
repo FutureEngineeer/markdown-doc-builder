@@ -5,12 +5,15 @@ const yaml = require('js-yaml');
 const { CSS_CLASSES, getSiteConfig, getSectionKeywords, getExternalAssets, isRepositoryAllowed, getConfig } = require('./components/config');
 const { generateHeader } = require('./components/header');
 const { generateFooter } = require('./components/footer');
+const { generateHamburgerMenu } = require('./components/hamburgerMenu');
+const { generateNewSectionMap } = require('./components/newSectionMap');
 const { parseOverviewContent, removeOverviewFromMarkdown, generateProductCard } = require('./components/overview');
 const { parseMarkdownWithCards, renderCards } = require('./components/cardParser');
 const { parseSpecifications, renderSpecificationCards, isSpecificationDocument } = require('./components/specParser');
 const { parseProjects, renderProjectCards, loadProjectOverview, createGitHubProjectPages, createHtmlPagesForDirectory } = require('./components/projectParser');
 const { processAnalytics } = require('./components/analytics');
 const { processSelectorsInMarkdown, replaceSelectorPlaceholders } = require('./components/selectorParser');
+const { generateModularScripts, getExternalDependencies } = require('./components/scriptLoader');
 const { 
   createMarkdownInstance, 
   escapeHtml, 
@@ -371,7 +374,16 @@ function getRelativePathToRoot(outputFile) {
   if (!outputFile) return './';
   
   // Нормализуем путь и разделяем на части
-  const normalizedPath = path.normalize(outputFile).replace(/\\/g, '/');
+  let normalizedPath = path.normalize(outputFile).replace(/\\/g, '/');
+  
+  // Если путь абсолютный, делаем его относительным от текущей директории
+  if (path.isAbsolute(outputFile)) {
+    const cwd = process.cwd().replace(/\\/g, '/');
+    if (normalizedPath.startsWith(cwd)) {
+      normalizedPath = normalizedPath.substring(cwd.length + 1);
+    }
+  }
+  
   const pathParts = normalizedPath.split('/');
   
   // Находим индекс папки dist
@@ -396,21 +408,38 @@ function getRelativePathToRoot(outputFile) {
 }
 
 /**
- * Генерирует теги <link> для CSS из EXTERNAL_ASSETS
+ * Генерирует теги <link> для CSS - включая динамические зависимости
  * @param {string} outputFile - Путь к выходному HTML файлу для корректных относительных путей
+ * @param {string} htmlContent - HTML контент для определения необходимых стилей
+ * @param {Object} config - Конфигурация
+ * @returns {string} HTML теги стилей
  */
-function generateStylesheets(outputFile = '') {
+function generateStylesheets(outputFile = '', htmlContent = '', config = null) {
   const externalAssets = getExternalAssets();
-  if (!externalAssets || !externalAssets.stylesheets) {
+  const relativeRoot = getRelativePathToRoot(outputFile);
+  
+  const stylesheets = [];
+  
+  // Добавляем базовые стили из конфигурации
+  if (externalAssets && externalAssets.stylesheets) {
+    stylesheets.push(...externalAssets.stylesheets);
+  }
+  
+  // Добавляем динамические зависимости на основе контента
+  if (htmlContent) {
+    const dependencies = getExternalDependencies(htmlContent, config || processor.config || getConfig());
+    const cssDepend = dependencies.filter(dep => dep.type === 'stylesheet');
+    stylesheets.push(...cssDepend);
+  }
+
+  if (stylesheets.length === 0) {
     return '';
   }
 
-  const relativeRoot = getRelativePathToRoot(outputFile);
-
-  return externalAssets.stylesheets
+  return stylesheets
     .map(css => {
       const integrity = css.integrity 
-        ? ` integrity="${css.integrity}" crossorigin="anonymous"` 
+        ? ` integrity="${css.integrity}" crossorigin="${css.crossorigin || 'anonymous'}"` 
         : '';
       
       let href = css.href;
@@ -427,38 +456,15 @@ function generateStylesheets(outputFile = '') {
 
 
 /**
- * Генерирует теги <script> для JS из EXTERNAL_ASSETS
+ * Генерирует теги <script> для JS - теперь использует модульную систему
  * @param {string} outputFile - Путь к выходному HTML файлу для корректных относительных путей
+ * @param {string} htmlContent - HTML контент для определения необходимых скриптов
+ * @param {Object} config - Конфигурация
+ * @returns {string} HTML теги скриптов
  */
-function generateScripts(outputFile = '') {
-  const externalAssets = getExternalAssets();
-  if (!externalAssets || !externalAssets.scripts) {
-    return '';
-  }
-
-  const relativeRoot = getRelativePathToRoot(outputFile);
-
-  const scriptTags = externalAssets.scripts
-    .map(js => {
-      const defer = js.defer ? ' defer' : '';
-      const async = js.async ? ' async' : '';
-      const type = js.module ? ' type="module"' : '';
-      const integrity = js.integrity 
-        ? ` integrity="${js.integrity}" crossorigin="anonymous"` 
-        : '';
-      
-      let src = js.src;
-      // Для локальных файлов корректируем путь
-      if (js.type === 'local' && !src.startsWith('http')) {
-        src = src.startsWith('./') ? src.substring(2) : src;
-        src = relativeRoot + src;
-      }
-      
-      return `  <script src="${src}"${defer}${async}${type}${integrity}></script>`;
-    })
-    .join('\n');
-
-  return scriptTags ? '\n' + scriptTags : '';
+function generateScripts(outputFile = '', htmlContent = '', config = null) {
+  // Используем модульную систему для генерации скриптов
+  return generateModularScripts(htmlContent, outputFile, config || processor.config || getConfig());
 }
 
 
@@ -485,7 +491,16 @@ function processMultipleFiles(files, outputDir, configPath = null) {
   files.forEach(file => {
     // Сохраняем структуру папок в выходной директории
     const relativePath = path.relative(process.cwd(), file);
-    const outputPath = path.join(outputDir, relativePath.replace('.md', '.html'));
+    let outputPath = relativePath.replace('.md', '.html');
+    
+    // Если файл README.md (любой регистр), то создаем index.html
+    const fileName = path.basename(relativePath);
+    if (/^readme\.md$/i.test(fileName)) {
+      const dirPath = path.dirname(outputPath);
+      outputPath = path.join(dirPath, 'index.html');
+    }
+    
+    outputPath = path.join(outputDir, outputPath);
     
     // Создаем папки если нужно
     const outputDirForFile = path.dirname(outputPath);
@@ -556,14 +571,42 @@ function convertSingleProjectFile(markdownContent, projectFileName, projectTitle
   
   const projectProductCard = generateProductCard(projectPageData);
   
-  // Генерируем header и footer для проекта
-  const projectHeader = generateHeader(processor.config || getSiteConfig(), projectFileName + '.html', projectTitle, outputFile);
+  // Формируем breadcrumb для проекта
+  // Извлекаем корневую папку (самый высокий уровень) из outputFile
+  const outputPathParts = outputFile.split(path.sep);
+  
+  // Находим индекс папки dist
+  const distIndex = outputPathParts.findIndex(part => part === 'dist');
+  
+  // Корневая папка - это первая папка после dist
+  const rootFolder = distIndex >= 0 && distIndex < outputPathParts.length - 1 
+    ? outputPathParts[distIndex + 1] 
+    : outputPathParts[outputPathParts.length - 2];
+  
+  let projectBreadcrumb;
+  if (projectFileName.toLowerCase() === 'readme') {
+    // Для readme используем H1 из pageData
+    const h1Title = projectPageData.title || projectTitle;
+    projectBreadcrumb = `${rootFolder} / ${h1Title}`;
+  } else {
+    projectBreadcrumb = `${rootFolder} / ${projectFileName}`;
+  }
+  
+  // Генерируем header, footer и навигацию для проекта
+  const projectHeader = generateHeader(processor.config || getSiteConfig(), projectFileName, projectBreadcrumb, outputFile);
   const projectFooter = generateFooter(processor.config || getSiteConfig(), relativeRoot);
   
+  // Генерируем навигацию для проекта
+  const projectHamburgerMenu = generateHamburgerMenu('', outputFile);
+  const projectSectionMap = generateNewSectionMap('', outputFile);
+  
+  // Собираем полный HTML для определения необходимых скриптов
+  const fullProjectHtml = projectProductCard + projectContentHtml;
+  
   // Генерируем теги
-  const projectStyleLinks = generateStylesheets(outputFile);
+  const projectStyleLinks = generateStylesheets(outputFile, fullProjectHtml, processor.config);
   const projectFaviconTags = generateFaviconTags(outputFile, processor.config);
-  const projectScriptTags = generateScripts(outputFile);
+  const projectScriptTags = generateScripts(outputFile, fullProjectHtml, processor.config);
   
   return `<!DOCTYPE html>
 <html lang="en">
@@ -577,14 +620,17 @@ ${projectStyleLinks}
 <body>
   <div class="${CSS_CLASSES.siteWrapper}">
     ${projectHeader}
-
-    <main>
-      ${projectProductCard}
-      ${projectContentHtml}
-    </main>
-
-    ${projectFooter}
-  </div>${projectScriptTags}
+    <div class="scope">
+      ${projectHamburgerMenu}
+      ${projectSectionMap}
+      <main>
+        ${projectProductCard}
+        ${projectContentHtml}
+      </main>
+      ${projectFooter}
+    </div>
+  </div>
+${projectScriptTags}
 </body>
 </html>`;
   
@@ -626,9 +672,126 @@ function processMarkdownLinks(markdown, currentFile, outputFile) {
   const currentOutputDir = path.dirname(outputFile);
   const projectRoot = process.cwd();
   
-  // Функция для очистки пути от test-files
-  function cleanPath(filePath) {
-    return filePath.replace(/^\.\/test-files\//, './').replace(/test-files[\/\\]/g, '');
+  // Загружаем индекс файлов
+  const hierarchyPath = path.join(projectRoot, '.temp', 'hierarchy-info.json');
+  let allFiles = [];
+  let allRepositories = [];
+  if (fs.existsSync(hierarchyPath)) {
+    try {
+      const hierarchyData = JSON.parse(fs.readFileSync(hierarchyPath, 'utf-8'));
+      allFiles = hierarchyData.allFiles || [];
+      allRepositories = hierarchyData.allRepositories || [];
+    } catch (error) {
+      console.warn('Warning: Could not load hierarchy-info.json:', error.message);
+    }
+  }
+  
+  // Вспомогательная функция для преобразования .md в .html с учетом readme
+  function convertMdToHtml(mdPath) {
+    const fileName = path.basename(mdPath);
+    const isReadme = /^readme\.md$/i.test(fileName);
+    return isReadme 
+      ? mdPath.replace(/readme\.md$/i, 'index.html')
+      : mdPath.replace(/\.md$/i, '.html');
+  }
+  
+  // Функция для поиска файла в индексе (включая репозитории)
+  function findFileInIndex(targetPath, currentFilePath) {
+    // Нормализуем путь
+    const normalizedTarget = targetPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    
+    // Определяем, находится ли текущий файл в репозитории
+    const currentFileNormalized = currentFilePath.replace(/\\/g, '/');
+    let currentRepo = null;
+    
+    for (const repo of allRepositories) {
+      if (currentFileNormalized.includes(repo.alias)) {
+        currentRepo = repo;
+        break;
+      }
+    }
+    
+    // Если текущий файл в репозитории, ищем в файлах этого репозитория
+    if (currentRepo) {
+      // Получаем данные репозитория из fileStructure
+      const hierarchyData = JSON.parse(fs.readFileSync(hierarchyPath, 'utf-8'));
+      const fileStructure = hierarchyData.fileStructure || {};
+      
+      // Ищем репозиторий в структуре
+      for (const key in fileStructure) {
+        const items = fileStructure[key];
+        if (Array.isArray(items)) {
+          for (const item of items) {
+            if (item.type === 'repository' && item.alias === currentRepo.alias) {
+              // Нашли репозиторий, ищем файл в его файлах
+              const repoFiles = item.repoInfo?.files || [];
+              
+              for (const file of repoFiles) {
+                const localRelPath = file.localRelativePath?.replace(/\\/g, '/');
+                
+                // Проверяем совпадение
+                if (localRelPath === normalizedTarget || localRelPath.endsWith('/' + normalizedTarget)) {
+                  // Возвращаем путь относительно dist
+                  return {
+                    relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
+                  };
+                }
+                
+                // Проверяем совпадение по частям пути
+                const targetParts = normalizedTarget.split('/');
+                const fileParts = localRelPath.split('/');
+                
+                let match = true;
+                for (let i = targetParts.length - 1, j = fileParts.length - 1; i >= 0 && j >= 0; i--, j--) {
+                  if (targetParts[i] !== fileParts[j]) {
+                    match = false;
+                    break;
+                  }
+                }
+                
+                if (match) {
+                  return {
+                    relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Ищем в обычных файлах
+    for (const file of allFiles) {
+      const fileRelPath = file.relativePath.replace(/\\/g, '/');
+      
+      // Проверяем точное совпадение
+      if (fileRelPath === normalizedTarget || fileRelPath.endsWith('/' + normalizedTarget)) {
+        return file;
+      }
+      
+      // Проверяем совпадение имени файла
+      const fileName = path.basename(normalizedTarget);
+      if (fileRelPath.endsWith('/' + fileName) || fileRelPath === fileName) {
+        // Проверяем, что путь содержит все части целевого пути
+        const targetParts = normalizedTarget.split('/');
+        const fileParts = fileRelPath.split('/');
+        
+        let match = true;
+        for (let i = targetParts.length - 1, j = fileParts.length - 1; i >= 0 && j >= 0; i--, j--) {
+          if (targetParts[i] !== fileParts[j]) {
+            match = false;
+            break;
+          }
+        }
+        
+        if (match) {
+          return file;
+        }
+      }
+    }
+    
+    return null;
   }
   
   // Обрабатываем markdown ссылки на .md файлы
@@ -644,23 +807,24 @@ function processMarkdownLinks(markdown, currentFile, outputFile) {
     }
     
     const [file, anchor] = url.split('#');
-    let cleanFile = cleanPath(file);
-    let htmlFile = cleanFile.replace('.md', '.html');
     
-    // Если ссылка относительная, вычисляем правильный путь
-    if (!htmlFile.startsWith('http') && !htmlFile.startsWith('/')) {
-      // Определяем абсолютный путь к целевому файлу
+    // Ищем файл в индексе
+    const indexedFile = findFileInIndex(file, currentFile);
+    
+    let htmlFile;
+    if (indexedFile && indexedFile.relativePath) {
+      // Файл найден в индексе - используем его путь
+      const targetHtmlPath = path.join(projectRoot, 'dist', indexedFile.relativePath);
+      const relativePath = path.relative(currentOutputDir, targetHtmlPath);
+      htmlFile = relativePath.replace(/\\/g, '/');
+    } else {
+      // Файл не найден в индексе - используем стандартную логику
       const sourceFileDir = path.dirname(currentFile);
       const targetMarkdownPath = path.resolve(sourceFileDir, file);
-      
-      // Преобразуем в путь к HTML файлу в выходной директории
-      const relativeToProject = path.relative(projectRoot, targetMarkdownPath);
-      const cleanRelativePath = cleanPath(relativeToProject);
-      const targetHtmlPath = path.join(projectRoot, 'dist', cleanRelativePath.replace('.md', '.html'));
-      
-      // Вычисляем относительный путь от текущего выходного файла к целевому
+      const relativeToProject = path.relative(projectRoot, targetMarkdownPath).replace(/\\/g, '/');
+      const targetHtmlPath = path.join(projectRoot, 'dist', relativeToProject.replace(/\.md$/i, '.html'));
       const relativePath = path.relative(currentOutputDir, targetHtmlPath);
-      htmlFile = relativePath.replace(/\\/g, '/'); // Нормализуем слеши для веба
+      htmlFile = relativePath.replace(/\\/g, '/');
     }
     
     return `](${htmlFile}${anchor ? '#' + anchor : ''})`;
@@ -673,9 +837,126 @@ function resolveInternalLinks(html, currentFile, outputFile) {
   const currentOutputDir = path.dirname(outputFile);
   const projectRoot = process.cwd();
   
-  // Функция для очистки пути от test-files
-  function cleanPath(filePath) {
-    return filePath.replace(/^\.\/test-files\//, './').replace(/test-files[\/\\]/g, '');
+  // Загружаем индекс файлов
+  const hierarchyPath = path.join(projectRoot, '.temp', 'hierarchy-info.json');
+  let allFiles = [];
+  let allRepositories = [];
+  if (fs.existsSync(hierarchyPath)) {
+    try {
+      const hierarchyData = JSON.parse(fs.readFileSync(hierarchyPath, 'utf-8'));
+      allFiles = hierarchyData.allFiles || [];
+      allRepositories = hierarchyData.allRepositories || [];
+    } catch (error) {
+      console.warn('Warning: Could not load hierarchy-info.json:', error.message);
+    }
+  }
+  
+  // Вспомогательная функция для преобразования .md в .html с учетом readme
+  function convertMdToHtml(mdPath) {
+    const fileName = path.basename(mdPath);
+    const isReadme = /^readme\.md$/i.test(fileName);
+    return isReadme 
+      ? mdPath.replace(/readme\.md$/i, 'index.html')
+      : mdPath.replace(/\.md$/i, '.html');
+  }
+  
+  // Функция для поиска файла в индексе (включая репозитории)
+  function findFileInIndex(targetPath, currentFilePath) {
+    // Нормализуем путь
+    const normalizedTarget = targetPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    
+    // Определяем, находится ли текущий файл в репозитории
+    const currentFileNormalized = currentFilePath.replace(/\\/g, '/');
+    let currentRepo = null;
+    
+    for (const repo of allRepositories) {
+      if (currentFileNormalized.includes(repo.alias)) {
+        currentRepo = repo;
+        break;
+      }
+    }
+    
+    // Если текущий файл в репозитории, ищем в файлах этого репозитория
+    if (currentRepo) {
+      // Получаем данные репозитория из fileStructure
+      const hierarchyData = JSON.parse(fs.readFileSync(hierarchyPath, 'utf-8'));
+      const fileStructure = hierarchyData.fileStructure || {};
+      
+      // Ищем репозиторий в структуре
+      for (const key in fileStructure) {
+        const items = fileStructure[key];
+        if (Array.isArray(items)) {
+          for (const item of items) {
+            if (item.type === 'repository' && item.alias === currentRepo.alias) {
+              // Нашли репозиторий, ищем файл в его файлах
+              const repoFiles = item.repoInfo?.files || [];
+              
+              for (const file of repoFiles) {
+                const localRelPath = file.localRelativePath?.replace(/\\/g, '/');
+                
+                // Проверяем совпадение
+                if (localRelPath === normalizedTarget || localRelPath.endsWith('/' + normalizedTarget)) {
+                  // Возвращаем путь относительно dist
+                  return {
+                    relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
+                  };
+                }
+                
+                // Проверяем совпадение по частям пути
+                const targetParts = normalizedTarget.split('/');
+                const fileParts = localRelPath.split('/');
+                
+                let match = true;
+                for (let i = targetParts.length - 1, j = fileParts.length - 1; i >= 0 && j >= 0; i--, j--) {
+                  if (targetParts[i] !== fileParts[j]) {
+                    match = false;
+                    break;
+                  }
+                }
+                
+                if (match) {
+                  return {
+                    relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Ищем в обычных файлах
+    for (const file of allFiles) {
+      const fileRelPath = file.relativePath.replace(/\\/g, '/');
+      
+      // Проверяем точное совпадение
+      if (fileRelPath === normalizedTarget || fileRelPath.endsWith('/' + normalizedTarget)) {
+        return file;
+      }
+      
+      // Проверяем совпадение имени файла
+      const fileName = path.basename(normalizedTarget);
+      if (fileRelPath.endsWith('/' + fileName) || fileRelPath === fileName) {
+        // Проверяем, что путь содержит все части целевого пути
+        const targetParts = normalizedTarget.split('/');
+        const fileParts = fileRelPath.split('/');
+        
+        let match = true;
+        for (let i = targetParts.length - 1, j = fileParts.length - 1; i >= 0 && j >= 0; i--, j--) {
+          if (targetParts[i] !== fileParts[j]) {
+            match = false;
+            break;
+          }
+        }
+        
+        if (match) {
+          return file;
+        }
+      }
+    }
+    
+    return null;
   }
   
   // Функция для проверки GitHub ссылок
@@ -710,6 +991,36 @@ function resolveInternalLinks(html, currentFile, outputFile) {
     return url;
   }
   
+  // Функция для обработки ссылки
+  function processLink(file, anchor) {
+    // Проверяем GitHub ссылки
+    if (file && file.startsWith('http')) {
+      const processedUrl = processGitHubLink(file);
+      return `${processedUrl}${anchor ? '#' + anchor : ''}`;
+    }
+    
+    // Ищем файл в индексе
+    const indexedFile = findFileInIndex(file, currentFile);
+    
+    let htmlFile;
+    if (indexedFile && indexedFile.relativePath) {
+      // Файл найден в индексе - используем его путь
+      const targetHtmlPath = path.join(projectRoot, 'dist', indexedFile.relativePath);
+      const relativePath = path.relative(currentOutputDir, targetHtmlPath);
+      htmlFile = relativePath.replace(/\\/g, '/');
+    } else {
+      // Файл не найден в индексе - используем стандартную логику
+      const sourceFileDir = path.dirname(currentFile);
+      const targetMarkdownPath = path.resolve(sourceFileDir, file);
+      const relativeToProject = path.relative(projectRoot, targetMarkdownPath).replace(/\\/g, '/');
+      const targetHtmlPath = path.join(projectRoot, 'dist', relativeToProject.replace(/\.md$/i, '.html'));
+      const relativePath = path.relative(currentOutputDir, targetHtmlPath);
+      htmlFile = relativePath.replace(/\\/g, '/');
+    }
+    
+    return `${htmlFile}${anchor ? '#' + anchor : ''}`;
+  }
+  
   // Обрабатываем href ссылки
   html = html.replace(/href="([^"]+\.md(?:#[^"]*)?)"/g, (match, url) => {
     // Проверяем, что url является строкой
@@ -718,33 +1029,8 @@ function resolveInternalLinks(html, currentFile, outputFile) {
     }
     
     const [file, anchor] = url.split('#');
-    
-    // Проверяем GitHub ссылки
-    if (file && file.startsWith('http')) {
-      const processedUrl = processGitHubLink(file);
-      return `href="${processedUrl}${anchor ? '#' + anchor : ''}"`;
-    }
-    
-    let cleanFile = cleanPath(file);
-    let htmlFile = cleanFile.replace('.md', '.html');
-    
-    // Если ссылка относительная, вычисляем правильный путь
-    if (!htmlFile.startsWith('http') && !htmlFile.startsWith('/')) {
-      // Определяем абсолютный путь к целевому файлу
-      const sourceFileDir = path.dirname(currentFile);
-      const targetMarkdownPath = path.resolve(sourceFileDir, file);
-      
-      // Преобразуем в путь к HTML файлу в выходной директории
-      const relativeToProject = path.relative(projectRoot, targetMarkdownPath);
-      const cleanRelativePath = cleanPath(relativeToProject);
-      const targetHtmlPath = path.join(projectRoot, 'dist', cleanRelativePath.replace('.md', '.html'));
-      
-      // Вычисляем относительный путь от текущего выходного файла к целевому
-      const relativePath = path.relative(currentOutputDir, targetHtmlPath);
-      htmlFile = relativePath.replace(/\\/g, '/'); // Нормализуем слеши для веба
-    }
-    
-    return `href="${htmlFile}${anchor ? '#' + anchor : ''}"`;
+    const processedUrl = processLink(file, anchor);
+    return `href="${processedUrl}"`;
   });
   
   // Обрабатываем onclick ссылки в карточках
@@ -755,33 +1041,8 @@ function resolveInternalLinks(html, currentFile, outputFile) {
     }
     
     const [file, anchor] = url.split('#');
-    
-    // Проверяем GitHub ссылки
-    if (file && file.startsWith('http')) {
-      const processedUrl = processGitHubLink(file);
-      return `onclick="window.location.href='${processedUrl}${anchor ? '#' + anchor : ''}'"`;
-    }
-    
-    let cleanFile = cleanPath(file);
-    let htmlFile = cleanFile.replace('.md', '.html');
-    
-    // Если ссылка относительная, вычисляем правильный путь
-    if (!htmlFile.startsWith('http') && !htmlFile.startsWith('/')) {
-      // Определяем абсолютный путь к целевому файлу
-      const sourceFileDir = path.dirname(currentFile);
-      const targetMarkdownPath = path.resolve(sourceFileDir, file);
-      
-      // Преобразуем в путь к HTML файлу в выходной директории
-      const relativeToProject = path.relative(projectRoot, targetMarkdownPath);
-      const cleanRelativePath = cleanPath(relativeToProject);
-      const targetHtmlPath = path.join(projectRoot, 'dist', cleanRelativePath.replace('.md', '.html'));
-      
-      // Вычисляем относительный путь от текущего выходного файла к целевому
-      const relativePath = path.relative(currentOutputDir, targetHtmlPath);
-      htmlFile = relativePath.replace(/\\/g, '/'); // Нормализуем слеши для веба
-    }
-    
-    return `onclick="window.location.href='${htmlFile}${anchor ? '#' + anchor : ''}'"`;
+    const processedUrl = processLink(file, anchor);
+    return `onclick="window.location.href='${processedUrl}'"`;
   });
   
   return html;
@@ -812,15 +1073,25 @@ async function convertMarkdownToHTML(markdownFile, outputFile, configPath = null
     if (pathParts.length > 1) {
       // Убираем test-files из пути если есть
       const folders = pathParts.slice(0, -1).filter(folder => folder !== 'test-files');
-      const cleanFileName = fileName.charAt(0).toUpperCase() + fileName.slice(1);
       
       if (folders.length > 0) {
-        breadcrumbPath = [...folders, cleanFileName].join(' / ');
+        // Для репозиториев: корневая_папка / название файла
+        // Корневая папка - это самый высокий уровень (первая папка после фильтрации)
+        const rootFolder = folders[0];
+        
+        // Если файл readme, используем H1 вместо имени файла
+        if (fileName.toLowerCase() === 'readme') {
+          // H1 будет добавлен позже в header.js
+          breadcrumbPath = `${rootFolder} / readme`;
+        } else {
+          breadcrumbPath = `${rootFolder} / ${fileName}`;
+        }
       } else {
-        breadcrumbPath = cleanFileName;
+        breadcrumbPath = fileName;
       }
     } else {
-      breadcrumbPath = fileName.charAt(0).toUpperCase() + fileName.slice(1);
+      // Файл в корневой папке - показываем только название проекта
+      breadcrumbPath = 'root';
     }
   }
   
@@ -829,10 +1100,6 @@ async function convertMarkdownToHTML(markdownFile, outputFile, configPath = null
 
   // Определяем относительный путь к корню для ассетов
   const relativeRoot = getRelativePathToRoot(outputFile);
-
-  console.log('\n' + '='.repeat(60));
-  console.log('ПАРСИНГ КАРТОЧЕК');
-  console.log('='.repeat(60));
 
   // Сохраняем оригинальный markdown для проверки типа документа
   const originalMarkdown = markdown;
@@ -845,29 +1112,24 @@ async function convertMarkdownToHTML(markdownFile, outputFile, configPath = null
 
   // 2. Парсинг Specifications (с поддержкой alerts)
   const specResult = parseSpecifications(markdown);
-  console.log(`Specifications: ${specResult.cards.length} карточек`);
   markdown = specResult.cleanedMarkdown;
 
 
   // 3. Парсинг Features (автоматическое распознавание)
   const featureResult = parseMarkdownWithCards(markdown, 'features');
-  console.log(`Features: ${featureResult.cards.length} карточек`);
   markdown = featureResult.cleanedMarkdown;
 
 
   // 4. Парсинг Applications
   const applicationResult = parseMarkdownWithCards(markdown, 'applications');
-  console.log(`Applications: ${applicationResult.cards.length} карточек`);
   markdown = applicationResult.cleanedMarkdown;
 
   // 5. Парсинг Resources
   const resourceResult = parseMarkdownWithCards(markdown, 'resources');
-  console.log(`Resources: ${resourceResult.cards.length} карточек`);
   markdown = resourceResult.cleanedMarkdown;
 
   // 6. Парсинг Projects
   const projectResult = parseProjects(markdown);
-  console.log(`Projects: ${projectResult.projects.length} проектов`);
   markdown = projectResult.cleanedMarkdown;
 
 
@@ -1016,7 +1278,10 @@ async function convertMarkdownToHTML(markdownFile, outputFile, configPath = null
         if (projectDir === absoluteBaseDir) {
           // Это отдельный файл проекта (например, local-tool.md)
           const projectFileName = path.basename(projectPath, '.md');
-          const projectOutputFile = path.join(outputDir, projectFileName + '.html');
+          // Если файл README (любой регистр), то создаем index.html
+          const isReadme = /^readme$/i.test(projectFileName);
+          const outputFileName = isReadme ? 'index.html' : projectFileName + '.html';
+          const projectOutputFile = path.join(outputDir, outputFileName);
           
           try {
             const markdownContent = fs.readFileSync(projectPath, 'utf8');
@@ -1029,7 +1294,6 @@ async function convertMarkdownToHTML(markdownFile, outputFile, configPath = null
             }
             
             fs.writeFileSync(projectOutputFile, htmlContent);
-            console.log(`Created project file: ${projectOutputFile}`);
           } catch (error) {
             console.warn(`Error converting project file ${projectPath}:`, error.message);
           }
@@ -1062,14 +1326,21 @@ async function convertMarkdownToHTML(markdownFile, outputFile, configPath = null
             let projectContentHtml = md.render(projectMarkdown);
             const projectProductCard = generateProductCard(projectPageData);
             
-            // Генерируем header и footer для проекта
-            const projectHeader = generateHeader(tempProcessor.config || getSiteConfig(), filename.replace('.md', '.html'), project.title, tempOutputFile);
+            // Генерируем header, footer и навигацию для проекта
+            const projectHeader = generateHeader(tempProcessor.config || getSiteConfig(), filename.replace('.md', ''), project.title, tempOutputFile);
             const projectFooter = generateFooter(tempProcessor.config || getSiteConfig(), relativeRoot);
             
+            // Генерируем навигацию для проекта
+            const projectHamburgerMenu = generateHamburgerMenu('', tempOutputFile);
+            const projectSectionMap = generateNewSectionMap('', tempOutputFile);
+            
+            // Собираем полный HTML для определения необходимых скриптов
+            const fullProjectHtml = projectProductCard + projectContentHtml;
+            
             // Генерируем теги
-            const projectStyleLinks = generateStylesheets(tempOutputFile);
+            const projectStyleLinks = generateStylesheets(tempOutputFile, fullProjectHtml, tempProcessor.config);
             const projectFaviconTags = generateFaviconTags(tempOutputFile, tempProcessor.config);
-            const projectScriptTags = generateScripts(tempOutputFile);
+            const projectScriptTags = generateScripts(tempOutputFile, fullProjectHtml, tempProcessor.config);
             
             return `<!DOCTYPE html>
 <html lang="en">
@@ -1083,14 +1354,17 @@ ${projectStyleLinks}
 <body>
   <div class="${CSS_CLASSES.siteWrapper}">
     ${projectHeader}
-
-    <main>
-      ${projectProductCard}
-      ${projectContentHtml}
-    </main>
-
-    ${projectFooter}
-  </div>${projectScriptTags}
+    <div class="scope">
+      ${projectHamburgerMenu}
+      ${projectSectionMap}
+      <main>
+        ${projectProductCard}
+        ${projectContentHtml}
+      </main>
+      ${projectFooter}
+    </div>
+  </div>
+${projectScriptTags}
 </body>
 </html>`;
           }, false); // preserveStructure = false для проектов
@@ -1109,17 +1383,41 @@ ${projectStyleLinks}
   }
 
 
-  // 15. Генерация header, footer и product card
+  // 15. Генерация header, footer, navigation и product card
   const currentPage = path.basename(outputFile); // Получаем имя файла (например, "main.html")
-  const header = generateHeader(processor.config || getSiteConfig(), currentPage, processor.currentFilePath, outputFile);
+  
+  // Для корневых файлов (index, main, root, readme) заменяем breadcrumb на H1
+  const currentBaseName = path.basename(outputFile, '.html').toLowerCase();
+  const isRootFile = ['index', 'main', 'root', 'readme'].includes(currentBaseName);
+  let breadcrumbForHeader = processor.currentFilePath;
+  
+  if (isRootFile && pageData.title) {
+    // Заменяем имя файла на H1 в breadcrumb
+    const parts = processor.currentFilePath.split('/').map(p => p.trim());
+    if (parts.length > 1) {
+      // Для репозиториев: проект / H1
+      parts[parts.length - 1] = pageData.title;
+      breadcrumbForHeader = parts.join(' / ');
+    } else {
+      // Для обычных файлов просто используем H1
+      breadcrumbForHeader = pageData.title;
+    }
+  }
+  
+  const header = generateHeader(processor.config || getSiteConfig(), currentPage, breadcrumbForHeader, outputFile);
   const footer = generateFooter(processor.config || getSiteConfig(), relativeRoot);
   const productCard = generateProductCard(pageData); // Функция сама решит, создавать ли product card
+  
+  // Генерируем навигацию (hamburger menu и section map)
+  const hamburgerMenu = generateHamburgerMenu(markdownFile, outputFile);
+  const sectionMap = generateNewSectionMap(markdownFile, outputFile);
 
 
 // 16. Генерация тегов для стилей, скриптов и favicon с корректными путями
-const styleLinks = generateStylesheets(outputFile);
+const fullHtml = productCard + contentHtml;
+const styleLinks = generateStylesheets(outputFile, fullHtml, processor.config);
 const faviconTags = generateFaviconTags(outputFile, processor.config);
-const scriptTags = generateScripts(outputFile);
+const scriptTags = generateScripts(outputFile, fullHtml, processor.config);
 
 // 16.1. Обработка аналитики
 const fullConfig = processor.config || getConfig();
@@ -1141,34 +1439,340 @@ ${styleLinks}${analyticsHeadCode}
 <body>
   <div class="${CSS_CLASSES.siteWrapper}">
     ${header}
-
-    <main>
-      ${productCard}
-      ${contentHtml}
-    </main>
-
-    ${footer}
-  </div>${scriptTags}
-  ${analyticsTrackingCode ? `<script>${analyticsTrackingCode}</script>` : ''}$
+    <div class="scope">
+      ${hamburgerMenu}
+      ${sectionMap}
+      <main>
+        ${productCard}
+        ${contentHtml}
+      </main>
+      ${footer}
+    </div>
+  </div>
+${scriptTags}
+  ${analyticsTrackingCode ? `<script>${analyticsTrackingCode}</script>` : ''}
 </body>
 </html>`;
 
-  fs.writeFileSync(outputFile, fullHTML, 'utf-8');
+  // Убеждаемся, что папка существует
+  const outputDir = path.dirname(outputFile);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  
+  try {
+    fs.writeFileSync(outputFile, fullHTML, 'utf-8');
+    // Проверяем, что файл действительно создан
+    if (!fs.existsSync(outputFile)) {
+      console.error(`❌ Файл не создан: ${outputFile}`);
+    }
+  } catch (error) {
+    console.error(`❌ Ошибка сохранения ${outputFile}:`, error.message);
+    throw error;
+  }
 
-
-  console.log('\n' + '='.repeat(60));
-  console.log('✓ HTML saved to ' + outputFile);
-  console.log('='.repeat(60));
-  console.log(`Title: ${pageData.title}`);
-  console.log(`Specifications: ${specResult.cards.length} карточек`);
-  console.log(`Features: ${featureResult.cards.length} карточек`);
-  console.log(`Applications: ${applicationResult.cards.length} карточек`);
-  console.log(`Resources: ${resourceResult.cards.length} карточек`);
-  console.log(`Projects: ${projectResult.projects.length} проектов`);
-  console.log('='.repeat(60) + '\n');
+  // Краткое логирование только если есть карточки
+  const totalCards = specResult.cards.length + featureResult.cards.length + 
+                     applicationResult.cards.length + resourceResult.cards.length + 
+                     projectResult.projects.length;
+  
+  if (totalCards > 0) {
+    const cardsSummary = [];
+    if (specResult.cards.length > 0) cardsSummary.push(`${specResult.cards.length} specs`);
+    if (featureResult.cards.length > 0) cardsSummary.push(`${featureResult.cards.length} features`);
+    if (applicationResult.cards.length > 0) cardsSummary.push(`${applicationResult.cards.length} apps`);
+    if (resourceResult.cards.length > 0) cardsSummary.push(`${resourceResult.cards.length} resources`);
+    if (projectResult.projects.length > 0) cardsSummary.push(`${projectResult.projects.length} projects`);
+    
+    console.log(`✓ ${path.basename(outputFile)} (${cardsSummary.join(', ')})`);
+  } else {
+    console.log(`✓ ${path.basename(outputFile)}`);
+  }
 }
 
 
+
+/**
+ * Генерирует ТОЛЬКО контент <main> без HTML обёртки
+ * @param {string} markdownFile - Путь к markdown файлу
+ * @param {string} outputFile - Путь к выходному HTML файлу
+ * @param {string} configPath - Путь к конфигурации (опционально)
+ */
+async function generateMainContentOnly(markdownFile, outputFile, configPath = null) {
+  processor.reset();
+  
+  // Загружаем конфигурацию если указана
+  if (configPath && fs.existsSync(configPath)) {
+    processor.loadConfig(configPath);
+  }
+
+  let markdown = fs.readFileSync(markdownFile, 'utf-8');
+  
+  // Определяем относительный путь к корню для ассетов
+  const relativeRoot = getRelativePathToRoot(outputFile);
+
+  // Сохраняем оригинальный markdown для проверки типа документа
+  const originalMarkdown = markdown;
+
+  // 1. Парсинг Overview
+  const pageData = parseOverviewContent(markdown, relativeRoot);
+  const hasOverviewSection = pageData.hasOverviewSection;
+  markdown = removeOverviewFromMarkdown(markdown);
+
+  // 2. Парсинг Specifications
+  const specResult = parseSpecifications(markdown);
+  markdown = specResult.cleanedMarkdown;
+
+  // 3. Парсинг Features
+  const featureResult = parseMarkdownWithCards(markdown, 'features');
+  markdown = featureResult.cleanedMarkdown;
+
+  // 4. Парсинг Applications
+  const applicationResult = parseMarkdownWithCards(markdown, 'applications');
+  markdown = applicationResult.cleanedMarkdown;
+
+  // 5. Парсинг Resources
+  const resourceResult = parseMarkdownWithCards(markdown, 'resources');
+  markdown = resourceResult.cleanedMarkdown;
+
+  // 6. Парсинг Projects
+  const projectResult = parseProjects(markdown);
+  markdown = projectResult.cleanedMarkdown;
+
+  // 7. Обработка селекторов в markdown
+  const selectorResult = processSelectorsInMarkdown(markdown, md);
+  markdown = selectorResult.markdown;
+  const hasSelectors = selectorResult.hasSelectors;
+  const selectorData = selectorResult.selectors || [];
+  
+  // 8. Обработка ссылок в markdown перед рендерингом
+  markdown = processMarkdownLinks(markdown, markdownFile, outputFile);
+  
+  // 9. Рендеринг оставшегося markdown
+  let contentHtml = md.render(markdown);
+  
+  // 9.1. Заменяем placeholder'ы селекторов на HTML
+  if (hasSelectors && selectorData.length > 0) {
+    contentHtml = replaceSelectorPlaceholders(contentHtml, selectorData);
+  }
+  
+  // 9.2. Закрываем все открытые секции
+  while (processor.sectionStack.length > 0) {
+    contentHtml += '</div></section>\n';
+    processor.sectionStack.pop();
+  }
+
+  // 10. Рендеринг карточек
+  const featureHtml = renderCards(featureResult.cards);
+  const applicationHtml = renderCards(applicationResult.cards);
+  const resourceHtml = renderCards(resourceResult.cards);
+  
+  // Создаем временную папку для GitHub проектов
+  const tempDir = path.join(process.cwd(), 'temp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+  }
+  
+  const projectHtml = await renderProjectCards(projectResult.projects, path.dirname(markdownFile), relativeRoot, tempDir);
+
+  // 11. Вставка карточек в соответствующие секции
+  const isSpecDoc = isSpecificationDocument(originalMarkdown);
+  
+  if (isSpecDoc && specResult.cards && specResult.cards.length > 0) {
+    const specHtml = renderSpecificationCards(specResult.cards);
+    if (specHtml) {
+      const h1Regex = /(<h1[^>]*>.*?<\/h1>)/i;
+      const match = contentHtml.match(h1Regex);
+      
+      if (match) {
+        const h1Element = match[1];
+        const replacement = `${h1Element}\n\n<div style="margin-top: 2rem;">\n${specHtml}\n</div>`;
+        contentHtml = contentHtml.replace(h1Element, replacement);
+      }
+    }
+  } else {
+    if (specResult.specsSections && specResult.specsSections.length > 0) {
+      specResult.specsSections.forEach(section => {
+        const sectionHtml = renderSpecificationCards(section.cards);
+        if (sectionHtml) {
+          const sectionRegex = new RegExp(`(<section id="${section.id}" class="section">[\\s\\S]*?<div class="section-content">)([\\s\\S]*?)(</div></section>)`, 'i');
+          const match = contentHtml.match(sectionRegex);
+          
+          if (match) {
+            const [fullMatch, beforeContent, existingContent, afterContent] = match;
+            const newContent = existingContent.trim() ? 
+              `${existingContent}\n<div style="margin-top: 1.5rem;"></div>\n${sectionHtml}` :
+              `\n<div style="margin-top: 1.5rem;"></div>\n${sectionHtml}\n`;
+            
+            contentHtml = contentHtml.replace(fullMatch, beforeContent + newContent + afterContent);
+          }
+        }
+      });
+    }
+  }
+
+  if (featureHtml) {
+    contentHtml = contentHtml.replace(
+      /(<section id="features" class="section">[\s\S]*?<div class="section-content">)/,
+      match => match + '\n' + featureHtml
+    );
+  }
+
+  if (applicationHtml) {
+    contentHtml = contentHtml.replace(
+      /(<section id="applications" class="section">[\s\S]*?<div class="section-content">)/,
+      match => match + '\n' + applicationHtml
+    );
+  }
+
+  if (resourceHtml) {
+    contentHtml = contentHtml.replace(
+      /(<section id="resources" class="section">[\s\S]*?<div class="section-content">)/,
+      match => match + '\n' + resourceHtml
+    );
+  }
+
+  if (projectHtml) {
+    contentHtml = contentHtml.replace(
+      /(<section id="projects" class="section">[\s\S]*?<div class="section-content">)/,
+      match => match + '\n' + projectHtml
+    );
+  }
+
+  // 12. Разрешаем внутренние ссылки
+  contentHtml = resolveInternalLinks(contentHtml, markdownFile, outputFile);
+
+  // 13. Генерация product card
+  const productCard = generateProductCard(pageData);
+  
+  // 14. Собираем только <main> контент
+  const mainContent = `<main>
+  ${productCard}
+  ${contentHtml}
+</main>`;
+
+  // Убеждаемся, что папка существует
+  const outputDir = path.dirname(outputFile);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  
+  // Сохраняем ТОЛЬКО контент main (без HTML обёртки)
+  try {
+    fs.writeFileSync(outputFile, mainContent, 'utf-8');
+    if (!fs.existsSync(outputFile)) {
+      console.error(`❌ Файл не создан: ${outputFile}`);
+    }
+  } catch (error) {
+    console.error(`❌ Ошибка сохранения ${outputFile}:`, error.message);
+    throw error;
+  }
+}
+
+/**
+ * Оборачивает контент <main> в полный HTML с header, footer, navigation
+ * @param {string} htmlFile - Путь к HTML файлу с контентом <main>
+ */
+async function wrapMainContentInHTML(htmlFile) {
+  // Читаем файл с контентом main
+  let mainContent = fs.readFileSync(htmlFile, 'utf-8');
+  
+  // Извлекаем title из product card или H1
+  let pageTitle = getSiteConfig().siteName;
+  const titleMatch = mainContent.match(/<h1[^>]*>(.*?)<\/h1>/);
+  if (titleMatch) {
+    pageTitle = titleMatch[1].replace(/<[^>]*>/g, '').trim();
+  }
+  
+  // Определяем относительный путь к корню
+  const relativeRoot = getRelativePathToRoot(htmlFile);
+  
+  // Определяем breadcrumb для header
+  const fileName = path.basename(htmlFile, '.html');
+  let breadcrumbPath = '';
+  
+  // Извлекаем путь относительно dist
+  let relativePath = htmlFile.replace(/\\/g, '/');
+  const distIndex = relativePath.indexOf('dist/');
+  if (distIndex >= 0) {
+    relativePath = relativePath.substring(distIndex + 5);
+  }
+  
+  const pathParts = relativePath.split('/');
+  
+  if (pathParts.length > 1) {
+    // Файл в подпапке
+    const rootFolder = pathParts[0];
+    
+    if (fileName.toLowerCase() === 'index' || fileName.toLowerCase() === 'readme') {
+      // Для index/readme используем H1 или название папки
+      breadcrumbPath = `${rootFolder} / ${pageTitle}`;
+    } else {
+      breadcrumbPath = `${rootFolder} / ${fileName}`;
+    }
+  } else {
+    // Файл в корне
+    if (fileName.toLowerCase() === 'index') {
+      breadcrumbPath = pageTitle;
+    } else {
+      breadcrumbPath = fileName;
+    }
+  }
+  
+  // Генерируем header, footer и навигацию на основе индексированной структуры
+  const currentPage = path.basename(htmlFile);
+  const header = generateHeader(processor.config || getSiteConfig(), currentPage, breadcrumbPath, htmlFile);
+  const footer = generateFooter(processor.config || getSiteConfig(), relativeRoot);
+  
+  // Генерируем навигацию с хайлайтом текущей страницы
+  // ВАЖНО: передаём пустую строку как currentFile, так как outputFile уже содержит полный путь
+  const hamburgerMenu = generateHamburgerMenu('', htmlFile);
+  const sectionMap = generateNewSectionMap('', htmlFile);
+  
+  // Генерируем теги для стилей, скриптов и favicon
+  const styleLinks = generateStylesheets(htmlFile, mainContent, processor.config);
+  const faviconTags = generateFaviconTags(htmlFile, processor.config);
+  const scriptTags = generateScripts(htmlFile, mainContent, processor.config);
+  
+  // Обработка аналитики
+  const fullConfig = processor.config || getConfig();
+  const analytics = processAnalytics(fullConfig);
+  const analyticsHeadCode = analytics.headCode;
+  const analyticsTrackingCode = analytics.trackingCode;
+  
+  // Генерируем модальное окно поиска
+  const { generateSearchModal } = require('./components/searchModal');
+  const searchModal = generateSearchModal();
+  
+  // Собираем полный HTML
+  const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(pageTitle)}</title>
+${faviconTags}
+${styleLinks}${analyticsHeadCode}
+</head>
+<body>
+  <div class="${CSS_CLASSES.siteWrapper}">
+    ${header}
+    <div class="scope">
+      ${hamburgerMenu}
+      ${sectionMap}
+      ${mainContent}
+      ${footer}
+    </div>
+  </div>
+  ${searchModal}
+${scriptTags}
+  ${analyticsTrackingCode ? `<script>${analyticsTrackingCode}</script>` : ''}
+</body>
+</html>`;
+
+  // Сохраняем полный HTML
+  fs.writeFileSync(htmlFile, fullHTML, 'utf-8');
+}
 
 module.exports = { 
   md, 
@@ -1180,7 +1784,9 @@ module.exports = {
   CSS_CLASSES,
   generateStylesheets,
   generateScripts,
-  generateFaviconTags
+  generateFaviconTags,
+  generateMainContentOnly,
+  wrapMainContentInHTML
 };
 
 
@@ -1197,3 +1803,4 @@ if (require.main === module) {
 
   convertMarkdownToHTML(inputFile, outputFile, cssFile);
 }
+

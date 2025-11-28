@@ -1,0 +1,45 @@
+# doc-config.yaml для root папки
+# Определяет структуру меню сайта и порядок отображения файлов
+
+# Иерархия страниц - определяет структуру и вложенность в меню
+# ТОЛЬКО файлы из hierarchy будут отображаться в меню и конвертироваться
+hierarchy:
+  # Главная страница (верхний уровень)
+  - file: home.md
+    title: "Главная"
+    alias: home
+    description: "Главная страница сайта"
+  
+  # Основная документация
+  - file: main.md
+    title: "Основная документация"
+    alias: main-docs
+    description: "Полная документация проекта"
+  
+  # GitHub репозитории (можно добавлять в hierarchy)
+  - repository: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
+    alias: "CLN"
+    title: "CLN Driver"
+  
+
+  # Секция проектов (папка как контейнер)
+  - title: "Проекты"
+    alias: projects
+    section: true
+    children:
+      - title: "Проект Alpha"
+        alias: project-alpha
+        folder: project-alpha
+      - title: "Проект Beta"
+        alias: project-beta
+        folder: project-beta
+  
+  # Дополнительные материалы
+  - title: "Дополнительно"
+    alias: additional
+    section: true
+    children:
+      - title: "Sub раздел"
+        alias: sub
+        folder: sub
+
