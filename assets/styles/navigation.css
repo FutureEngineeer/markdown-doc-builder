@@ -207,11 +207,11 @@
 /* Hamburger menu - полная карта сайта слева */
 .hamburger-menu {
     position: fixed;
-    top: 60px;  /* Под header */
+    top: 75px;  /* Под header */
     left: -350px;  /* Скрыт слева */
     width: 300px;
-    height: calc(100vh - 60px);
-    height: calc(100dvh - 60px); /* Dynamic viewport height для мобильных браузеров */
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px); /* Dynamic viewport height для мобильных браузеров */
     background: var(--header-footer-bg);
     padding: 0 1.5rem 1.5rem 1.5rem;  /* Убираем верхний padding */
     overflow-y: auto;
@@ -221,6 +221,15 @@
     transition: left var(--speed-smooth) var(--ease-smooth);
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
     -webkit-overflow-scrolling: touch;  /* Плавная прокрутка на iOS */
+}
+
+/* Hamburger menu для десктопа */
+@media (min-width: 651px) {
+    .hamburger-menu {
+        top: 90px;
+        height: calc(100vh - 90px);
+        height: calc(100dvh - 90px);
+    }
 }
 
 /* Показываем hamburger menu при активации только на узких экранах */

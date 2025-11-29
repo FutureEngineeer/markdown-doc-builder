@@ -140,49 +140,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Управление прокруткой main и section-map
+// Управление прокруткой section-map и hamburger menu
 function setupScrollBehavior() {
-    const main = document.querySelector('main');
-    const sectionMap = document.querySelector('.section-map');
+    const sectionMapContent = document.querySelector('.section-map-content');
     const hamburgerMenu = document.querySelector('.hamburger-menu');
     const body = document.body;
     
-    if (!main) return;
-    
     let isOverSectionMap = false;
-    let isOverMain = false;
-    let isOverHamburgerMenu = false;
     
     // Отслеживаем наведение на section-map
-    if (sectionMap) {
-        sectionMap.addEventListener('mouseenter', () => {
+    if (sectionMapContent) {
+        sectionMapContent.addEventListener('mouseenter', () => {
             isOverSectionMap = true;
         });
         
-        sectionMap.addEventListener('mouseleave', () => {
+        sectionMapContent.addEventListener('mouseleave', () => {
             isOverSectionMap = false;
         });
     }
-    
-    // Отслеживаем наведение на hamburger menu
-    if (hamburgerMenu) {
-        hamburgerMenu.addEventListener('mouseenter', () => {
-            isOverHamburgerMenu = true;
-        });
-        
-        hamburgerMenu.addEventListener('mouseleave', () => {
-            isOverHamburgerMenu = false;
-        });
-    }
-    
-    // Отслеживаем наведение на main
-    main.addEventListener('mouseenter', () => {
-        isOverMain = true;
-    });
-    
-    main.addEventListener('mouseleave', () => {
-        isOverMain = false;
-    });
     
     // Перехватываем событие прокрутки колесом мыши на body
     body.addEventListener('wheel', (e) => {
@@ -195,30 +170,20 @@ function setupScrollBehavior() {
         const isHamburgerMenuOpen = hamburgerMenu && hamburgerMenu.classList.contains('active');
         
         // Если hamburger menu открыт, направляем всю прокрутку на него
-        if (isHamburgerMenuOpen) {
+        if (isHamburgerMenuOpen && isOverSectionMap === false) {
             e.preventDefault();
             hamburgerMenu.scrollTop += e.deltaY;
             return;
         }
         
-        // Если мышка над section-map, позволяем ему прокручиваться
-        if (isOverSectionMap && sectionMap) {
-            // Проверяем, может ли section-map прокручиваться дальше
-            const canScrollDown = sectionMap.scrollTop < sectionMap.scrollHeight - sectionMap.clientHeight;
-            const canScrollUp = sectionMap.scrollTop > 0;
-            
-            if ((e.deltaY > 0 && canScrollDown) || (e.deltaY < 0 && canScrollUp)) {
-                // Section-map может прокручиваться, не мешаем
-                return;
-            }
+        // Если мышка над section-map-content, позволяем ему прокручиваться независимо
+        if (isOverSectionMap && sectionMapContent) {
+            e.stopPropagation();
+            // Браузер сам обработает прокрутку section-map-content
+            return;
         }
         
-        // Если мышка НЕ над main и НЕ над section-map (т.е. за пределами основной ширины)
-        // перенаправляем прокрутку на main
-        if (!isOverMain && !isOverSectionMap) {
-            e.preventDefault();
-            main.scrollTop += e.deltaY;
-        }
+        // В остальных случаях body прокручивается естественным образом
     }, { passive: false });
 }
 
@@ -251,3 +216,54 @@ function setupSidebarAutoClose() {
 if (typeof window !== 'undefined') {
     window.toggleMobileMenu = toggleMobileMenu;
 }
+
+
+// Функциональность якорных ссылок для заголовков
+document.addEventListener('DOMContentLoaded', () => {
+    // Добавляем обработчик для всех якорных ссылок
+    const anchorLinks = document.querySelectorAll('.anchor-link');
+    
+    anchorLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const href = link.getAttribute('href');
+            const targetId = href.substring(1); // Убираем #
+            
+            // Копируем полную ссылку в буфер обмена
+            const fullUrl = window.location.origin + window.location.pathname + href;
+            
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                // Визуальная обратная связь
+                const originalText = link.textContent;
+                link.textContent = '✓';
+                link.style.opacity = '1';
+                
+                setTimeout(() => {
+                    link.textContent = originalText;
+                }, 1500);
+                
+                // Обновляем URL без перезагрузки страницы
+                history.pushState(null, null, href);
+                
+                // Прокручиваем к элементу
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }).catch(err => {
+                console.error('Не удалось скопировать ссылку:', err);
+            });
+        });
+    });
+    
+    // Проверяем, есть ли якорь в URL при загрузке страницы
+    if (window.location.hash) {
+        setTimeout(() => {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    }
+});

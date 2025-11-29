@@ -41,6 +41,7 @@
     /* Main Colors */
     --bg: #1B1C28;
     --accent: #2FB65A;
+    --accent-rgb: 47, 182, 90;
     --accent-hover: #26a04d;
     --header-footer-bg: #000000;
     --card-bg: #262736;
@@ -142,38 +143,37 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
-    height: 100vh;
-    height: 100dvh; /* Dynamic viewport height для мобильных браузеров */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0;
-    line-height: 1.6;
-    overflow: hidden;
-}
-
-.site-wrapper {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height для мобильных браузеров */
     width: 100%;
     min-width: 350px;
     max-width: 1250px;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    grid-template-areas: 
-        "header"
-        "scope";
-    height: 100vh;
-    height: 100dvh; /* Dynamic viewport height для мобильных браузеров */
-    overflow: hidden;
+    margin: 0 auto;
+    padding: 0;
+    line-height: 1.6;
+    overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
 }
 
-.site-wrapper > header {
-    grid-area: header;
+body > header {
+    position: sticky;
+    top: 0;
+    z-index: 1200;
 }
 
-.site-wrapper > .scope {
-    grid-area: scope;
+body > .scope {
     display: grid;
+    min-height: calc(100vh - 75px);
+    min-height: calc(100dvh - 75px);
+}
+
+/* Scope для десктопа */
+@media (min-width: 651px) {
+    body > .scope {
+        min-height: calc(100vh - 90px);
+        min-height: calc(100dvh - 90px);
+    }
 }
 
 
@@ -306,6 +306,37 @@ h4 {
 
 h5 {
     font-size: 1.25em;
+}
+
+/* Якорные ссылки для заголовков */
+.heading-with-anchor {
+    position: relative;
+}
+
+.anchor-link {
+    opacity: 0;
+    margin-left: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 0.8em;
+    transition: opacity var(--speed-fast) var(--ease-smooth), color var(--speed-fast) var(--ease-smooth);
+    cursor: pointer;
+}
+
+.heading-with-anchor:hover .anchor-link {
+    opacity: 1;
+}
+
+.anchor-link:hover {
+    color: var(--accent-hover);
+}
+
+.anchor-link:focus {
+    opacity: 1;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 h6 {
@@ -612,43 +643,12 @@ a:active {
     position: relative;
     margin-top: 0;
     transition: margin-top 0.3s ease;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
     display: grid;
 }
 
-/* Градиентный blur эффект через несколько слоев */
-.scope::before {
-    content: '';
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 1250px;
-    margin: 0 auto;
-    height: 100px;
-    pointer-events: none;
-    z-index: 100;
-    background: 
-        linear-gradient(to bottom, 
-            rgba(27, 28, 40, 1) 0%, 
-            rgba(27, 28, 40, 0.95) 10%,
-            rgba(27, 28, 40, 0.85) 20%,
-            rgba(27, 28, 40, 0.7) 30%,
-            rgba(27, 28, 40, 0.5) 45%,
-            rgba(27, 28, 40, 0.3) 60%,
-            rgba(27, 28, 40, 0.15) 75%,
-            rgba(27, 28, 40, 0.05) 90%,
-            transparent 100%
-        );
+/* Градиент больше не нужен - прокрутка на body */
 
-}
-
-/* Нижний градиент не нужен - footer имеет свой фон и z-index */
-
-/* Мобильная версия < 700px: только main, footer прокручивается */
+/* Мобильная версия < 700px: только main, footer прокручивается вместе с body */
 @media (max-width: 700px) {
     .scope {
         grid-template-columns: 1fr;
@@ -671,7 +671,7 @@ a:active {
     }
 }
 
-/* При ширине 701-1000px: только main, footer sticky */
+/* При ширине 701-1000px: только main, footer sticky внизу */
 @media (min-width: 701px) and (max-width: 1000px) {
     .scope {
         grid-template-columns: 1fr;
@@ -679,7 +679,6 @@ a:active {
         grid-template-areas: 
             "content"
             "footer";
-        overflow-y: hidden;
     }
     
     .scope .section-map {
@@ -688,12 +687,14 @@ a:active {
     
     .scope main {
         grid-area: content;
-        overflow-y: auto;
-        overflow-x: hidden;
+        width: 100%;
     }
     
     .scope > footer {
         grid-area: footer;
+        position: sticky;
+        bottom: 0;
+        z-index: 1000;
     }
 }
 
@@ -705,7 +706,6 @@ a:active {
         grid-template-areas: 
             "content"
             "footer";
-        overflow-y: hidden;
     }
     
     .scope:not(.has-section-map) .section-map {
@@ -714,43 +714,49 @@ a:active {
     
     .scope:not(.has-section-map) main {
         grid-area: content;
-        overflow-y: auto;
-        overflow-x: hidden;
+        width: 100%;
     }
     
     .scope:not(.has-section-map) > footer {
         grid-area: footer;
+        position: sticky;
+        bottom: 0;
+        z-index: 1000;
     }
 }
 
 /* При ширине > 1000px С section-map: сетка 2x2 с section-map слева и main справа, footer sticky внизу на обеих ячейках */
 @media (min-width: 1001px) {
     .scope.has-section-map {
-        grid-template-columns: var(--sidebar-width) 1fr;
-        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
         grid-template-areas: 
-            "sidebar content"
-            "footer footer";
-        overflow-y: hidden;
+            "content"
+            "footer";
     }
     
     .scope.has-section-map .section-map {
         display: flex;
-        grid-area: sidebar;
-        align-self: stretch;  /* Растягиваем на всю высоту grid-ячейки */
-        height: 100%;  /* Занимаем всю высоту */
-        overflow: hidden;  /* Скрываем переполнение на уровне section-map */
+        position: fixed;
+        top: 90px;
+        left: max(0px, calc((100vw - 1250px) / 2));
+        height: calc(100vh - 90px - 76px);
+        height: calc(100dvh - 90px - 76px);
+        width: var(--sidebar-width);
+        z-index: 50;
     }
     
     .scope.has-section-map main {
         grid-area: content;
-        overflow-y: auto;
-        overflow-x: hidden;
-        min-height: 0;
+        width: 100%;
+        padding-left: calc(var(--sidebar-width) + var(--main-padding));
     }
     
     .scope.has-section-map > footer {
         grid-area: footer;
+        position: sticky;
+        bottom: 0;
+        z-index: 1000;
     }
 }
 
@@ -769,34 +775,6 @@ main {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
-    
-    /* Плавное размытие контента под header и footer */
-    mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(0, 0, 0, 0.2) 5px,
-        rgba(0, 0, 0, 0.5) 12px,
-        rgba(0, 0, 0, 0.8) 20px,
-        black 30px,
-        black calc(100% - 30px),
-        rgba(0, 0, 0, 0.8) calc(100% - 20px),
-        rgba(0, 0, 0, 0.5) calc(100% - 12px),
-        rgba(0, 0, 0, 0.2) calc(100% - 5px),
-        transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(0, 0, 0, 0.2) 5px,
-        rgba(0, 0, 0, 0.5) 12px,
-        rgba(0, 0, 0, 0.8) 20px,
-        black 30px,
-        black calc(100% - 30px),
-        rgba(0, 0, 0, 0.8) calc(100% - 20px),
-        rgba(0, 0, 0, 0.5) calc(100% - 12px),
-        rgba(0, 0, 0, 0.2) calc(100% - 5px),
-        transparent 100%
-    );
 }
 
 main.loaded {
@@ -804,37 +782,10 @@ main.loaded {
     transform: translateY(0);
 }
 
-/* На мобильных устройствах main не имеет overflow, прокручивается scope */
+/* На мобильных устройствах */
 @media (max-width: 700px) {
     main {
         overflow: visible;
-        /* Уменьшенная высота градиента для мобильных */
-        mask-image: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.2) 3px,
-            rgba(0, 0, 0, 0.5) 6px,
-            rgba(0, 0, 0, 0.8) 10px,
-            black 15px,
-            black calc(100% - 15px),
-            rgba(0, 0, 0, 0.8) calc(100% - 10px),
-            rgba(0, 0, 0, 0.5) calc(100% - 6px),
-            rgba(0, 0, 0, 0.2) calc(100% - 3px),
-            transparent 100%
-        );
-        -webkit-mask-image: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(0, 0, 0, 0.2) 3px,
-            rgba(0, 0, 0, 0.5) 6px,
-            rgba(0, 0, 0, 0.8) 10px,
-            black 15px,
-            black calc(100% - 15px),
-            rgba(0, 0, 0, 0.8) calc(100% - 10px),
-            rgba(0, 0, 0, 0.5) calc(100% - 6px),
-            rgba(0, 0, 0, 0.2) calc(100% - 3px),
-            transparent 100%
-        );
     }
 }
 

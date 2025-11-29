@@ -1,16 +1,21 @@
-name: Build and Deploy
+name: Build and Deploy (Advanced)
 
 on:
-  # Запуск при пуше в main ветку
-  push:
-    branches: [ main, master ]
-  
-  # Запуск по расписанию каждые 12 часов
+  # Запуск по расписанию каждые 12 часов для обновления репозиториев
   schedule:
     - cron: '0 */12 * * *'
   
-  # Ручной запуск
+  # Ручной запуск с опциями
   workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force full rebuild (ignore cache)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 # Разрешения для GitHub Pages
 permissions:
@@ -20,7 +25,7 @@ permissions:
 
 # Разрешить только один одновременный деплой
 concurrency:
-  group: "pages"
+  group: "pages-advanced"
   cancel-in-progress: false
 
 jobs:
@@ -42,29 +47,38 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Setup cache for repositories
+    # Кеширование репозиториев и оптимизированных ресурсов
+    - name: Setup cache for repositories and assets
       uses: actions/cache@v3
       with:
         path: |
           .temp/repos
           .temp/repos-cache.json
-        key: repos-cache-${{ hashFiles('config.yaml') }}-${{ github.run_number }}
+          dist/assets
+        key: advanced-cache-${{ hashFiles('config.yaml', 'website/**/*.yaml') }}-${{ github.run_number }}
         restore-keys: |
-          repos-cache-${{ hashFiles('config.yaml') }}-
-          repos-cache-
+          advanced-cache-${{ hashFiles('config.yaml', 'website/**/*.yaml') }}-
+          advanced-cache-
     
     - name: Check for changes in repositories
       id: check-changes
-      run: node .github/scripts/check-repo-changes.js
+      run: |
+        if [ -f .github/scripts/check-repo-changes.js ]; then
+          node .github/scripts/check-repo-changes.js
+        else
+          echo "force-rebuild=false" >> $GITHUB_OUTPUT
+          echo "has-changes=true" >> $GITHUB_OUTPUT
+        fi
     
     - name: Build site
       run: |
-        if [ "${{ steps.check-changes.outputs.force-rebuild }}" = "true" ]; then
-          echo "Force rebuilding all files..."
-          node build-all.js --force-rebuild
+        FORCE_REBUILD="${{ github.event.inputs.force_rebuild }}"
+        if [ "$FORCE_REBUILD" = "true" ] || [ "${{ steps.check-changes.outputs.force-rebuild }}" = "true" ]; then
+          echo "🔄 Force rebuilding all files..."
+          npm run build:all
         else
-          echo "Building with cache..."
-          node build-all.js
+          echo "⚡ Building with cache..."
+          npm run build:all
         fi
     
     - name: Setup Pages

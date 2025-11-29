@@ -332,20 +332,25 @@ function createMarkdownInstance(options = {}) {
       
       // Добавляем onclick только если ссылка содержит только изображение
       if (hasOnlyImage) {
-        // Определяем, внешняя ли это ссылка
-        const isExternalLink = linkUrl.startsWith('http://') || linkUrl.startsWith('https://');
-        const isInternalLink = linkUrl.startsWith('#') || linkUrl.startsWith('./') || linkUrl.startsWith('../') || 
-                              (!linkUrl.includes('://') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('tel:'));
+        // Не добавляем onclick для .md ссылок - они будут обработаны в resolveInternalLinks
+        const isMdLink = linkUrl.endsWith('.md') || linkUrl.includes('.md#');
         
-        if (isExternalLink) {
-          // Внешняя ссылка - открываем в новой вкладке
-          imgHtml += ` onclick="window.open('${linkUrl}', '_blank'); return false;" style="cursor: pointer;"`;
-        } else if (isInternalLink) {
-          // Внутренняя ссылка - открываем в том же окне
-          imgHtml += ` onclick="window.location.href='${linkUrl}'; return false;" style="cursor: pointer;"`;
-        } else {
-          // Для остальных случаев (mailto, tel и т.д.) - открываем в новой вкладке
-          imgHtml += ` onclick="window.open('${linkUrl}', '_blank'); return false;" style="cursor: pointer;"`;
+        if (!isMdLink) {
+          // Определяем, внешняя ли это ссылка
+          const isExternalLink = linkUrl.startsWith('http://') || linkUrl.startsWith('https://');
+          const isInternalLink = linkUrl.startsWith('#') || linkUrl.startsWith('./') || linkUrl.startsWith('../') || 
+                                (!linkUrl.includes('://') && !linkUrl.startsWith('mailto:') && !linkUrl.startsWith('tel:'));
+          
+          if (isExternalLink) {
+            // Внешняя ссылка - открываем в новой вкладке
+            imgHtml += ` onclick="window.open('${linkUrl}', '_blank'); return false;" style="cursor: pointer;"`;
+          } else if (isInternalLink) {
+            // Внутренняя ссылка - открываем в том же окне
+            imgHtml += ` onclick="window.location.href='${linkUrl}'; return false;" style="cursor: pointer;"`;
+          } else {
+            // Для остальных случаев (mailto, tel и т.д.) - открываем в новой вкладке
+            imgHtml += ` onclick="window.open('${linkUrl}', '_blank'); return false;" style="cursor: pointer;"`;
+          }
         }
       }
     }

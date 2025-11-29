@@ -4,13 +4,19 @@ header {
     background: var(--header-footer-bg);
     padding: var(--header-padding);
     position: relative;
-    height: auto;
-    min-height: 60px;
+    height: 75px;
     width: 100%;
     z-index: 1200;  /* Увеличиваем z-index чтобы быть выше sidebar */
     transition: border-radius var(--speed-quick) var(--ease-smooth);
     animation: slideDownHeader 0.5s ease-out;
     flex-shrink: 0;
+}
+
+/* Фиксированная высота header для десктопа */
+@media (min-width: 651px) {
+    header {
+        height: 90px;
+    }
 }
 
 
@@ -182,8 +188,8 @@ a:visited {
     display: none;
     flex-direction: column;
     justify-content: space-between;
-    width: 30px;
-    height: 24px;
+    width: 24px;
+    height: 19.2px;
     cursor: pointer;
     z-index: 1001;
     margin-right: 1rem;
@@ -193,14 +199,14 @@ a:visited {
 .hamburger-button span {
     display: block;
     width: 100%;
-    height: 3px;
+    height: 2.4px;
     background: var(--text-primary);
     border-radius: 2px;
     transition: all var(--speed-fast) ease;
 }
 
 .hamburger-button.active span:nth-child(1) {
-    transform: translateY(10.5px) rotate(45deg);
+    transform: translateY(8.4px) rotate(45deg);
 }
 
 .hamburger-button.active span:nth-child(2) {
@@ -208,7 +214,7 @@ a:visited {
 }
 
 .hamburger-button.active span:nth-child(3) {
-    transform: translateY(-10.5px) rotate(-45deg);
+    transform: translateY(-8.4px) rotate(-45deg);
 }
 
 /* Уменьшаем отступ hamburger на узких экранах */
@@ -221,11 +227,11 @@ a:visited {
 /* Overlay для мобильного меню - плавное размытие */
 .menu-overlay {
     position: fixed;
-    top: 60px;  /* Под header */
+    top: 75px;  /* Под header */
     left: 0;
     width: 100%;
-    height: calc(100vh - 60px);
-    height: calc(100dvh - 60px); /* Dynamic viewport height для мобильных браузеров */
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px); /* Dynamic viewport height для мобильных браузеров */
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
     background: rgba(0, 0, 0, 0);
@@ -238,6 +244,15 @@ a:visited {
                 visibility 0s var(--speed-fast);
     pointer-events: none;
     visibility: hidden;
+}
+
+/* Overlay для десктопа */
+@media (min-width: 651px) {
+    .menu-overlay {
+        top: 90px;
+        height: calc(100vh - 90px);
+        height: calc(100dvh - 90px);
+    }
 }
 
 .menu-overlay.active {
@@ -285,10 +300,40 @@ a:visited {
     }
 }
 
+/* Центрируем логотип между hamburger и кнопкой поиска только при ширине < 550px */
+@media (max-width: 550px) {
+    .header-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+    }
+    
+    .hamburger-button {
+        grid-column: 1;
+        order: 1;
+    }
+    
+    .logo-section {
+        grid-column: 2;
+        order: 2;
+        justify-self: center;
+    }
+    
+    .nav-section {
+        grid-column: 3;
+        order: 3;
+        margin-left: 0;
+    }
+}
+
 /* Скрываем Discord при ширине < 800px */
 @media (max-width: 600px) {
     .discord-btn {
         display: none !important;
+    }
+
+    .header-container {
+        gap: 1rem;
     }
 }
 

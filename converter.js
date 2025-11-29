@@ -252,6 +252,21 @@ md.renderer.rules.heading_close = function(tokens, idx, options, env, self) {
       if (hasOverviewSection) {
         return '';
       }
+      
+      // Для обычного H1 добавляем якорную ссылку
+      const anchorId = slugify(titleText);
+      return `<a href="#${anchorId}" class="anchor-link" aria-label="Ссылка на раздел" title="Скопировать ссылку">#</a></h1>`;
+    }
+  }
+  
+  // Для H3+ добавляем якорную ссылку
+  if (level >= 3) {
+    const openingIdx = idx - 2;
+    if (openingIdx >= 0) {
+      const inlineToken = tokens[openingIdx + 1];
+      const titleText = inlineToken ? inlineToken.content : '';
+      const anchorId = slugify(titleText);
+      return `<a href="#${anchorId}" class="anchor-link" aria-label="Ссылка на раздел" title="Скопировать ссылку">#</a></${token.tag}>`;
     }
   }
   
@@ -297,7 +312,8 @@ md.renderer.rules.heading_open = function(tokens, idx, options, env, self) {
       return ''; // Скрываем стандартный H1
     }
     
-    // Если нет Overview секции, рендерим как обычный H1
+    // Если нет Overview секции, рендерим как обычный H1 с якорной ссылкой
+    token.attrSet('class', 'heading-with-anchor');
     return defaultHeadingOpen(tokens, idx, options, env, self);
   }
 
@@ -330,7 +346,7 @@ md.renderer.rules.heading_open = function(tokens, idx, options, env, self) {
     const sectionId = anchorId || (sectionType || 'section').toLowerCase().replace(/\s+/g, '-');
 
     html += `<section id="${sectionId}" class="${cls.section}">\n` +
-            `<h2 id="${anchorId}" class="${cls.sectionTitle}">${escapeHtml(titleText)}</h2>\n` +
+            `<h2 id="${anchorId}" class="${cls.sectionTitle} heading-with-anchor">${escapeHtml(titleText)}<a href="#${anchorId}" class="anchor-link" aria-label="Ссылка на раздел" title="Скопировать ссылку">#</a></h2>\n` +
             `<div class="${cls.sectionContent}">\n`;
 
     processor.sectionStack.push(sectionType || 'generic');
@@ -347,9 +363,9 @@ md.renderer.rules.heading_open = function(tokens, idx, options, env, self) {
   if (level >= 3) {
     // Если мы в секции спецификаций или родительский заголовок содержит "specification"
     if (isSpecificationSection || processor.currentSection === 'specifications') {
-      token.attrSet('class', 'spec-card');
+      token.attrSet('class', 'spec-card heading-with-anchor');
     } else {
-      token.attrSet('class', 'subsection-title');
+      token.attrSet('class', 'subsection-title heading-with-anchor');
     }
     token.attrSet('id', anchorId);
   }
@@ -618,17 +634,15 @@ ${projectFaviconTags}
 ${projectStyleLinks}
 </head>
 <body>
-  <div class="${CSS_CLASSES.siteWrapper}">
-    ${projectHeader}
-    <div class="scope">
-      ${projectHamburgerMenu}
-      ${projectSectionMap}
-      <main>
-        ${projectProductCard}
-        ${projectContentHtml}
-      </main>
-      ${projectFooter}
-    </div>
+  ${projectHeader}
+  <div class="scope">
+    ${projectHamburgerMenu}
+    ${projectSectionMap}
+    <main>
+      ${projectProductCard}
+      ${projectContentHtml}
+    </main>
+    ${projectFooter}
   </div>
 ${projectScriptTags}
 </body>
@@ -698,15 +712,32 @@ function processMarkdownLinks(markdown, currentFile, outputFile) {
   // Функция для поиска файла в индексе (включая репозитории)
   function findFileInIndex(targetPath, currentFilePath) {
     // Нормализуем путь
-    const normalizedTarget = targetPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    let normalizedTarget = targetPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    
+    // Используем outputFile для определения текущей позиции файла
+    // Извлекаем путь относительно dist/
+    let currentOutputPath = outputFile.replace(/\\/g, '/');
+    const distIndex = currentOutputPath.indexOf('dist/');
+    if (distIndex >= 0) {
+      currentOutputPath = currentOutputPath.substring(distIndex + 5); // убираем 'dist/'
+    }
     
     // Определяем, находится ли текущий файл в репозитории
-    const currentFileNormalized = currentFilePath.replace(/\\/g, '/');
     let currentRepo = null;
+    let currentFileLocalPath = null;
     
     for (const repo of allRepositories) {
-      if (currentFileNormalized.includes(repo.alias)) {
+      if (currentOutputPath.startsWith(repo.alias + '/')) {
         currentRepo = repo;
+        // Извлекаем localRelativePath из outputPath
+        // Например: CLN/wiki/CLN17/index.html -> wiki/CLN17/readme.md
+        const pathInRepo = currentOutputPath.substring(repo.alias.length + 1); // убираем 'CLN/'
+        // Конвертируем обратно из .html в .md
+        if (pathInRepo.endsWith('/index.html')) {
+          currentFileLocalPath = pathInRepo.replace('/index.html', '/readme.md');
+        } else if (pathInRepo.endsWith('.html')) {
+          currentFileLocalPath = pathInRepo.replace('.html', '.md');
+        }
         break;
       }
     }
@@ -724,13 +755,35 @@ function processMarkdownLinks(markdown, currentFile, outputFile) {
           for (const item of items) {
             if (item.type === 'repository' && item.alias === currentRepo.alias) {
               // Нашли репозиторий, ищем файл в его файлах
-              const repoFiles = item.repoInfo?.files || [];
+              const repoFiles = item.repoInfo?.projectData?.files || item.repoInfo?.files || [];
               
+              // Если целевой путь относительный (начинается с ../ или просто имя файла),
+              // разрешаем его относительно текущего файла
+              if (currentFileLocalPath && (normalizedTarget.startsWith('../') || !normalizedTarget.includes('/'))) {
+                const currentFileDir = path.posix.dirname(currentFileLocalPath);
+                const resolvedPath = path.posix.join(currentFileDir, normalizedTarget);
+                normalizedTarget = path.posix.normalize(resolvedPath);
+                // Убираем ведущий слеш если он есть
+                if (normalizedTarget.startsWith('/')) {
+                  normalizedTarget = normalizedTarget.substring(1);
+                }
+              }
+              
+              // Теперь ищем файл по разрешенному пути
               for (const file of repoFiles) {
                 const localRelPath = file.localRelativePath?.replace(/\\/g, '/');
                 
-                // Проверяем совпадение
+                // Проверяем совпадение (с учётом регистра)
                 if (localRelPath === normalizedTarget || localRelPath.endsWith('/' + normalizedTarget)) {
+                  // Возвращаем путь относительно dist
+                  return {
+                    relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
+                  };
+                }
+                
+                // Проверяем совпадение без учёта регистра
+                if (localRelPath.toLowerCase() === normalizedTarget.toLowerCase() || 
+                    localRelPath.toLowerCase().endsWith('/' + normalizedTarget.toLowerCase())) {
                   // Возвращаем путь относительно dist
                   return {
                     relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
@@ -743,7 +796,7 @@ function processMarkdownLinks(markdown, currentFile, outputFile) {
                 
                 let match = true;
                 for (let i = targetParts.length - 1, j = fileParts.length - 1; i >= 0 && j >= 0; i--, j--) {
-                  if (targetParts[i] !== fileParts[j]) {
+                  if (targetParts[i].toLowerCase() !== fileParts[j].toLowerCase()) {
                     match = false;
                     break;
                   }
@@ -818,11 +871,24 @@ function processMarkdownLinks(markdown, currentFile, outputFile) {
       const relativePath = path.relative(currentOutputDir, targetHtmlPath);
       htmlFile = relativePath.replace(/\\/g, '/');
     } else {
-      // Файл не найден в индексе - используем стандартную логику
-      const sourceFileDir = path.dirname(currentFile);
-      const targetMarkdownPath = path.resolve(sourceFileDir, file);
-      const relativeToProject = path.relative(projectRoot, targetMarkdownPath).replace(/\\/g, '/');
-      const targetHtmlPath = path.join(projectRoot, 'dist', relativeToProject.replace(/\.md$/i, '.html'));
+      // Файл не найден в индексе - используем outputFile для определения текущей позиции
+      // Извлекаем путь относительно dist/
+      let currentOutputPath = outputFile.replace(/\\/g, '/');
+      const distIndex = currentOutputPath.indexOf('dist/');
+      if (distIndex >= 0) {
+        currentOutputPath = currentOutputPath.substring(distIndex + 5); // убираем 'dist/'
+      }
+      
+      // Разрешаем относительный путь
+      const currentDir = path.posix.dirname(currentOutputPath);
+      const resolvedPath = path.posix.join(currentDir, file);
+      const normalizedPath = path.posix.normalize(resolvedPath);
+      
+      // Конвертируем .md в .html
+      const htmlPath = normalizedPath.replace(/\.md$/i, '.html');
+      
+      // Вычисляем относительный путь от текущего файла
+      const targetHtmlPath = path.join(projectRoot, 'dist', htmlPath);
       const relativePath = path.relative(currentOutputDir, targetHtmlPath);
       htmlFile = relativePath.replace(/\\/g, '/');
     }
@@ -863,15 +929,32 @@ function resolveInternalLinks(html, currentFile, outputFile) {
   // Функция для поиска файла в индексе (включая репозитории)
   function findFileInIndex(targetPath, currentFilePath) {
     // Нормализуем путь
-    const normalizedTarget = targetPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    let normalizedTarget = targetPath.replace(/\\/g, '/').replace(/^\.\//, '');
+    
+    // Используем outputFile для определения текущей позиции файла
+    // Извлекаем путь относительно dist/
+    let currentOutputPath = outputFile.replace(/\\/g, '/');
+    const distIndex = currentOutputPath.indexOf('dist/');
+    if (distIndex >= 0) {
+      currentOutputPath = currentOutputPath.substring(distIndex + 5); // убираем 'dist/'
+    }
     
     // Определяем, находится ли текущий файл в репозитории
-    const currentFileNormalized = currentFilePath.replace(/\\/g, '/');
     let currentRepo = null;
+    let currentFileLocalPath = null;
     
     for (const repo of allRepositories) {
-      if (currentFileNormalized.includes(repo.alias)) {
+      if (currentOutputPath.startsWith(repo.alias + '/')) {
         currentRepo = repo;
+        // Извлекаем localRelativePath из outputPath
+        // Например: CLN/wiki/CLN17/index.html -> wiki/CLN17/readme.md
+        const pathInRepo = currentOutputPath.substring(repo.alias.length + 1); // убираем 'CLN/'
+        // Конвертируем обратно из .html в .md
+        if (pathInRepo.endsWith('/index.html')) {
+          currentFileLocalPath = pathInRepo.replace('/index.html', '/readme.md');
+        } else if (pathInRepo.endsWith('.html')) {
+          currentFileLocalPath = pathInRepo.replace('.html', '.md');
+        }
         break;
       }
     }
@@ -889,13 +972,35 @@ function resolveInternalLinks(html, currentFile, outputFile) {
           for (const item of items) {
             if (item.type === 'repository' && item.alias === currentRepo.alias) {
               // Нашли репозиторий, ищем файл в его файлах
-              const repoFiles = item.repoInfo?.files || [];
+              const repoFiles = item.repoInfo?.projectData?.files || item.repoInfo?.files || [];
               
+              // Если целевой путь относительный (начинается с ../ или просто имя файла),
+              // разрешаем его относительно текущего файла
+              if (currentFileLocalPath && (normalizedTarget.startsWith('../') || !normalizedTarget.includes('/'))) {
+                const currentFileDir = path.posix.dirname(currentFileLocalPath);
+                const resolvedPath = path.posix.join(currentFileDir, normalizedTarget);
+                normalizedTarget = path.posix.normalize(resolvedPath);
+                // Убираем ведущий слеш если он есть
+                if (normalizedTarget.startsWith('/')) {
+                  normalizedTarget = normalizedTarget.substring(1);
+                }
+              }
+              
+              // Теперь ищем файл по разрешенному пути
               for (const file of repoFiles) {
                 const localRelPath = file.localRelativePath?.replace(/\\/g, '/');
                 
-                // Проверяем совпадение
+                // Проверяем совпадение (с учётом регистра)
                 if (localRelPath === normalizedTarget || localRelPath.endsWith('/' + normalizedTarget)) {
+                  // Возвращаем путь относительно dist
+                  return {
+                    relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
+                  };
+                }
+                
+                // Проверяем совпадение без учёта регистра
+                if (localRelPath.toLowerCase() === normalizedTarget.toLowerCase() || 
+                    localRelPath.toLowerCase().endsWith('/' + normalizedTarget.toLowerCase())) {
                   // Возвращаем путь относительно dist
                   return {
                     relativePath: `${currentRepo.alias}/${convertMdToHtml(localRelPath)}`
@@ -908,7 +1013,7 @@ function resolveInternalLinks(html, currentFile, outputFile) {
                 
                 let match = true;
                 for (let i = targetParts.length - 1, j = fileParts.length - 1; i >= 0 && j >= 0; i--, j--) {
-                  if (targetParts[i] !== fileParts[j]) {
+                  if (targetParts[i].toLowerCase() !== fileParts[j].toLowerCase()) {
                     match = false;
                     break;
                   }
@@ -1009,11 +1114,24 @@ function resolveInternalLinks(html, currentFile, outputFile) {
       const relativePath = path.relative(currentOutputDir, targetHtmlPath);
       htmlFile = relativePath.replace(/\\/g, '/');
     } else {
-      // Файл не найден в индексе - используем стандартную логику
-      const sourceFileDir = path.dirname(currentFile);
-      const targetMarkdownPath = path.resolve(sourceFileDir, file);
-      const relativeToProject = path.relative(projectRoot, targetMarkdownPath).replace(/\\/g, '/');
-      const targetHtmlPath = path.join(projectRoot, 'dist', relativeToProject.replace(/\.md$/i, '.html'));
+      // Файл не найден в индексе - используем outputFile для определения текущей позиции
+      // Извлекаем путь относительно dist/
+      let currentOutputPath = outputFile.replace(/\\/g, '/');
+      const distIndex = currentOutputPath.indexOf('dist/');
+      if (distIndex >= 0) {
+        currentOutputPath = currentOutputPath.substring(distIndex + 5); // убираем 'dist/'
+      }
+      
+      // Разрешаем относительный путь
+      const currentDir = path.posix.dirname(currentOutputPath);
+      const resolvedPath = path.posix.join(currentDir, file);
+      const normalizedPath = path.posix.normalize(resolvedPath);
+      
+      // Конвертируем .md в .html
+      const htmlPath = normalizedPath.replace(/\.md$/i, '.html');
+      
+      // Вычисляем относительный путь от текущего файла
+      const targetHtmlPath = path.join(projectRoot, 'dist', htmlPath);
       const relativePath = path.relative(currentOutputDir, targetHtmlPath);
       htmlFile = relativePath.replace(/\\/g, '/');
     }
@@ -1352,17 +1470,15 @@ ${projectFaviconTags}
 ${projectStyleLinks}
 </head>
 <body>
-  <div class="${CSS_CLASSES.siteWrapper}">
-    ${projectHeader}
-    <div class="scope">
-      ${projectHamburgerMenu}
-      ${projectSectionMap}
-      <main>
-        ${projectProductCard}
-        ${projectContentHtml}
-      </main>
-      ${projectFooter}
-    </div>
+  ${projectHeader}
+  <div class="scope">
+    ${projectHamburgerMenu}
+    ${projectSectionMap}
+    <main>
+      ${projectProductCard}
+      ${projectContentHtml}
+    </main>
+    ${projectFooter}
   </div>
 ${projectScriptTags}
 </body>
@@ -1437,17 +1553,15 @@ ${faviconTags}
 ${styleLinks}${analyticsHeadCode}
 </head>
 <body>
-  <div class="${CSS_CLASSES.siteWrapper}">
-    ${header}
-    <div class="scope">
-      ${hamburgerMenu}
-      ${sectionMap}
-      <main>
-        ${productCard}
-        ${contentHtml}
-      </main>
-      ${footer}
-    </div>
+  ${header}
+  <div class="scope">
+    ${hamburgerMenu}
+    ${sectionMap}
+    <main>
+      ${productCard}
+      ${contentHtml}
+    </main>
+    ${footer}
   </div>
 ${scriptTags}
   ${analyticsTrackingCode ? `<script>${analyticsTrackingCode}</script>` : ''}
@@ -1755,14 +1869,12 @@ ${faviconTags}
 ${styleLinks}${analyticsHeadCode}
 </head>
 <body>
-  <div class="${CSS_CLASSES.siteWrapper}">
-    ${header}
-    <div class="scope">
-      ${hamburgerMenu}
-      ${sectionMap}
-      ${mainContent}
-      ${footer}
-    </div>
+  ${header}
+  <div class="scope">
+    ${hamburgerMenu}
+    ${sectionMap}
+    ${mainContent}
+    ${footer}
   </div>
   ${searchModal}
 ${scriptTags}

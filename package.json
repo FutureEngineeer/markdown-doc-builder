@@ -12,6 +12,7 @@
         "build:optimized": "npm run build && npm run optimize",
         "optimize": "node scripts/optimize.js",
         "optimize:images": "node scripts/optimize-images.js",
+        "optimize:images:smart": "node scripts/optimize-images-smart.js",
         "optimize:analyze": "node scripts/optimize.js && npm run optimize:images",
         "analyze": "node scripts/optimize.js",
         "cache:clear": "node scripts/clear-cache.js",
@@ -44,6 +45,10 @@
         "gh-pages": "^6.1.0",
         "http-server": "^14.1.1",
         "imagemin": "^9.0.1",
+        "imagemin-gifsicle": "^7.0.0",
+        "imagemin-mozjpeg": "^10.0.0",
+        "imagemin-pngquant": "^10.0.0",
+        "imagemin-svgo": "^11.0.1",
         "imagemin-webp": "^8.0.0",
         "mime-types": "^2.1.35",
         "nodemon": "^3.0.2"

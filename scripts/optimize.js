@@ -175,7 +175,6 @@ function generateCriticalCSS() {
     /:root\s*{[^}]+}/,
     /\*\s*{[^}]+}/,
     /body\s*{[^}]+}/,
-    /\.site-wrapper[^{]*{[^}]+}/,
     /header[^{]*{[^}]+}/,
     /\.header[^{]*{[^}]+}/,
     /\.logo[^{]*{[^}]+}/
@@ -277,11 +276,10 @@ function analyzeAssets() {
     const totalImageSize = images.reduce((sum, img) => sum + img.size, 0);
     console.log(`\n   Total: ${(totalImageSize / 1024 / 1024).toFixed(2)}MB (${images.length} images)`);
     
-    // Рекомендации
+    // Информация об оптимизации (без предупреждения)
     const largeImages = images.filter(img => img.size > 100 * 1024);
     if (largeImages.length > 0) {
-      console.log(`\n   ⚠️  ${largeImages.length} images > 100KB - consider optimization`);
-      console.log(`   💡 Use: npm install --save-dev imagemin imagemin-webp`);
+      console.log(`\n   ℹ️  ${largeImages.length} images > 100KB (will be optimized during build)`);
     }
   }
   

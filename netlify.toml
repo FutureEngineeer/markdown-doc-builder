@@ -26,13 +26,20 @@
 [build.processing.images]
   compress = true
 
+# SPA fallback - для правильной работы роутинга
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  
 # Custom error pages
 [[redirects]]
   from = "/*"
   to = "/assets/errors/404.html"
   status = 404
 
-# Server error page
+# Server error page  
 [[redirects]]
   from = "/*"
   to = "/assets/errors/500.html"

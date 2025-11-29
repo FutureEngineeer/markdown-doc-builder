@@ -60,6 +60,18 @@ async function initSearch() {
 }
 
 /**
+ * Получает текущий URL страницы
+ */
+function getCurrentPageUrl() {
+  const pathname = window.location.pathname;
+  let currentUrl = pathname.substring(pathname.lastIndexOf('/') + 1);
+  if (!currentUrl || currentUrl === '') {
+    currentUrl = './';
+  }
+  return currentUrl;
+}
+
+/**
  * Выполняет поиск
  * @param {string} query - Поисковый запрос
  * @returns {Array} - Массив результатов
@@ -82,19 +94,168 @@ function performSearch(query) {
     
     console.log(`✅ Found results: ${results.length}`);
     
+    const currentPageUrl = getCurrentPageUrl();
+    
     // Добавляем информацию о документах к результатам
-    return results.map(result => {
+    const enrichedResults = results.map(result => {
       const doc = searchDocuments[parseInt(result.ref)];
+      const isCurrentPage = doc.url === currentPageUrl || 
+                           doc.url.endsWith('/' + currentPageUrl) ||
+                           (currentPageUrl === './' && doc.url === './');
+      
       return {
         ...doc,
         score: result.score,
-        preview: generatePreview(doc.content, query)
+        isCurrentPage,
+        matches: findMatches(doc, query)
       };
-    }).slice(0, 20); // Увеличено до 20 результатов
+    });
+    
+    // Сортируем: сначала текущая страница, потом по score
+    enrichedResults.sort((a, b) => {
+      if (a.isCurrentPage && !b.isCurrentPage) return -1;
+      if (!a.isCurrentPage && b.isCurrentPage) return 1;
+      return b.score - a.score;
+    });
+    
+    return enrichedResults.slice(0, 30);
   } catch (error) {
     console.error('❌ Search error:', error);
     return [];
   }
+}
+
+/**
+ * Находит ближайший заголовок к позиции в тексте
+ * @param {Array} headings - Массив заголовков
+ * @param {number} position - Позиция в тексте
+ * @returns {Object|null} - Ближайший заголовок или null
+ */
+function findNearestHeading(headings, position) {
+  if (!headings || headings.length === 0) return null;
+  
+  let nearest = null;
+  for (const heading of headings) {
+    if (heading.position <= position) {
+      nearest = heading;
+    } else {
+      break;
+    }
+  }
+  
+  return nearest;
+}
+
+/**
+ * Подсчитывает количество слов в тексте
+ * @param {string} text - Текст
+ * @returns {number} - Количество слов
+ */
+function countWords(text) {
+  return text.trim().split(/\s+/).filter(w => w.length > 0).length;
+}
+
+/**
+ * Извлекает контекст с ограничением по словам или абзацу
+ * @param {string} content - Текстовый контент
+ * @param {number} position - Позиция совпадения
+ * @param {number} maxWords - Максимум слов (по умолчанию 50)
+ * @returns {string} - Контекст
+ */
+function extractSmartContext(content, position, maxWords = 50) {
+  // Находим начало и конец абзаца
+  let paragraphStart = content.lastIndexOf('\n\n', position);
+  if (paragraphStart === -1) paragraphStart = 0;
+  else paragraphStart += 2;
+  
+  let paragraphEnd = content.indexOf('\n\n', position);
+  if (paragraphEnd === -1) paragraphEnd = content.length;
+  
+  let context = content.substring(paragraphStart, paragraphEnd).trim();
+  
+  // Если абзац слишком длинный, ограничиваем по словам
+  if (countWords(context) > maxWords) {
+    const words = context.split(/\s+/);
+    const matchPosition = position - paragraphStart;
+    const matchWordIndex = countWords(content.substring(paragraphStart, paragraphStart + matchPosition));
+    
+    // Берем слова вокруг совпадения
+    const startWord = Math.max(0, matchWordIndex - Math.floor(maxWords / 2));
+    const endWord = Math.min(words.length, startWord + maxWords);
+    
+    context = words.slice(startWord, endWord).join(' ');
+    
+    if (startWord > 0) context = '...' + context;
+    if (endWord < words.length) context = context + '...';
+  }
+  
+  return context;
+}
+
+/**
+ * Извлекает HTML фрагмент вокруг совпадения с умным контекстом
+ * @param {string} html - HTML контент
+ * @param {string} plainText - Текстовый контент
+ * @param {number} position - Позиция совпадения в тексте
+ * @param {Object} heading - Ближайший заголовок
+ * @returns {string} - HTML фрагмент
+ */
+function extractHtmlFragment(html, plainText, position, heading) {
+  // Извлекаем умный контекст из текста
+  const textContext = extractSmartContext(plainText, position, 50);
+  
+  // Если есть заголовок, пытаемся найти его в HTML и добавить
+  if (heading && heading.text) {
+    const headingPattern = new RegExp(`<h[1-6][^>]*>${heading.text}</h[1-6]>`, 'i');
+    const headingMatch = html.match(headingPattern);
+    
+    if (headingMatch) {
+      // Возвращаем заголовок + контекст
+      return `<div class="search-heading">${headingMatch[0]}</div><div class="search-context">${textContext}</div>`;
+    }
+  }
+  
+  return `<div class="search-context">${textContext}</div>`;
+}
+
+/**
+ * Находит все совпадения в документе
+ * @param {Object} doc - Документ
+ * @param {string} query - Поисковый запрос
+ * @returns {Array} - Массив совпадений
+ */
+function findMatches(doc, query) {
+  const matches = [];
+  const queryLower = query.toLowerCase();
+  const contentLower = doc.content.toLowerCase();
+  
+  // Используем headingsData вместо headings
+  const headingsData = doc.headingsData || [];
+  
+  // Ищем все вхождения
+  let index = 0;
+  while ((index = contentLower.indexOf(queryLower, index)) !== -1) {
+    // Находим ближайший заголовок
+    const nearestHeading = findNearestHeading(headingsData, index);
+    
+    // Извлекаем умный контекст (50 слов или конец абзаца)
+    const preview = extractHtmlFragment(
+      doc.contentHtml || doc.content,
+      doc.content,
+      index,
+      nearestHeading
+    );
+    
+    matches.push({
+      preview: highlightQuery(preview, query),
+      position: index,
+      heading: nearestHeading
+    });
+    
+    index += queryLower.length;
+  }
+  
+  return matches.slice(0, 5); // Максимум 5 совпадений на документ
 }
 
 /**
@@ -153,11 +314,21 @@ function openSearchModal() {
     return;
   }
   
+  // Если модальное окно уже открыто, не делаем ничего
+  if (modal.classList.contains('active')) {
+    console.log('⚠️ Search modal already open');
+    return;
+  }
+  
   console.log('🔍 Opening search modal');
   
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
-  input.focus();
+  
+  // Фокусируем input после небольшой задержки для корректной работы анимации
+  setTimeout(() => {
+    input.focus();
+  }, 100);
   
   // Инициализируем поиск при первом открытии
   if (!searchInitialized) {
@@ -176,13 +347,26 @@ function closeSearchModal() {
   const input = document.getElementById('search-input');
   const results = document.getElementById('search-results');
   
-  if (modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-    
-    if (input) input.value = '';
-    if (results) results.innerHTML = '';
+  if (!modal) {
+    return;
   }
+  
+  // Если модальное окно уже закрыто, не делаем ничего
+  if (!modal.classList.contains('active')) {
+    console.log('⚠️ Search modal already closed');
+    return;
+  }
+  
+  console.log('🔍 Closing search modal');
+  
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+  
+  // Очищаем поле ввода и восстанавливаем начальное состояние результатов
+  setTimeout(() => {
+    if (input) input.value = '';
+    if (results) results.innerHTML = '<div class="search-hint">Type at least 2 characters to search</div>';
+  }, 300); // Задержка соответствует времени анимации
 }
 
 /**
@@ -234,16 +418,81 @@ function handleSearchInput(event) {
     return;
   }
   
+  // Группируем результаты по страницам
+  const groupedResults = [];
+  let currentUrl = null;
+  
+  results.forEach(result => {
+    if (result.url !== currentUrl) {
+      groupedResults.push({
+        type: 'page',
+        ...result
+      });
+      currentUrl = result.url;
+    } else {
+      // Дополнительные совпадения на той же странице
+      groupedResults.push({
+        type: 'match',
+        ...result
+      });
+    }
+  });
+  
   // Отображаем результаты
-  resultsContainer.innerHTML = results.map(result => `
-    <a href="${getResultUrl(result.url)}" class="search-result-item" onclick="closeSearchModal()">
-      <div class="search-result-header">
-        <span class="search-result-title">${highlightQuery(result.title, query)}</span>
-        ${result.breadcrumb ? `<span class="search-result-breadcrumb">${result.breadcrumb}</span>` : ''}
-      </div>
-      <div class="search-result-preview">${result.preview}</div>
-    </a>
-  `).join('');
+  let html = '';
+  let lastUrl = null;
+  
+  groupedResults.forEach((result, index) => {
+    // Добавляем разделитель между разными страницами
+    if (lastUrl !== null && result.url !== lastUrl) {
+      html += '<div class="search-result-separator"></div>';
+    }
+    
+    if (result.type === 'page') {
+      // Основной результат страницы
+      const currentPageBadge = result.isCurrentPage ? '<span class="current-page-badge">Current Page</span>' : '';
+      
+      // Определяем якорь для первого совпадения
+      const firstMatchAnchor = result.matches.length > 0 && result.matches[0].heading 
+        ? `#${result.matches[0].heading.id}` 
+        : '';
+      
+      html += `
+        <a href="${getResultUrl(result.url)}${firstMatchAnchor}" class="search-result-item ${result.isCurrentPage ? 'current-page' : ''}" onclick="closeSearchModal()">
+          <div class="search-result-header">
+            <span class="search-result-title">${highlightQuery(result.title, query)}</span>
+            ${currentPageBadge}
+            ${result.breadcrumb ? `<span class="search-result-breadcrumb">${result.breadcrumb}</span>` : ''}
+          </div>
+          ${result.matches.length > 0 ? `<div class="search-result-preview">${result.matches[0].preview}</div>` : ''}
+        </a>
+      `;
+      
+      // Если есть дополнительные совпадения на этой странице
+      if (result.matches.length > 1) {
+        const isCollapsed = !result.isCurrentPage;
+        const collapseClass = isCollapsed ? 'collapsed' : '';
+        const uniqueId = `more-matches-${index}`;
+        
+        html += `<div class="search-more-matches ${collapseClass}" id="${uniqueId}">`;
+        html += `<div class="search-more-matches-header" onclick="toggleMoreMatches('${uniqueId}')">${result.matches.length - 1} more on this page</div>`;
+        html += '<div class="search-more-matches-content">';
+        result.matches.slice(1).forEach(match => {
+          const anchor = match.heading ? `#${match.heading.id}` : '';
+          html += `
+            <a href="${getResultUrl(result.url)}${anchor}" class="search-match-item" onclick="closeSearchModal()">
+              <div class="search-result-preview">${match.preview}</div>
+            </a>
+          `;
+        });
+        html += '</div></div>';
+      }
+    }
+    
+    lastUrl = result.url;
+  });
+  
+  resultsContainer.innerHTML = html;
 }
 
 /**
@@ -262,6 +511,22 @@ function highlightQuery(text, query) {
   });
   
   return result;
+}
+
+/**
+ * Переключает видимость дополнительных совпадений
+ * @param {string} id - ID элемента
+ */
+function toggleMoreMatches(id) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.classList.toggle('collapsed');
+  }
+}
+
+// Экспортируем для использования в onclick
+if (typeof window !== 'undefined') {
+  window.toggleMoreMatches = toggleMoreMatches;
 }
 
 /**

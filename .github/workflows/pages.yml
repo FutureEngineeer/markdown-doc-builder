@@ -1,5 +1,5 @@
-# Простой workflow для деплоя статического контента на GitHub Pages
-name: Deploy static content to Pages
+# Оптимизированный workflow для деплоя на GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   # Запуск при пуше в ветку "main"
@@ -15,15 +15,13 @@ permissions:
   pages: write
   id-token: write
 
-# Разрешить только один одновременный деплой, пропуская запуски в очереди между последним запущенным и последним в очереди.
-# Однако НЕ отменяйте выполняющиеся запуски, поскольку мы хотим, чтобы эти производственные деплои завершились.
+# Разрешить только один одновременный деплой
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Задача одиночного деплоя, поскольку мы просто деплоим
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -31,6 +29,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Полная история для проверки изменений
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,7 +41,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Build
+      # Кеширование репозиториев и оптимизированных изображений
+      - name: Cache repositories and optimized assets
+        uses: actions/cache@v3
+        with:
+          path: |
+            .temp/repos
+            .temp/repos-cache.json
+            dist/assets
+          key: build-cache-${{ hashFiles('config.yaml', 'website/**/*.yaml') }}-${{ github.run_number }}
+          restore-keys: |
+            build-cache-${{ hashFiles('config.yaml', 'website/**/*.yaml') }}-
+            build-cache-
+      
+      - name: Build site
         run: npm run build:all
       
       - name: Setup Pages
@@ -50,7 +63,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Загружаем папку dist
           path: './dist'
       
       - name: Deploy to GitHub Pages

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест страниц ошибок</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1B1C28;
+            color: #fff;
+        }
+        h1 {
+            color: #2FB65A;
+        }
+        .link-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(47, 182, 90, 0.3);
+        }
+        a {
+            color: #2FB65A;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .info {
+            background: rgba(88, 101, 242, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #5865F2;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест страниц ошибок</h1>
+    
+    <div class="info">
+        <strong>Информация:</strong> Эти страницы будут автоматически показываться при ошибках на сервере.
+    </div>
+
+    <div class="link-box">
+        <h2>404 - Страница не найдена</h2>
+        <p>Показывается когда пользователь переходит по несуществующему URL</p>
+        <a href="assets/errors/404.html" target="_blank">→ Открыть страницу 404</a>
+    </div>
+
+    <div class="link-box">
+        <h2>500 - Ошибка сервера</h2>
+        <p>Показывается при внутренних ошибках сервера</p>
+        <a href="assets/errors/500.html" target="_blank">→ Открыть страницу 500</a>
+    </div>
+
+    <div class="info">
+        <strong>Конфигурация Netlify:</strong><br>
+        Страницы ошибок настроены в файле <code>netlify.toml</code> и будут автоматически показываться при соответствующих HTTP статусах.
+    </div>
+</body>
+</html>

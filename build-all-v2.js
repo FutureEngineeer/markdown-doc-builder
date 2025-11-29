@@ -679,8 +679,7 @@ async function generateMainContent(index, fileStructure) {
         await generateMainContentOnly(sourceFile.path, outputPath);
         generatedCount++;
         
-        const mark = item.inSidebar ? '' : ' [hidden]';
-        console.log(`✓ ${item.output}${mark}`);
+        // Скрываем список файлов, показываем только ошибки
       } catch (error) {
         console.error(`❌ Error: ${item.output}`, error.message);
       }
@@ -803,7 +802,7 @@ async function postProcessAllFiles() {
     try {
       await wrapMainContentInHTML(filePath);
       processedCount++;
-      console.log(`✓ ${path.relative('dist', filePath)}`);
+      // Скрываем список файлов, показываем только ошибки
     } catch (error) {
       console.error(`❌ Error: ${path.relative('dist', filePath)}`, error.message);
     }
@@ -899,6 +898,9 @@ async function buildAll() {
   // Phase 5: Generate search index
   await generateSearchIndex();
   
+  // Phase 6: Optimize images
+  await optimizeImages();
+  
   console.log('='.repeat(60));
   console.log('✅ Build completed successfully!');
   console.log('='.repeat(60));
@@ -922,6 +924,27 @@ async function generateSearchIndex() {
     console.log(`   ✓ Search index created: ${searchData.documents.length} documents indexed\n`);
   } catch (error) {
     console.error('   ❌ Failed to generate search index:', error.message);
+  }
+}
+
+/**
+ * Optimize images in dist folder (smart - only new files)
+ */
+async function optimizeImages() {
+  console.log('🖼️  Optimizing images (smart mode)...');
+  
+  try {
+    const { optimizeImages: smartOptimize } = require('./scripts/optimize-images-smart');
+    await smartOptimize();
+  } catch (error) {
+    // Если пакеты не установлены, показываем предупреждение
+    if (error.code === 'ERR_MODULE_NOT_FOUND' || error.code === 'MODULE_NOT_FOUND') {
+      console.log(`   ⚠️  Image optimization skipped (packages not installed)`);
+      console.log(`   💡 Install: npm install --save-dev imagemin imagemin-mozjpeg imagemin-pngquant imagemin-gifsicle imagemin-svgo\n`);
+    } else {
+      console.error('   ❌ Failed to optimize images:', error.message);
+      console.log('');
+    }
   }
 }
 

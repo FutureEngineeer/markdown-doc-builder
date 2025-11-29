@@ -44,7 +44,6 @@ const CSS_CLASSES = {
   grid4: 'grid-4',
   grid5: 'grid-5',
   projectButton: 'btn',
-  siteWrapper: 'site-wrapper',
   header: 'header',
   headerContainer: 'header-container',
   logoSection: 'logo-section',
