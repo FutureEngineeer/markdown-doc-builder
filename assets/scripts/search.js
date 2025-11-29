@@ -8,27 +8,31 @@ let searchInitialized = false;
  * Получает путь к корню сайта
  */
 function getSearchIndexPath() {
-  // Получаем базовый путь (директория, где находится index.html)
   const pathname = window.location.pathname;
   
-  // Если pathname заканчивается на .html, убираем имя файла
+  // Убираем имя файла, оставляем только путь к директории
   let basePath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
   
-  // Если мы в поддиректории (например /dist/), убираем её
-  if (basePath.includes('/dist/')) {
-    basePath = basePath.substring(basePath.indexOf('/dist/') + 5);
+  // Убираем базовый URL репозитория для GitHub Pages
+  // Например: /markdown-doc-builder/ -> /
+  const pathParts = basePath.split('/').filter(p => p);
+  
+  // Если первая часть - это название репозитория, убираем её
+  if (pathParts.length > 0 && !pathParts[0].endsWith('.html')) {
+    // Считаем глубину вложенности после базового пути
+    const depth = pathParts.length - 1;
+    
+    if (depth === 0) {
+      // Мы в корне репозитория
+      return 'search-index.json';
+    } else {
+      // Поднимаемся к корню
+      return '../'.repeat(depth) + 'search-index.json';
+    }
   }
   
-  // Считаем уровень вложенности
-  const depth = (basePath.match(/\//g) || []).length;
-  
-  if (depth === 0 || depth === 1) {
-    // Корень или первый уровень
-    return basePath + 'search-index.json';
-  }
-  
-  // Для вложенных страниц поднимаемся к корню
-  return '../'.repeat(depth - 1) + 'search-index.json';
+  // Если мы в корне сайта
+  return 'search-index.json';
 }
 
 /**
@@ -64,11 +68,23 @@ async function initSearch() {
  */
 function getCurrentPageUrl() {
   const pathname = window.location.pathname;
-  let currentUrl = pathname.substring(pathname.lastIndexOf('/') + 1);
-  if (!currentUrl || currentUrl === '') {
-    currentUrl = './';
+  
+  // Убираем базовый путь репозитория
+  const pathParts = pathname.split('/').filter(p => p);
+  
+  if (pathParts.length === 0) {
+    return 'index.html';
   }
-  return currentUrl;
+  
+  // Последняя часть - это имя файла
+  const fileName = pathParts[pathParts.length - 1];
+  
+  // Если это директория (нет .html), возвращаем index.html
+  if (!fileName.endsWith('.html')) {
+    return 'index.html';
+  }
+  
+  return fileName;
 }
 
 /**
@@ -99,9 +115,14 @@ function performSearch(query) {
     // Добавляем информацию о документах к результатам
     const enrichedResults = results.map(result => {
       const doc = searchDocuments[parseInt(result.ref)];
-      const isCurrentPage = doc.url === currentPageUrl || 
-                           doc.url.endsWith('/' + currentPageUrl) ||
-                           (currentPageUrl === './' && doc.url === './');
+      
+      // Нормализуем URL для сравнения
+      const docUrl = doc.url.replace(/^\.\//, '');
+      const docFileName = docUrl.split('/').pop();
+      
+      const isCurrentPage = docFileName === currentPageUrl || 
+                           docUrl === currentPageUrl ||
+                           (currentPageUrl === 'index.html' && docUrl === './');
       
       return {
         ...doc,
@@ -156,6 +177,39 @@ function countWords(text) {
 }
 
 /**
+ * Преобразует markdown-подобный текст в HTML для отображения
+ * @param {string} text - Текст
+ * @returns {string} - HTML
+ */
+function formatTextForDisplay(text) {
+  // Сохраняем переносы строк
+  let formatted = text
+    // Заменяем двойные переносы на параграфы
+    .replace(/\n\n/g, '</p><p>')
+    // Заменяем одинарные переносы на <br>
+    .replace(/\n/g, '<br>');
+  
+  // Оборачиваем в параграф если нужно
+  if (!formatted.startsWith('<p>')) {
+    formatted = '<p>' + formatted;
+  }
+  if (!formatted.endsWith('</p>')) {
+    formatted = formatted + '</p>';
+  }
+  
+  // Обрабатываем inline код
+  formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+  
+  // Обрабатываем жирный текст
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Обрабатываем курсив
+  formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  
+  return formatted;
+}
+
+/**
  * Извлекает контекст с ограничением по словам или абзацу
  * @param {string} content - Текстовый контент
  * @param {number} position - Позиция совпадения
@@ -189,7 +243,8 @@ function extractSmartContext(content, position, maxWords = 50) {
     if (endWord < words.length) context = context + '...';
   }
   
-  return context;
+  // Форматируем текст для отображения
+  return formatTextForDisplay(context);
 }
 
 /**
@@ -378,23 +433,18 @@ function getResultUrl(resultUrl) {
   
   // Получаем текущий путь
   const pathname = window.location.pathname;
-  let basePath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
+  const pathParts = pathname.split('/').filter(p => p && !p.endsWith('.html'));
   
-  // Если мы в поддиректории (например /dist/), убираем её
-  if (basePath.includes('/dist/')) {
-    basePath = basePath.substring(basePath.indexOf('/dist/') + 5);
-  }
+  // Считаем глубину вложенности (исключая базовый путь репозитория)
+  const depth = pathParts.length > 0 ? pathParts.length - 1 : 0;
   
-  // Считаем уровень вложенности
-  const depth = (basePath.match(/\//g) || []).length;
-  
-  if (depth === 0 || depth === 1) {
-    // Корень или первый уровень - используем URL как есть
+  if (depth === 0) {
+    // Мы в корне - используем URL как есть
     return url;
   }
   
   // Для вложенных страниц поднимаемся к корню
-  return '../'.repeat(depth - 1) + url;
+  return '../'.repeat(depth) + url;
 }
 
 /**

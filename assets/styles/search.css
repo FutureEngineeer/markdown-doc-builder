@@ -225,7 +225,30 @@
 .search-result-preview {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
+}
+
+/* Форматирование текста в результатах поиска */
+.search-result-preview p,
+.search-match-item p {
+    margin: 0.5rem 0;
+}
+
+.search-result-preview p:first-child,
+.search-match-item p:first-child {
+    margin-top: 0;
+}
+
+.search-result-preview p:last-child,
+.search-match-item p:last-child {
+    margin-bottom: 0;
+}
+
+.search-result-preview br,
+.search-match-item br {
+    display: block;
+    content: "";
+    margin: 0.25rem 0;
 }
 
 /* Сохраняем стили для кода, списков и других элементов в превью */
@@ -246,6 +269,41 @@
     border-radius: 4px;
     overflow-x: auto;
     margin: 0.5rem 0;
+}
+
+.search-result-preview strong,
+.search-match-item strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.search-result-preview em,
+.search-match-item em {
+    font-style: italic;
+}
+
+/* Таблицы в результатах поиска */
+.search-result-preview table,
+.search-match-item table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5rem 0;
+    font-size: 0.85em;
+}
+
+.search-result-preview th,
+.search-result-preview td,
+.search-match-item th,
+.search-match-item td {
+    border: 1px solid var(--border-color);
+    padding: 0.25rem 0.5rem;
+    text-align: left;
+}
+
+.search-result-preview th,
+.search-match-item th {
+    background: var(--bg-secondary);
+    font-weight: 600;
 }
 
 .search-result-preview ul,
