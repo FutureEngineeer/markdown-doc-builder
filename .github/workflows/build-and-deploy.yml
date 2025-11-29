@@ -71,15 +71,7 @@ jobs:
         fi
     
     - name: Build site
-      run: |
-        FORCE_REBUILD="${{ github.event.inputs.force_rebuild }}"
-        if [ "$FORCE_REBUILD" = "true" ] || [ "${{ steps.check-changes.outputs.force-rebuild }}" = "true" ]; then
-          echo "🔄 Force rebuilding all files..."
-          npm run build:all
-        else
-          echo "⚡ Building with cache..."
-          npm run build:all
-        fi
+      run: npm run build:all
     
     - name: Setup Pages
       uses: actions/configure-pages@v4

@@ -4,18 +4,61 @@ const yaml = require('js-yaml');
 const simpleGit = require('simple-git');
 
 /**
+ * Извлекает репозитории из hierarchy
+ */
+function extractRepositories(hierarchy, repos = []) {
+  if (!hierarchy || !Array.isArray(hierarchy)) return repos;
+  
+  hierarchy.forEach(item => {
+    if (item.repository) {
+      repos.push({ url: item.repository, alias: item.alias });
+    }
+    if (item.children) {
+      extractRepositories(item.children, repos);
+    }
+  });
+  
+  return repos;
+}
+
+/**
  * Проверяет изменения в репозиториях и определяет нужна ли пересборка
  */
 async function checkRepoChanges() {
   try {
-    // Загружаем конфигурацию
-    const config = yaml.load(fs.readFileSync('config.yaml', 'utf8'));
-    const repositories = config?.build?.input?.githubRepositories || [];
+    // Загружаем конфигурацию из website/doc-config.yaml
+    const docConfigPath = 'website/doc-config.yaml';
+    let repositories = [];
+    
+    if (fs.existsSync(docConfigPath)) {
+      const docConfig = yaml.load(fs.readFileSync(docConfigPath, 'utf8'));
+      repositories = extractRepositories(docConfig?.hierarchy || []);
+    }
+    
+    // Также проверяем секции
+    const websiteDir = 'website';
+    if (fs.existsSync(websiteDir)) {
+      const items = fs.readdirSync(websiteDir, { withFileTypes: true });
+      items.forEach(item => {
+        if (item.isDirectory()) {
+          const sectionConfigPath = path.join(websiteDir, item.name, 'doc-config.yaml');
+          if (fs.existsSync(sectionConfigPath)) {
+            const sectionConfig = yaml.load(fs.readFileSync(sectionConfigPath, 'utf8'));
+            repositories = repositories.concat(extractRepositories(sectionConfig?.hierarchy || []));
+          }
+        }
+      });
+    }
     
     if (repositories.length === 0) {
       console.log('No repositories configured');
       return { forceRebuild: false, changedRepos: [] };
     }
+    
+    console.log(`Found ${repositories.length} repositories to check`);
+    repositories.forEach(repo => {
+      console.log(`  - ${repo.alias || repo.url}`);
+    });
     
     // Проверяем кеш
     const cacheFile = '.temp/repos-cache.json';
