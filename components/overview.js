@@ -104,21 +104,9 @@ function parseOverviewContent(markdown, relativeRoot = './') {
       if (imageSrc && !imageSrc.startsWith('http')) {
         const path = require('path');
         
-        if (imageSrc.startsWith('./assets/') || imageSrc.startsWith('assets/')) {
-          imageSrc = imageSrc.replace(/^\.?\/assets\//, `${relativeRoot}assets/`);
-        } else if (imageSrc.startsWith('../')) {
-          // Обрабатываем пути типа ../../assets/image.gif
-          const segments = imageSrc.split('/');
-          const assetIndex = segments.findIndex(seg => seg === 'assets');
-          if (assetIndex !== -1) {
-            // Берем путь от assets и далее
-            const assetPath = segments.slice(assetIndex).join('/');
-            imageSrc = `${relativeRoot}${assetPath}`;
-          } else {
-            // Если нет папки assets, просто берем имя файла
-            imageSrc = `${relativeRoot}assets/${path.basename(imageSrc)}`;
-          }
-        }
+        // Все изображения должны быть в assets/images/root/
+        const imageFileName = path.basename(imageSrc);
+        imageSrc = `${relativeRoot}assets/images/root/${imageFileName}`;
       }
       
       pageData.overview.image = imageSrc;

@@ -82,7 +82,8 @@ function getRelativePathToRoot(outputFile) {
     
     if (!outputFile) return './';
     
-    const normalizedPath = path.normalize(outputFile).replace(/\\/g, '/');
+    // Заменяем обратные слеши на прямые для кросс-платформенности
+    let normalizedPath = outputFile.replace(/\\/g, '/');
     const pathParts = normalizedPath.split('/');
     
     const distIndex = pathParts.findIndex(part => part === 'dist');

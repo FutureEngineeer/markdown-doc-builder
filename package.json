@@ -4,9 +4,9 @@
     "description": "Multi-repository documentation builder for GitHub Pages",
     "main": "builder.js",
     "scripts": {
-        "build": "node build-all-v2.js",
-        "build:all": "node build-all-v2.js",
-        "build:netlify": "node build-all-v2.js",
+        "build": "node build-all-v3.js",
+        "build:all": "node build-all-v3.js",
+        "build:netlify": "node build-all-v3.js",
         "build:clean": "node scripts/clean-build.js && npm run build:all",
         "build:test": "node scripts/test-build.js",
         "build:optimized": "npm run build && npm run optimize",
@@ -18,7 +18,9 @@
         "cache:clear": "node scripts/clear-cache.js",
         "cache:info": "node scripts/cache-info.js",
         "index:check": "node scripts/check-index.js",
-        "search:test": "node scripts/test-search.js"
+        "search:test": "node scripts/test-search.js",
+        "test:images": "node scripts/test-image-optimization.js",
+        "errors:generate": "node scripts/generate-error-pages.js"
     },
     "dependencies": {
         "@mdit/plugin-alert": "0.12.0",

@@ -220,6 +220,26 @@ if (typeof window !== 'undefined') {
 
 // Функциональность якорных ссылок для заголовков
 document.addEventListener('DOMContentLoaded', () => {
+    // Функция для получения высоты header
+    function getHeaderHeight() {
+        const header = document.querySelector('header');
+        return header ? header.offsetHeight : (window.innerWidth >= 651 ? 90 : 75);
+    }
+    
+    // Функция для прокрутки к элементу с учетом header
+    function scrollToElement(target) {
+        if (!target) return;
+        
+        const headerHeight = getHeaderHeight();
+        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = targetPosition - headerHeight - 10; // 10px дополнительный отступ
+        
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    }
+    
     // Добавляем обработчик для всех якорных ссылок
     const anchorLinks = document.querySelectorAll('.anchor-link');
     
@@ -230,30 +250,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const href = link.getAttribute('href');
             const targetId = href.substring(1); // Убираем #
             
-            // Копируем полную ссылку в буфер обмена
-            const fullUrl = window.location.origin + window.location.pathname + href;
+            // Обновляем URL без перезагрузки страницы
+            history.pushState(null, null, href);
             
-            navigator.clipboard.writeText(fullUrl).then(() => {
-                // Визуальная обратная связь
-                const originalText = link.textContent;
-                link.textContent = '✓';
-                link.style.opacity = '1';
-                
-                setTimeout(() => {
-                    link.textContent = originalText;
-                }, 1500);
-                
-                // Обновляем URL без перезагрузки страницы
-                history.pushState(null, null, href);
-                
-                // Прокручиваем к элементу
-                const target = document.getElementById(targetId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }).catch(err => {
-                console.error('Не удалось скопировать ссылку:', err);
-            });
+            // Прокручиваем к элементу с учетом header
+            const target = document.getElementById(targetId);
+            scrollToElement(target);
         });
     });
     
@@ -262,6 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             const target = document.querySelector(window.location.hash);
             if (target) {
+                // При загрузке страницы используем scroll-margin-top (работает корректно)
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }, 100);

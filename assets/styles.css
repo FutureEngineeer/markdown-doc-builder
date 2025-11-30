@@ -322,6 +322,7 @@ h5 {
     font-size: 0.8em;
     transition: opacity var(--speed-fast) var(--ease-smooth), color var(--speed-fast) var(--ease-smooth);
     cursor: pointer;
+    user-select: none;  /* Предотвращаем выделение текста */
 }
 
 .heading-with-anchor:hover .anchor-link {
@@ -775,11 +776,32 @@ main {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
+    /* Fallback: показываем контент через 1 секунду даже если JS не загрузился */
+    animation: fadeInFallback 0.6s ease 1s forwards;
+}
+
+/* Scroll offset для якорей - заголовки будут с отступом от header */
+main :target {
+    scroll-margin-top: 115px;  /* Только небольшой отступ, header учитывается автоматически */
+}
+
+@media (min-width: 651px) {
+    main :target {
+        scroll-margin-top: 100px;  /* Только небольшой отступ, header учитывается автоматически */
+    }
 }
 
 main.loaded {
     opacity: 1;
     transform: translateY(0);
+    animation: none; /* Отменяем fallback анимацию если JS сработал */
+}
+
+@keyframes fadeInFallback {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* На мобильных устройствах */

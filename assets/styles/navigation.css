@@ -218,7 +218,7 @@
     overflow-x: hidden;
     overscroll-behavior: contain;
     z-index: 1100;  /* Выше header::after и footer::before */
-    transition: left var(--speed-smooth) var(--ease-smooth);
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);  /* Увеличиваем скорость в 2 раза (1.0s -> 0.5s) */
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
     -webkit-overflow-scrolling: touch;  /* Плавная прокрутка на iOS */
 }

@@ -11,19 +11,24 @@ const { generateInlineSvg } = require('./utils');
 function getRelativePathToRoot(outputFile) {
   if (!outputFile) return './';
   
-  const relativePath = path.relative(process.cwd(), outputFile);
-  const pathParts = relativePath.split(path.sep);
+  // Заменяем обратные слеши на прямые для кросс-платформенности
+  let normalizedPath = outputFile.replace(/\\/g, '/');
+  const pathParts = normalizedPath.split('/');
   
-  // Считаем количество папок (исключая имя файла)
-  const folderDepth = pathParts.length - 1;
+  const distIndex = pathParts.findIndex(part => part === 'dist');
   
-  if (folderDepth <= 1) {
-    // Файл в корне или в папке dist
+  if (distIndex === -1) {
+    const folderDepth = pathParts.length - 1;
+    return folderDepth <= 0 ? './' : '../'.repeat(folderDepth);
+  }
+  
+  const levelsAfterDist = pathParts.length - distIndex - 2;
+  
+  if (levelsAfterDist <= 0) {
     return './';
   }
   
-  // Для каждого уровня вложенности добавляем "../"
-  return '../'.repeat(folderDepth - 1);
+  return '../'.repeat(levelsAfterDist);
 }
 
 function generateHeader(config, currentPage = '', customBreadcrumb = '', outputFile = '') {

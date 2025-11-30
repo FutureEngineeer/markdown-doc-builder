@@ -151,18 +151,33 @@ footer {
 @media (max-width: 650px) {
     footer {
         min-height: auto;  /* Убираем минимальную высоту на мобильных */
-        padding: 1.5rem 1rem;  /* Увеличиваем padding для мобильных */
+        max-height: 150px;  /* Ограничиваем максимальную высоту */
+        padding: 1rem 0.7rem;  /* Уменьшаем padding на 30% */
     }
 
     .footer-container {
         flex-direction: column;
         text-align: center;
         justify-content: center;
-        gap: 1.5rem;  /* Увеличиваем gap между элементами */
+        gap: 1rem;  /* Уменьшаем gap на 30% */
     }
 
     .social-links {
         justify-content: center;
+        gap: 0.5rem;  /* Уменьшаем gap между social pills на 30% */
+    }
+    
+    /* Уменьшаем social-pill на 30% */
+    .social-pill {
+        min-width: 28px;  /* 40px * 0.7 */
+        min-height: 28px;  /* 40px * 0.7 */
+        padding: 0.35rem;  /* 0.5rem * 0.7 */
+        border-width: 1.4px;  /* 2px * 0.7 */
+    }
+    
+    .social-icon {
+        width: calc(var(--icon-size) * 0.7);
+        height: calc(var(--icon-size) * 0.7);
     }
 }
 

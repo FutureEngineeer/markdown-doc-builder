@@ -2,6 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { optimizeImage } = require('./imageOptimizer');
+const { globalImageIndexer } = require('./imageIndexer');
 
 // Кеш скачанных репозиториев
 const downloadedReposCache = new Map();
@@ -314,28 +316,79 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
         showProgress(downloadedCount, totalFiles);
         
       } else if (file.type === 'image') {
-        // Сохраняем изображения в dist/assets/images с исходной структурой папок
+        // Создаем структуру: assets/images/{owner-repo}/{path}
         const assetsImagesDir = path.join(process.cwd(), 'dist', 'assets', 'images');
-        const imageRelativePath = file.path; // Сохраняем полный путь
-        const localFilePath = path.join(assetsImagesDir, imageRelativePath);
+        const repoStructurePath = `${owner}-${repo}`;
+        const imageRelativePath = file.path;
+        const localFilePath = path.join(assetsImagesDir, repoStructurePath, imageRelativePath);
         const localFileDir = path.dirname(localFilePath);
         
-        // Создаем структуру папок если её нет
-        if (!fs.existsSync(localFileDir)) {
-          fs.mkdirSync(localFileDir, { recursive: true });
+        // Скачиваем изображение во временный файл
+        const tempDir = path.join('.temp', 'images');
+        if (!fs.existsSync(tempDir)) {
+          fs.mkdirSync(tempDir, { recursive: true });
         }
+        const tempFilePath = path.join(tempDir, path.basename(file.path) + '.tmp');
+        await downloadBinaryFile(file.url, tempFilePath);
         
-        // Скачиваем изображение
-        await downloadBinaryFile(file.url, localFilePath);
+        // Регистрируем изображение в индексаторе
+        const registration = globalImageIndexer.registerImage(
+          tempFilePath,
+          localFilePath,
+          `${owner}/${repo}/${file.path}`
+        );
         
-        downloadedFiles.push({
-          originalPath: file.path,
-          localPath: localFilePath,
-          localRelativePath: imageRelativePath,
-          relativePath: `assets/images/${imageRelativePath}`,
-          url: file.url,
-          type: 'image'
-        });
+        if (registration.isDuplicate) {
+          // Изображение уже существует, удаляем временный файл
+          if (fs.existsSync(tempFilePath)) {
+            fs.unlinkSync(tempFilePath);
+          }
+          
+          downloadedFiles.push({
+            originalPath: file.path,
+            localPath: registration.finalPath,
+            localRelativePath: path.relative(assetsImagesDir, registration.finalPath),
+            relativePath: `assets/images/${path.relative(assetsImagesDir, registration.finalPath)}`,
+            url: file.url,
+            type: 'image',
+            isDuplicate: true
+          });
+        } else {
+          // Создаем структуру папок если её нет
+          if (!fs.existsSync(localFileDir)) {
+            fs.mkdirSync(localFileDir, { recursive: true });
+          }
+          
+          // Оптимизируем изображение
+          try {
+            optimizeImage(tempFilePath, localFilePath, {
+              quality: 85,
+              maxWidth: 1920,
+              maxHeight: 1080,
+              stripMetadata: true
+            });
+            
+            // Удаляем временный файл
+            if (fs.existsSync(tempFilePath)) {
+              fs.unlinkSync(tempFilePath);
+            }
+          } catch (error) {
+            // Если оптимизация не удалась, используем оригинал
+            if (fs.existsSync(tempFilePath)) {
+              fs.renameSync(tempFilePath, localFilePath);
+            }
+          }
+          
+          downloadedFiles.push({
+            originalPath: file.path,
+            localPath: localFilePath,
+            localRelativePath: path.join(repoStructurePath, imageRelativePath),
+            relativePath: `assets/images/${repoStructurePath}/${imageRelativePath}`,
+            url: file.url,
+            type: 'image',
+            isDuplicate: false
+          });
+        }
         
         downloadedCount++;
         showProgress(downloadedCount, totalFiles);
@@ -517,7 +570,7 @@ function getHtmlPathForRepoFile(repoPath, owner, repo, alias = null) {
 /**
  * Обрабатывает ссылки в markdown файле GitHub проекта
  */
-function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDownloadedRepos = []) {
+function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDownloadedRepos = [], outputFile = null) {
   const { owner, repo, branch } = projectData;
   
   // Сначала обрабатываем изображения
@@ -547,11 +600,27 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
         }
         
         if (imageFile) {
-          // Вычисляем относительный путь от текущего файла к assets/images
-          const currentDir = path.dirname(currentFilePath);
-          const levelsUp = currentDir.split('/').filter(part => part !== '').length;
-          const relativePath = '../'.repeat(levelsUp) + `assets/images/${imageFile.originalPath}`;
-          return `![${altText}](${relativePath})`;
+          // Используем localRelativePath который уже содержит {owner-repo}/path
+          // Нормализуем путь (заменяем обратные слеши на прямые)
+          const normalizedPath = imageFile.localRelativePath.replace(/\\/g, '/');
+          
+          // Вычисляем относительный путь от outputFile к изображению
+          let finalImagePath;
+          if (outputFile) {
+            const projectRoot = process.cwd();
+            // Если outputFile относительный, делаем его абсолютным
+            const absoluteOutputFile = path.isAbsolute(outputFile) 
+              ? outputFile 
+              : path.join(projectRoot, outputFile);
+            const outputDir = path.dirname(absoluteOutputFile);
+            const imageFullPath = path.join(projectRoot, 'dist', 'assets', 'images', normalizedPath);
+            finalImagePath = path.relative(outputDir, imageFullPath).replace(/\\/g, '/');
+          } else {
+            // Fallback: используем путь от корня dist
+            finalImagePath = `assets/images/${normalizedPath}`;
+          }
+          
+          return `![${altText}](${finalImagePath})`;
         }
       }
     }
@@ -585,15 +654,38 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
     );
     
     if (imageFile) {
-      // Изображение скачано в dist/assets/images с сохранением структуры
-      // Вычисляем относительный путь от текущего файла к assets/images
-      const currentDir = path.dirname(currentFilePath);
-      const levelsUp = currentDir.split('/').filter(part => part !== '').length;
-      const relativePath = '../'.repeat(levelsUp) + `assets/images/${imageFile.originalPath}`;
-      return `![${altText}](${relativePath})`;
+      // Изображение скачано в dist/assets/images/{owner-repo}/ с сохранением структуры
+      // Используем localRelativePath который уже содержит {owner-repo}/path
+      // Нормализуем путь (заменяем обратные слеши на прямые)
+      const normalizedPath = imageFile.localRelativePath.replace(/\\/g, '/');
+      
+      // Вычисляем относительный путь от outputFile к изображению
+      let finalImagePath;
+      if (outputFile) {
+        const projectRoot = process.cwd();
+        // Если outputFile относительный, делаем его абсолютным
+        const absoluteOutputFile = path.isAbsolute(outputFile) 
+          ? outputFile 
+          : path.join(projectRoot, outputFile);
+        const outputDir = path.dirname(absoluteOutputFile);
+        const imageFullPath = path.join(projectRoot, 'dist', 'assets', 'images', normalizedPath);
+        finalImagePath = path.relative(outputDir, imageFullPath).replace(/\\/g, '/');
+        
+
+      } else {
+        // Fallback: используем путь от корня dist
+        finalImagePath = `assets/images/${normalizedPath}`;
+      }
+      
+      return `![${altText}](${finalImagePath})`;
     }
     
-    return `![${altText}](${processedImagePath})`;
+    // Вычисляем относительный путь от текущего файла к assets/images
+    const currentDir = path.dirname(currentFilePath);
+    const levelsUp = currentDir.split('/').filter(part => part !== '').length;
+    const relativePath = '../'.repeat(levelsUp) + processedImagePath;
+    
+    return `![${altText}](${relativePath})`;
   });
   
   // Обрабатываем ссылки на .md файлы (включая ссылки в изображениях)
@@ -704,11 +796,27 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
       );
       
       if (imageFile) {
-        // Вычисляем относительный путь от текущего файла к assets/images
-        const currentDir = path.dirname(currentFilePath);
-        const levelsUp = currentDir.split('/').filter(part => part !== '').length;
-        const relativePath = '../'.repeat(levelsUp) + `assets/images/${imageFile.originalPath}`;
-        return `[${linkText}](${relativePath})`;
+        // Используем localRelativePath который уже содержит {owner-repo}/path
+        const normalizedPath = imageFile.localRelativePath.replace(/\\/g, '/');
+        
+        // Вычисляем относительный путь от outputFile к изображению
+        let finalImagePath;
+        if (outputFile) {
+          const projectRoot = process.cwd();
+          const absoluteOutputFile = path.isAbsolute(outputFile) 
+            ? outputFile 
+            : path.join(projectRoot, outputFile);
+          const outputDir = path.dirname(absoluteOutputFile);
+          const imageFullPath = path.join(projectRoot, 'dist', 'assets', 'images', normalizedPath);
+          finalImagePath = path.relative(outputDir, imageFullPath).replace(/\\/g, '/');
+        } else {
+          // Fallback: вычисляем относительный путь от текущего файла
+          const currentDir = path.dirname(currentFilePath);
+          const levelsUp = currentDir.split('/').filter(part => part !== '').length;
+          finalImagePath = '../'.repeat(levelsUp) + `assets/images/${normalizedPath}`;
+        }
+        
+        return `[${linkText}](${finalImagePath})`;
       }
     }
     

@@ -202,9 +202,10 @@ function parseMarkdownWithCards(markdown, sectionName = null) {
       continue;
     }
 
-    // Проверяем конец секции спецификаций
-    if (inSpecificationSection && (trimmed.startsWith('## ') || trimmed.match(/^---+$/))) {
+    // Проверяем конец секции спецификаций - ЛЮБОЙ новый H2 заголовок
+    if (inSpecificationSection && trimmed.startsWith('## ')) {
       inSpecificationSection = false;
+      // Продолжаем обработку этой строки ниже
     }
 
     // Проверка начала целевой секции
@@ -323,7 +324,41 @@ function parseMarkdownWithCards(markdown, sectionName = null) {
     i++;
   }
 
-
+  // ВАЖНО: Если мы удалили карточки из секции, добавляем placeholder
+  // чтобы секция не была пустой и markdown-it создал для неё <section>
+  if (sectionName && cards.length > 0) {
+    const cleanedLines = outputLines.join('\n').split('\n');
+    const sectionRegex = new RegExp(`^##\\s+${sectionName}\\b`, 'i');
+    let sectionIndex = -1;
+    let nextSectionIndex = -1;
+    
+    // Находим индекс секции
+    for (let i = 0; i < cleanedLines.length; i++) {
+      if (cleanedLines[i].match(sectionRegex)) {
+        sectionIndex = i;
+      } else if (sectionIndex >= 0 && cleanedLines[i].match(/^##\s+/)) {
+        nextSectionIndex = i;
+        break;
+      }
+    }
+    
+    // Если секция найдена, проверяем есть ли в ней контент
+    if (sectionIndex >= 0) {
+      const endIndex = nextSectionIndex >= 0 ? nextSectionIndex : cleanedLines.length;
+      const sectionContent = cleanedLines.slice(sectionIndex + 1, endIndex);
+      const hasContent = sectionContent.some(line => line.trim().length > 0);
+      
+      if (!hasContent) {
+        // Секция пустая - добавляем пустую строку чтобы секция не была пустой
+        cleanedLines.splice(sectionIndex + 1, 0, '');
+      }
+    }
+    
+    return {
+      cards,
+      cleanedMarkdown: cleanedLines.join('\n')
+    };
+  }
 
   return {
     cards,
