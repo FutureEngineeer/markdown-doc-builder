@@ -8,7 +8,7 @@ site:
   description: "Multi-repository documentation builder for GitHub Pages"
   baseUrl: "https://futureengineeer.github.io/markdown-doc-builder"
   language: "en"
-  logoClickUrl: "index.html"  # Ссылка при клике на лого
+  logoClickUrl: "https://futureengineeer.github.io/markdown-doc-builder/index.html"  # Ссылка при клике на лого
 
 # Навигация
 navigation:
@@ -48,7 +48,7 @@ socials:
     hoverColor: "#CC0000"
   - name: "discord"
     label: "Discord"
-    url: "https://discord.gg/your-server"
+    url: "https://discord.gg/V4aJdTja8v"
     icon: "assets/discord.svg"
     color: "#5865F2"
     hoverColor: "#4752C4"

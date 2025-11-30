@@ -298,14 +298,20 @@ const errorTypes = [
 ];
 
 /**
- * Генерация HTML страницы ошибки
+ * Генерация HTML страницы ошибки с встроенными стилями и скриптами
  */
 function generateErrorPageHTML(errorCode, errorTitle, config) {
   const siteName = config.site.name || 'creapunk';
-  const siteTitle = config.site.title || 'motion control systems';
   const logoPath = config.icons.site.logo || './assets/creapunk-icon.svg';
   const homeUrl = config.site.logoClickUrl || 'index.html';
   const messages = errorMessages[errorCode] || errorMessages[404];
+  
+  // Читаем CSS и JS файлы
+  const cssPath = path.join(__dirname, '..', 'assets', 'styles', 'error-page.css');
+  const jsPath = path.join(__dirname, '..', 'assets', 'scripts', 'error-page.js');
+  
+  const cssContent = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
+  const jsContent = fs.existsSync(jsPath) ? fs.readFileSync(jsPath, 'utf8') : '';
   
   return `<!DOCTYPE html>
 <html lang="en">
@@ -313,7 +319,9 @@ function generateErrorPageHTML(errorCode, errorTitle, config) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${errorCode} - ${errorTitle} | ${siteName}</title>
-<link rel="stylesheet" href="assets/styles/error-page.css">
+<style>
+${cssContent}
+</style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -332,7 +340,9 @@ const messages = ${JSON.stringify(messages)};
 const randomMessage = messages[Math.floor(Math.random() * messages.length)];
 document.getElementById('errorMessage').textContent = randomMessage;
 </script>
-<script src="assets/scripts/error-page.js"></script>
+<script>
+${jsContent}
+</script>
 </body>
 </html>`;
 }
