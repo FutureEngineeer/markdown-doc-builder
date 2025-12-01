@@ -104,5 +104,31 @@ npm run build:fresh
 2. **Нормализация имён файлов** - все HTML файлы в нижнем регистре
 3. **Обработка репозиториев в hamburgerMenu.js** - правильное добавление в дерево
 
+## Дополнительное исправление: Section Map для репозиториев
+
+### Проблема
+Section Map (правая боковая панель) была неполной для файлов репозиториев - показывала только часть структуры.
+
+### Причина
+`findSectionNode` в `newSectionMap.js` искал исходные файлы репозитория в `temp/CLN/`, но реальная директория называлась `temp/creapunk-CLN-ClosedLoopNemaDriver/` (формат `owner-repo`).
+
+### Решение
+Исправлен `findSectionNode` для использования информации из `hierarchyInfo.allRepositories`:
+```javascript
+// Находим реальное имя директории репозитория в temp/
+let tempRepoDir = null;
+if (hierarchyInfo.allRepositories) {
+  const repoInfo = hierarchyInfo.allRepositories.find(r => r.alias === alias);
+  if (repoInfo) {
+    tempRepoDir = path.join(baseDir, 'temp', `${repoInfo.owner}-${repoInfo.repo}`);
+  }
+}
+```
+
+### Результат
+✅ Section Map теперь показывает полную структуру репозиториев:
+- CLN: Overview, License, Sponsors, Hardware, Wiki (с Applications, Features, CLN17, CLN234)
+- RadiX: Overview, License, Wiki (с Design Foundations, RadiX Drive)
+
 ## Дата исправления
 1 декабря 2025

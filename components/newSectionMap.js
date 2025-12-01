@@ -409,7 +409,21 @@ function findSectionNode(config, baseDir, sectionName) {
             const alias = item.alias || item.repository.split('/').pop();
             if (alias === sectionName) {
               const repoDir = path.join(baseDir, 'dist', alias);
-              const tempRepoDir = path.join(baseDir, 'temp', alias);
+              
+              // Находим реальное имя директории репозитория в temp/
+              let tempRepoDir = null;
+              if (hierarchyInfo.allRepositories) {
+                const repoInfo = hierarchyInfo.allRepositories.find(r => r.alias === alias);
+                if (repoInfo) {
+                  // Используем owner-repo формат
+                  tempRepoDir = path.join(baseDir, 'temp', `${repoInfo.owner}-${repoInfo.repo}`);
+                }
+              }
+              
+              // Fallback к старому формату
+              if (!tempRepoDir || !fs.existsSync(tempRepoDir)) {
+                tempRepoDir = path.join(baseDir, 'temp', alias);
+              }
               
               let dirTree;
               if (fs.existsSync(tempRepoDir)) {
@@ -430,8 +444,6 @@ function findSectionNode(config, baseDir, sectionName) {
               } else {
                 return null;
               }
-              
-              // Doc config processing removed - now handled by doc-config.yaml hierarchy
               
               return {
                 name: alias,
