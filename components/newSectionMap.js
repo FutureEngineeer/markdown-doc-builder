@@ -48,6 +48,7 @@ function getRelativePathToRoot(outputFile) {
 
 /**
  * Определяет корневую папку текущей страницы (раздел)
+ * Для вложенных репозиториев возвращает путь к репозиторию
  */
 function getRootFolder(filePath) {
   if (!filePath) return '';
@@ -56,6 +57,33 @@ function getRootFolder(filePath) {
   const distIndex = parts.indexOf('dist');
   
   if (distIndex >= 0 && distIndex < parts.length - 1) {
+    // Проверяем, есть ли вложенный репозиторий (например, project-beta/radix)
+    // Если есть больше одной папки после dist и перед файлом, это может быть вложенный репозиторий
+    const foldersAfterDist = parts.length - distIndex - 2; // -2 для dist и имени файла
+    
+    if (foldersAfterDist >= 2) {
+      // Проверяем, является ли вторая папка репозиторием
+      // Для этого проверяем наличие hierarchy-info.json
+      const hierarchyPath = path.join(process.cwd(), '.temp', 'hierarchy-info.json');
+      if (fs.existsSync(hierarchyPath)) {
+        try {
+          const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+          const secondFolder = parts[distIndex + 2];
+          
+          // Проверяем, есть ли этот alias в allRepositories
+          if (hierarchyInfo.allRepositories) {
+            const isRepo = hierarchyInfo.allRepositories.some(r => r.alias === secondFolder);
+            if (isRepo) {
+              // Возвращаем путь к репозиторию: parent/repo
+              return path.join(parts[distIndex + 1], parts[distIndex + 2]);
+            }
+          }
+        } catch (error) {
+          // Игнорируем ошибки, используем fallback
+        }
+      }
+    }
+    
     return parts[distIndex + 1];
   }
   
@@ -379,6 +407,17 @@ function isSingleFileFolder(dirTree) {
 function findSectionNode(config, baseDir, sectionName) {
   if (!sectionName) return null;
   
+  // Проверяем, является ли sectionName путем (например, project-beta/radix)
+  const isNestedPath = sectionName.includes('/') || sectionName.includes('\\');
+  let actualSectionName = sectionName;
+  let parentSection = null;
+  
+  if (isNestedPath) {
+    const parts = sectionName.split(/[\/\\]/);
+    parentSection = parts[0];
+    actualSectionName = parts[parts.length - 1];
+  }
+  
   // Сначала проверяем hierarchy-info.json
   const hierarchyPath = path.join(baseDir, '.temp', 'hierarchy-info.json');
   if (fs.existsSync(hierarchyPath)) {
@@ -399,6 +438,64 @@ function findSectionNode(config, baseDir, sectionName) {
             children: sectionTree.children,
             files: sectionTree.files
           };
+        }
+      }
+      
+      // Проверяем вложенные репозитории в секциях (например, project-beta/radix)
+      if (isNestedPath && parentSection && hierarchyInfo.sections && hierarchyInfo.sections[parentSection]) {
+        const sectionConfig = hierarchyInfo.sections[parentSection];
+        if (sectionConfig.hierarchy) {
+          for (const item of sectionConfig.hierarchy) {
+            if (item.repository) {
+              const alias = item.alias || item.repository.split('/').pop();
+              if (alias === actualSectionName) {
+                const repoDir = path.join(baseDir, 'dist', parentSection, alias);
+                
+                // Находим реальное имя директории репозитория в temp/
+                let tempRepoDir = null;
+                if (hierarchyInfo.allRepositories) {
+                  const repoInfo = hierarchyInfo.allRepositories.find(r => r.alias === alias);
+                  if (repoInfo) {
+                    tempRepoDir = path.join(baseDir, 'temp', `${repoInfo.owner}-${repoInfo.repo}`);
+                  }
+                }
+                
+                if (!tempRepoDir || !fs.existsSync(tempRepoDir)) {
+                  tempRepoDir = path.join(baseDir, 'temp', alias);
+                }
+                
+                let dirTree;
+                const fullPath = path.join(parentSection, alias);
+                if (fs.existsSync(tempRepoDir)) {
+                  dirTree = buildFileTreeFromSource(tempRepoDir, fullPath, []);
+                  
+                  if (dirTree.files) {
+                    dirTree.files.forEach(file => {
+                      const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
+                      if (fileName === 'readme') {
+                        const dirPath = path.dirname(file.htmlPath);
+                        const newPath = path.posix.join(dirPath, 'index.html');
+                        file.path = newPath;
+                        file.htmlPath = newPath;
+                      }
+                    });
+                  }
+                } else if (fs.existsSync(repoDir)) {
+                  dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), fullPath, []);
+                } else {
+                  return null;
+                }
+                
+                return {
+                  name: alias,
+                  title: item.title || formatSectionTitle(alias),
+                  path: fullPath,
+                  children: dirTree.children,
+                  files: dirTree.files
+                };
+              }
+            }
+          }
         }
       }
       
@@ -610,6 +707,15 @@ function shouldExpandNode(node, normalizedCurrentFile, isSection = false) {
 }
 
 /**
+ * Вычисляет относительный путь от текущей страницы до целевого файла
+ */
+function getRelativeHref(targetPath, currentFile) {
+  const currentDir = path.dirname(currentFile);
+  const relativePath = path.posix.relative(currentDir, targetPath);
+  return relativePath || targetPath;
+}
+
+/**
  * Рекурсивно генерирует HTML для узла дерева
  */
 function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSection = false) {
@@ -648,7 +754,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
     
     if (readmeFile) {
       const cleanPath = readmeFile.htmlPath.replace(/\\/g, '/');
-      const href = relativeRoot + cleanPath;
+      const href = getRelativeHref(cleanPath, normalizedCurrentFile);
       
       // Проверяем, является ли README файл активным
       const fileHtmlPath = readmeFile.htmlPath.replace(/\\/g, '/').toLowerCase();
@@ -663,7 +769,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
     } else if (!hasChildFolders && filesWithoutReadme.length === 1) {
       const singleFile = filesWithoutReadme[0];
       const cleanPath = singleFile.htmlPath.replace(/\\/g, '/');
-      const href = relativeRoot + cleanPath;
+      const href = getRelativeHref(cleanPath, normalizedCurrentFile);
       const fileName = path.basename(singleFile.path, '.html').toLowerCase();
       
       let displayName;
@@ -727,7 +833,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
         const isFileActive = normalizedCurrentFile === fileHtmlPath;
         
         const cleanPath = file.htmlPath.replace(/\\/g, '/');
-        const href = relativeRoot + cleanPath;
+        const href = getRelativeHref(cleanPath, normalizedCurrentFile);
         
         html += `${indent}    <li>\n`;
         html += `${indent}      <div class="item-content${isFileActive ? ' active' : ''}" onclick="window.location.href='${href}'">\n`;
@@ -942,7 +1048,10 @@ function generateNewSectionMap(currentFile = '', outputFile = '') {
       const isActive = normalizedCurrentFile === fileHtmlPath;
       
       const cleanPath = file.htmlPath.replace(/\\/g, '/');
-      const href = relativeRoot + cleanPath;
+      // Вычисляем относительный путь от текущей страницы до целевого файла
+      const currentDir = path.dirname(normalizedCurrentFile);
+      const relativePath = path.posix.relative(currentDir, cleanPath);
+      const href = relativePath || cleanPath;
       
       html += `        <li>\n`;
       html += `          <div class="item-content${isActive ? ' active' : ''}" onclick="window.location.href='${href}'">\n`;
