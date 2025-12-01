@@ -140,7 +140,7 @@ function buildFileTreeFromSource(tempDir, relativePath, ignoredFiles = []) {
         };
       }
     } else if (/\.md$/i.test(item.name)) {
-      let htmlPath = itemRelativePath.replace(/\.md$/i, '.html').replace(/\\/g, '/');
+      let htmlPath = itemRelativePath.replace(/\.md$/i, '.html').toLowerCase().replace(/\\/g, '/');
       
       // Корневой README репозитория уже конвертируется в index.html в projectParser.js
       // Здесь мы просто сохраняем оригинальное имя файла
@@ -256,7 +256,7 @@ function buildTreeFromHierarchy(hierarchy, baseDir, hierarchyInfo) {
     if (item.file) {
       // Это файл
       const fileName = path.basename(item.file, '.md');
-      let htmlFile = item.file.replace('.md', '.html');
+      let htmlFile = item.file.replace('.md', '.html').toLowerCase();
       
       // Специальная обработка для home.md → index.html
       if (fileName.toLowerCase() === 'home') {
@@ -590,7 +590,7 @@ function collectFullSiteStructure(config, baseDir) {
     
     if (itemType === 'file') {
       const relativePath = path.relative(baseDir, itemPath);
-      const htmlPath = relativePath.replace('.md', '.html');
+      const htmlPath = relativePath.replace('.md', '.html').toLowerCase();
       const fileName = path.basename(htmlPath, '.html');
       
       if (ignoredFiles.some(ignored => htmlPath.includes(ignored))) {
@@ -720,8 +720,8 @@ function buildFileTree(dir, baseDir, relativePath = '', ignoredFiles = [], hiera
     const extractFiles = (items) => {
       items.forEach(item => {
         if (item.file) {
-          // Конвертируем .md в .html и берем только имя файла (без пути)
-          const htmlFile = path.basename(item.file.replace('.md', '.html'));
+          // Конвертируем .md в .html и берем только имя файла (без пути) в нижнем регистре
+          const htmlFile = path.basename(item.file.replace('.md', '.html').toLowerCase());
           allowedFiles.add(htmlFile);
         }
         if (item.children) {

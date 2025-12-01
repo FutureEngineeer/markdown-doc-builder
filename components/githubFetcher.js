@@ -546,8 +546,8 @@ async function createGitHubProjectOverviewFromRepo(githubUrl, tempDir) {
  * Получает HTML путь к файлу в репозитории
  */
 function getHtmlPathForRepoFile(repoPath, owner, repo, alias = null) {
-  // Конвертируем путь .md файла в .html путь
-  let htmlPath = repoPath.replace(/\.md$/, '.html');
+  // Конвертируем путь .md файла в .html путь с нижним регистром
+  let htmlPath = repoPath.replace(/\.md$/, '.html').toLowerCase();
   
   // Если файл называется readme.html (любой регистр), заменяем на index.html
   const fileName = path.basename(htmlPath);
@@ -717,8 +717,8 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
     const fileExistsInRepo = projectData.files && projectData.files.some(f => f.originalPath === targetPath);
     
     if (fileExistsInRepo) {
-      // Файл есть в текущем репозитории - создаем относительную ссылку
-      let htmlPath = targetPath.replace(/\.md$/, '.html');
+      // Файл есть в текущем репозитории - создаем относительную ссылку с нижним регистром
+      let htmlPath = targetPath.replace(/\.md$/, '.html').toLowerCase();
       
       // Если файл называется readme.html (любой регистр), заменяем на index.html
       const fileName = path.basename(htmlPath);
@@ -742,8 +742,8 @@ function processGitHubMarkdownLinks(content, projectData, currentFilePath, allDo
         }
       }
       
-      // Файл не найден - оставляем как есть, но конвертируем в .html
-      let htmlPath = targetPath.replace(/\.md$/, '.html');
+      // Файл не найден - оставляем как есть, но конвертируем в .html с нижним регистром
+      let htmlPath = targetPath.replace(/\.md$/, '.html').toLowerCase();
       
       // Если файл называется readme.html (любой регистр), заменяем на index.html
       const fileName = path.basename(htmlPath);

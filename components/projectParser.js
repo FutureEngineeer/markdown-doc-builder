@@ -381,7 +381,7 @@ async function renderProjectCards(projects, baseDir = '.', relativeRoot = './', 
           // Если есть subPath, ссылаемся на конкретный файл в репозитории
           const subPathFile = findMainFile(overview.projectData.files, subPath);
           if (subPathFile) {
-            const htmlPath = subPathFile.originalPath.replace(/\.md$/i, '.html');
+            const htmlPath = subPathFile.originalPath.replace(/\.md$/i, '.html').toLowerCase();
             targetLink = `${relativeRoot}${projectDirName}/${htmlPath}`;
           } else {
             targetLink = `${relativeRoot}${projectDirName}/index.html`;
@@ -483,8 +483,8 @@ async function createGitHubProjectPages(projectData, outputDir, converter, allDo
       if (file === mainFile) {
         outputRelativePath = 'index.html'; // Главный файл становится index.html
       } else {
-        // Сохраняем структуру папок (игнорируем регистр .md)
-        outputRelativePath = file.localRelativePath.replace(/\.md$/i, '.html');
+        // Сохраняем структуру папок (игнорируем регистр .md) и приводим к нижнему регистру
+        outputRelativePath = file.localRelativePath.replace(/\.md$/i, '.html').toLowerCase();
         
         // Если файл называется README.md (любой регистр), заменяем на index.html
         const fileName = path.basename(outputRelativePath);
@@ -559,10 +559,10 @@ async function createHtmlPagesForDirectory(dirPath, outputDir, converter, preser
       }
       await createHtmlPagesForDirectory(fullPath, subOutputDir, converter, preserveStructure);
     } else if (/\.md$/i.test(file.name)) {
-      // Конвертируем .md файл в .html (игнорируем регистр)
+      // Конвертируем .md файл в .html (игнорируем регистр) и приводим к нижнему регистру
       // Если файл README.md (любой регистр), то создаем index.html
       const isReadme = /^readme\.md$/i.test(file.name);
-      const htmlFileName = isReadme ? 'index.html' : file.name.replace(/\.md$/i, '.html');
+      const htmlFileName = isReadme ? 'index.html' : file.name.replace(/\.md$/i, '.html').toLowerCase();
       const outputPath = path.join(outputDir, htmlFileName);
 
       // Убеждаемся, что папка для выходного файла существует

@@ -168,7 +168,7 @@ function buildFileTreeFromSource(tempDir, relativePath, ignoredFiles = []) {
         };
       }
     } else if (/\.md$/i.test(item.name)) {
-      let htmlPath = itemRelativePath.replace(/\.md$/i, '.html').replace(/\\/g, '/');
+      let htmlPath = itemRelativePath.replace(/\.md$/i, '.html').toLowerCase().replace(/\\/g, '/');
       
       // Корневой README репозитория уже конвертируется в index.html в projectParser.js
       // Здесь мы просто сохраняем оригинальное имя файла
@@ -220,8 +220,8 @@ function buildFileTree(dir, baseDir, relativePath = '', ignoredFiles = [], hiera
     const extractItems = (items) => {
       items.forEach(item => {
         if (item.file) {
-          // Конвертируем .md в .html и берем только имя файла (без пути)
-          const htmlFile = path.basename(item.file.replace('.md', '.html'));
+          // Конвертируем .md в .html и берем только имя файла (без пути) в нижнем регистре
+          const htmlFile = path.basename(item.file.replace('.md', '.html').toLowerCase());
           allowedFiles.add(htmlFile);
         }
         if (item.repository) {

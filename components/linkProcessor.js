@@ -266,8 +266,8 @@ class LinkProcessor {
       const fileExists = repoData.files && repoData.files.some(f => f.originalPath === targetPath);
 
       if (fileExists) {
-        // Конвертируем в .html
-        let htmlPath = targetPath.replace(/\.md$/i, '.html');
+        // Конвертируем в .html с нижним регистром
+        let htmlPath = targetPath.replace(/\.md$/i, '.html').toLowerCase();
         
         const fileName = path.basename(htmlPath);
         if (/^readme\.html$/i.test(fileName)) {
@@ -287,7 +287,7 @@ class LinkProcessor {
         const fileInOtherRepo = otherRepo.files.find(f => f.originalPath === targetPath);
         if (fileInOtherRepo) {
           const alias = otherRepo.alias || `${otherRepo.owner}-${otherRepo.repo}`;
-          let htmlPath = targetPath.replace(/\.md$/i, '.html');
+          let htmlPath = targetPath.replace(/\.md$/i, '.html').toLowerCase();
           
           const fileName = path.basename(htmlPath);
           if (/^readme\.html$/i.test(fileName)) {
@@ -299,8 +299,8 @@ class LinkProcessor {
         }
       }
 
-      // Файл не найден - конвертируем как есть
-      let htmlPath = targetPath.replace(/\.md$/i, '.html');
+      // Файл не найден - конвертируем как есть с нижним регистром
+      let htmlPath = targetPath.replace(/\.md$/i, '.html').toLowerCase();
       
       const fileName = path.basename(htmlPath);
       if (/^readme\.html$/i.test(fileName)) {
