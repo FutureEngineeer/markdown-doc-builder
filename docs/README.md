@@ -5,6 +5,7 @@
 ## Содержание
 
 ### Deployment & Configuration
+- **[FINAL_FIXES_SUMMARY.md](FINAL_FIXES_SUMMARY.md)** - 🎯 Финальная сводка всех исправлений
 - **[GITHUB_PAGES_DEPLOY.md](GITHUB_PAGES_DEPLOY.md)** - Руководство по деплою на GitHub Pages
 - **[DEPLOYMENT_FIX.md](DEPLOYMENT_FIX.md)** - Исправления проблем с деплоем
 - **[CHANGELOG_DEPLOY.md](CHANGELOG_DEPLOY.md)** - История изменений конфигурации деплоя

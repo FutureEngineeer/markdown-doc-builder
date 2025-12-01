@@ -70,10 +70,10 @@ class PathResolver {
     const isReadme = /^readme\.md$/i.test(fileName);
     
     if (isReadme) {
-      return mdPath.replace(/readme\.md$/i, 'index.html');
+      return mdPath.replace(/readme\.md$/i, 'index.html').toLowerCase();
     }
     
-    return mdPath.replace(/\.md$/i, '.html');
+    return mdPath.replace(/\.md$/i, '.html').toLowerCase();
   }
 
   /**
