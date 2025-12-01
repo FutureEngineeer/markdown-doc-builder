@@ -1,0 +1,72 @@
+name: Build and Deploy to Branch
+
+on:
+  push:
+    branches:
+      - main
+  # Запуск по расписанию каждые 12 часов для обновления репозиториев
+  schedule:
+    - cron: '0 */12 * * *'
+  
+  # Ручной запуск
+  workflow_dispatch:
+
+# Разрешения для записи в репозиторий
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    # Очистка временных файлов и кеша перед сборкой
+    - name: Clean temporary files and cache
+      run: |
+        echo "🧹 Cleaning temporary files and cache..."
+        rm -rf .temp
+        rm -rf temp
+        rm -rf dist
+        echo "✓ Cleanup complete"
+    
+    - name: Build site (from scratch)
+      run: npm run build:all
+    
+    # Проверка сгенерированных файлов
+    - name: List generated files
+      run: |
+        echo "📁 Generated directory structure:"
+        find dist -type d | head -20
+        echo ""
+        echo "📄 Sample HTML files:"
+        find dist -name "*.html" | head -20
+        echo ""
+        echo "🔍 Checking case sensitivity:"
+        ls -la dist/ | grep -i cln || echo "No CLN directory found"
+        ls -la dist/cln/ 2>/dev/null | head -10 || echo "No dist/cln directory"
+        ls -la dist/CLN/ 2>/dev/null | head -10 || echo "No dist/CLN directory"
+    
+    - name: Deploy to gh-pages branch
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: gh-pages
+        force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: 'Deploy: ${{ github.sha }}'

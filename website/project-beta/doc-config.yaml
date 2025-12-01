@@ -13,7 +13,7 @@ hierarchy:
     description: "API documentation for Project Beta"
 
   - repository: "https://github.com/creapunk/RadiX"
-    alias: "RadiX"
+    alias: "radix"
     title: "RadiX Project"
     section: true
   

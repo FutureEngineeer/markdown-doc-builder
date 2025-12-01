@@ -15,12 +15,11 @@ site:
 navigation:
   # Все ссылки отсюда добавляются в header nav-menu
   - text: "CLN"
-    url: "CLN/index.html"
-
+    url: "cln/index.html"
 
   - text: "RadiX Project"
-    url: "project-beta/RadiX/index.html"
-    alias: "RadiX"
+    url: "project-beta/radix/index.html"
+    alias: "radix"
   
   - text: "Проект Alpha"
     url: "project-alpha/main.html"

@@ -10,6 +10,7 @@
 - **[CHANGELOG_DEPLOY.md](CHANGELOG_DEPLOY.md)** - История изменений конфигурации деплоя
 - **[FILENAME_NORMALIZATION.md](FILENAME_NORMALIZATION.md)** - Нормализация имен файлов в нижний регистр
 - **[BUILD_ORDER_FIX.md](BUILD_ORDER_FIX.md)** - Исправление порядка сборки для репозиториев
+- **[CASE_SENSITIVITY_FIX.md](CASE_SENSITIVITY_FIX.md)** - Исправление регистрозависимости путей
 
 ### Architecture & Implementation
 - **[АРХИТЕКТУРА.md](АРХИТЕКТУРА.md)** - Архитектура проекта

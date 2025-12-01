@@ -18,7 +18,7 @@ hierarchy:
   
   # GitHub репозитории (можно добавлять в hierarchy)
   - repository: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
-    alias: "CLN"
+    alias: "cln"
     title: "CLN Driver"
   
 

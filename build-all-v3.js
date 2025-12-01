@@ -236,7 +236,7 @@ async function generateFiles(index, fileStructure, rootPath) {
   
   // Индексируем файлы репозиториев
   for (const repo of index.repositories) {
-    const repoAlias = (repo.alias || `${repo.owner}-${repo.repo}`).toLowerCase();
+    const repoAlias = repo.alias || `${repo.owner}-${repo.repo}`;
     for (const file of repo.files) {
       if (file.type === 'markdown') {
         const relativePath = file.localRelativePath.replace(/\\/g, '/');
@@ -257,9 +257,8 @@ async function generateFiles(index, fileStructure, rootPath) {
     if (item.type === 'repository') {
       const repoInfo = item.repoInfo;
       if (repoInfo) {
-        // Нормализуем путь к папке репозитория в нижний регистр
-        const outputDir = path.join('dist', item.output.toLowerCase());
-        console.log(`      Processing repository: ${item.output.toLowerCase()}`);
+        const outputDir = path.join('dist', item.output);
+        console.log(`      Processing repository: ${item.output}`);
         
         for (const file of repoInfo.files) {
           if (file.type === 'markdown') {
@@ -586,7 +585,7 @@ function buildFileStructure(index) {
         isIndex: isHome
       };
     } else if (item.folder) {
-      const outputFolder = item.alias || item.folder;
+      const outputFolder = (item.alias || item.folder).toLowerCase();
       let sectionConfig = null;
       const folderPath = path.join(index.rootConfig._basePath || 'website', item.folder);
       const configPath = path.join(folderPath, 'doc-config.yaml');
@@ -642,7 +641,7 @@ function buildFileStructure(index) {
             });
           } else if (sectionItem.repository) {
             const repoInfo = index.repositories.find(r => r.url === sectionItem.repository);
-            const repoAlias = sectionItem.alias || repoInfo?.alias || sectionItem.repository.split('/').pop();
+            const repoAlias = (sectionItem.alias || repoInfo?.alias || sectionItem.repository.split('/').pop()).toLowerCase();
             
             folderStructure.files.push({
               type: 'repository',
@@ -725,10 +724,11 @@ function buildFileStructure(index) {
       return folderStructure;
     } else if (item.repository) {
       const repoInfo = index.repositories.find(r => r.url === item.repository);
+      const repoOutput = (item.alias || repoInfo?.alias || item.repository.split('/').pop()).toLowerCase();
       return {
         type: 'repository',
         source: item.repository,
-        output: item.alias || repoInfo?.alias || item.repository.split('/').pop(),
+        output: repoOutput,
         title: item.title || item.alias,
         alias: item.alias,
         repoInfo: repoInfo,
