@@ -303,7 +303,7 @@ const errorTypes = [
 function generateErrorPageHTML(errorCode, errorTitle, config) {
   const siteName = config.site.name || 'creapunk';
   // Используем homeUrl для кнопки "Back to Home", logoClickUrl для клика на лого
-  const homeUrl = config.site.homeUrl || config.site.logoClickUrl || '/index.html';
+  const homeUrl = config.site.homeUrl || config.site.logoClickUrl || '/';
   const messages = errorMessages[errorCode] || errorMessages[404];
   
   // Читаем CSS и JS файлы

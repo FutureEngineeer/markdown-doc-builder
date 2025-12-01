@@ -8,8 +8,8 @@ site:
   description: "Multi-repository documentation builder for GitHub Pages"
   baseUrl: "https://futureengineeer.github.io/markdown-doc-builder"
   language: "en"
-  logoClickUrl: "/index.html"  # Ссылка при клике на лого (абсолютный путь от корня)
-  homeUrl: "/index.html"  # Главная страница сайта (абсолютный путь)
+  logoClickUrl: "/"  # Ссылка при клике на лого (абсолютный путь от корня)
+  homeUrl: "/"  # Главная страница сайта (абсолютный путь)
 
 # Навигация
 navigation:
