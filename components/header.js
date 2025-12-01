@@ -162,7 +162,10 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
   let logoClickUrl = config.logoClickUrl || relativeRoot;
   // Если это не абсолютный URL, делаем его относительным
   if (!logoClickUrl.startsWith('http') && !logoClickUrl.startsWith('#')) {
-    logoClickUrl = relativeRoot + (logoClickUrl.startsWith('./') ? logoClickUrl.substring(2) : logoClickUrl);
+    // Убираем начальный ./ или / из logoClickUrl
+    const cleanUrl = logoClickUrl.startsWith('./') ? logoClickUrl.substring(2) : 
+                     logoClickUrl.startsWith('/') ? logoClickUrl.substring(1) : logoClickUrl;
+    logoClickUrl = relativeRoot + cleanUrl;
   }
   
   // Поддержка новой структуры socials (массив объектов) и старой (объект)

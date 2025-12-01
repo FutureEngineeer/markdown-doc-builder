@@ -376,7 +376,7 @@ function buildTreeFromHierarchyInfo(hierarchyInfo, baseDir) {
         const relativePath = filePath.substring(normalizedFolder.length + 1);
         // Only include files directly in this folder (not in subfolders)
         if (!relativePath.includes('/') && !relativePath.includes('\\')) {
-          const htmlFile = file.isReadme ? 'index.html' : file.baseName + '.html';
+          const htmlFile = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
           files.push({
             name: formatFileName(file.baseName),
             path: path.join(folderPath, htmlFile).replace(/\\/g, '/'),
@@ -395,7 +395,7 @@ function buildTreeFromHierarchyInfo(hierarchyInfo, baseDir) {
       // Это файл
       const fileName = path.basename(item.file, '.md');
       const isHome = fileName.toLowerCase() === 'home';
-      const htmlFile = isHome ? 'index.html' : item.file.replace('.md', '.html');
+      const htmlFile = isHome ? 'index.html' : item.file.replace('.md', '.html').toLowerCase();
       
       return {
         name: item.title || formatFileName(fileName),
@@ -424,7 +424,7 @@ function buildTreeFromHierarchyInfo(hierarchyInfo, baseDir) {
         folderConfig.hierarchy.forEach((folderItem, folderIndex) => {
           if (folderItem.file) {
             const fileName = path.basename(folderItem.file, '.md');
-            const htmlFile = folderItem.file.replace('.md', '.html');
+            const htmlFile = folderItem.file.replace('.md', '.html').toLowerCase();
             const filePath = path.join(item.folder, htmlFile).replace(/\\/g, '/');
             
             folderTree.files.push({
@@ -514,7 +514,10 @@ function buildTreeFromHierarchyInfo(hierarchyInfo, baseDir) {
           if (child.file) {
             sectionTree.files.push(processed);
           } else {
-            sectionTree.children[child.folder || child.alias || child.title] = processed;
+            // Для репозиториев используем alias из child, для папок - folder
+            const key = child.repository ? (child.alias || child.repository.split('/').pop()) : 
+                        (child.folder || child.alias || child.title);
+            sectionTree.children[key] = processed;
           }
         }
       });
@@ -531,7 +534,10 @@ function buildTreeFromHierarchyInfo(hierarchyInfo, baseDir) {
       if (item.file) {
         tree.files.push(processed);
       } else {
-        tree.children[item.folder || item.alias || item.title] = processed;
+        // Для репозиториев используем alias из item, для папок - folder
+        const key = item.repository ? (item.alias || item.repository.split('/').pop()) : 
+                    (item.folder || item.alias || item.title);
+        tree.children[key] = processed;
       }
     }
   });
@@ -1063,6 +1069,14 @@ function generateHamburgerMenu(currentFile = '', outputFile = '') {
   html += '    </ul>\n';
   html += '  </nav>\n';
   html += '</aside>\n';
+  
+  // Проверяем, что CLN есть в HTML
+  if (html.includes('CLN')) {
+    console.log('[DEBUG] Hamburger menu contains CLN ✓');
+  } else {
+    console.log('[DEBUG] Hamburger menu DOES NOT contain CLN ✗');
+    console.log('[DEBUG] Children in tree:', Object.keys(fullTree.children));
+  }
   
   return html;
 }
