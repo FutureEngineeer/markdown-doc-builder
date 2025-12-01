@@ -805,7 +805,9 @@ function detectScopeItemType(itemPath) {
  */
 function containsActivePage(node, normalizedCurrentFile) {
   const hasActiveFile = node.files.some(file => {
-    const fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
+    let fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
+    // Заменяем readme.html на index.html для сравнения
+    fileHtmlPath = fileHtmlPath.replace(/\/readme\.html$/i, '/index.html');
     return normalizedCurrentFile === fileHtmlPath;
   });
   
@@ -860,11 +862,15 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
     }
     
     if (readmeFile) {
-      const cleanPath = readmeFile.htmlPath.replace(/\\/g, '/');
+      let cleanPath = readmeFile.htmlPath.replace(/\\/g, '/');
+      // Заменяем readme.html на index.html
+      cleanPath = cleanPath.replace(/\/readme\.html$/i, '/index.html');
       const href = relativeRoot + cleanPath;
       
       // Проверяем, является ли README файл активным
-      const fileHtmlPath = readmeFile.htmlPath.replace(/\\/g, '/').toLowerCase();
+      let fileHtmlPath = readmeFile.htmlPath.replace(/\\/g, '/').toLowerCase();
+      // Заменяем readme.html на index.html для сравнения
+      fileHtmlPath = fileHtmlPath.replace(/\/readme\.html$/i, '/index.html');
       const isFileActive = normalizedCurrentFile === fileHtmlPath;
       
       const divReplacement = isFileActive 
@@ -875,7 +881,9 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
       html += `${indent}    <span class="link">${sectionTitle}</span>\n`;
     } else if (!hasChildFolders && filesWithoutReadme.length === 1) {
       const singleFile = filesWithoutReadme[0];
-      const cleanPath = singleFile.htmlPath.replace(/\\/g, '/');
+      let cleanPath = singleFile.htmlPath.replace(/\\/g, '/');
+      // Заменяем readme.html на index.html
+      cleanPath = cleanPath.replace(/\/readme\.html$/i, '/index.html');
       const href = relativeRoot + cleanPath;
       const fileName = path.basename(singleFile.path, '.html').toLowerCase();
       
@@ -887,7 +895,9 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
       }
       
       // Проверяем, является ли этот файл активным
-      const fileHtmlPath = singleFile.htmlPath.replace(/\\/g, '/').toLowerCase();
+      let fileHtmlPath = singleFile.htmlPath.replace(/\\/g, '/').toLowerCase();
+      // Заменяем readme.html на index.html для сравнения
+      fileHtmlPath = fileHtmlPath.replace(/\/readme\.html$/i, '/index.html');
       const isFileActive = normalizedCurrentFile === fileHtmlPath;
       
       const divReplacement = isFileActive 
@@ -940,11 +950,15 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
       });
       
       sortedFiles.forEach(file => {
-        const fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
+        let fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
+        // Заменяем readme.html на index.html для сравнения
+        fileHtmlPath = fileHtmlPath.replace(/\/readme\.html$/i, '/index.html');
         // Точное сравнение путей
         const isFileActive = normalizedCurrentFile === fileHtmlPath;
         
-        const cleanPath = file.htmlPath.replace(/\\/g, '/');
+        let cleanPath = file.htmlPath.replace(/\\/g, '/');
+        // Заменяем readme.html на index.html
+        cleanPath = cleanPath.replace(/\/readme\.html$/i, '/index.html');
         const href = relativeRoot + cleanPath;
         
         html += `${indent}    <li>\n`;
@@ -1046,11 +1060,15 @@ function generateHamburgerMenu(currentFile = '', outputFile = '') {
   });
   
   rootFiles.forEach(file => {
-    const fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
+    let fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
+    // Заменяем readme.html на index.html для сравнения
+    fileHtmlPath = fileHtmlPath.replace(/\/readme\.html$/i, '/index.html');
     // Точное сравнение путей
     const isActive = normalizedCurrentFile === fileHtmlPath;
     
-    const cleanPath = file.htmlPath.replace(/\\/g, '/');
+    let cleanPath = file.htmlPath.replace(/\\/g, '/');
+    // Заменяем readme.html на index.html
+    cleanPath = cleanPath.replace(/\/readme\.html$/i, '/index.html');
     const href = relativeRoot + cleanPath;
     
     html += `      <li>\n`;

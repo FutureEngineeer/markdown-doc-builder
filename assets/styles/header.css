@@ -150,6 +150,7 @@ header {
 
 .nav-links a:hover::after {
     width: 100%;
+    color: var(--accent);
 }
 
 /* Активная ссылка в навигации - зеленый цвет БЕЗ подчеркивания */

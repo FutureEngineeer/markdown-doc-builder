@@ -302,8 +302,8 @@ const errorTypes = [
  */
 function generateErrorPageHTML(errorCode, errorTitle, config) {
   const siteName = config.site.name || 'creapunk';
-  // Используем logoClickUrl для кнопки "Back to Home" (как на обычных страницах)
-  const homeUrl = config.site.logoClickUrl || '/';
+  // Используем baseUrl для кнопки "Back to Home"
+  const homeUrl = config.site.baseUrl || '/';
   const messages = errorMessages[errorCode] || errorMessages[404];
   
   // Читаем CSS и JS файлы
