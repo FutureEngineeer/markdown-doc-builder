@@ -14,6 +14,23 @@ const { escapeHtml } = require('./utils');
 class HtmlGenerator {
   constructor(config = null) {
     this.config = config || getConfig();
+    
+    // Нормализуем конфигурацию для обратной совместимости
+    // Если есть site.name, используем его как siteName
+    if (this.config.site && this.config.site.name && !this.config.siteName) {
+      this.config.siteName = this.config.site.name;
+    }
+    
+    // Если есть icons.site.logo, используем его как logoPath
+    if (this.config.icons && this.config.icons.site && this.config.icons.site.logo && !this.config.logoPath) {
+      this.config.logoPath = this.config.icons.site.logo;
+    }
+    
+    // Если есть site.logoClickUrl, используем его
+    if (this.config.site && this.config.site.logoClickUrl && !this.config.logoClickUrl) {
+      this.config.logoClickUrl = this.config.site.logoClickUrl;
+    }
+    
     // Убеждаемся что конфигурация имеет правильную структуру
     if (!this.config.icons) {
       this.config.icons = getSiteConfig().favicon;

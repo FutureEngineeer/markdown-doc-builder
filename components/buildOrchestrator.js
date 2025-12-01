@@ -15,6 +15,7 @@ class BuildOrchestrator {
   constructor(options = {}) {
     this.projectRoot = options.projectRoot || process.cwd();
     this.distDir = options.distDir || 'dist';
+    this.configPath = options.configPath || 'config.yaml';
     
     // Инициализируем компоненты
     this.pathResolver = new PathResolver(this.projectRoot, this.distDir);
@@ -23,7 +24,7 @@ class BuildOrchestrator {
     this.configManager = globalConfigManager;
     
     // Загружаем глобальную конфигурацию
-    this.globalConfig = this.configManager.loadGlobalConfig();
+    this.globalConfig = this.configManager.loadGlobalConfig(this.configPath);
     this.htmlGenerator = new HtmlGenerator(this.globalConfig);
     
     // Статистика сборки

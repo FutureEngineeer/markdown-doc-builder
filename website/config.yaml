@@ -16,36 +16,16 @@ navigation:
   # Все ссылки отсюда добавляются в header nav-menu
   - text: "CLN"
     url: "CLN/index.html"
-  - text: "API"
-    url: "sub/api.html"
 
-  - text: "Docs"
-    url: "#documentation"
-  - text: "About"
-    url: "#about"
-  - text: "Главная"
-    url: "index.html"
-    alias: "home"
-  
-  - text: "Документация"
-    url: "main.html"
-    alias: "main-docs"
-  
-  - text: "CLN Driver"
-    url: "CLN/index.html"
-    alias: "CLN"
-  
+
   - text: "RadiX Project"
-    url: "RadiX/index.html"
+    url: "project-beta/RadiX/index.html"
     alias: "RadiX"
   
   - text: "Проект Alpha"
     url: "project-alpha/main.html"
     alias: "project-alpha"
   
-  - text: "Проект Beta"
-    url: "project-beta/overview.html"
-    alias: "project-beta"
 
 # Социальные ссылки
 socials:
@@ -59,16 +39,14 @@ socials:
     label: "GitHub"
     url: "https://github.com/creapunk"
     icon: "assets/github.svg"
-    color: "#1a1a1a"
-    hoverColor: "#FFFFFF"
-    filled: true
+    color: "#FFFFFF"
+    hoverColor: "#1a1a1a"
   - name: "youtube"
     label: "YouTube"
     url: "https://youtube.com/@creapunk"
     icon: "assets/youtube.svg"
     color: "#FF0000"
     hoverColor: "#CC0000"
-    filled: true
   - name: "discord"
     label: "Discord"
     url: "https://discord.gg/V4aJdTja8v"
@@ -88,7 +66,7 @@ socials:
 footer:
   copyright:
     line1: "Copyright © 2023-Present"
-    line2: "creapunk community"
+    line2: "creapunk, Anton Khrustalev"
 
 # Пути к иконкам
 icons:

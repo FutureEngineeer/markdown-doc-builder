@@ -207,12 +207,16 @@ function generateNavigationTemplates(index) {
 /**
  * Phase 3: Generate files using BuildOrchestrator
  */
-async function generateFiles(index, fileStructure) {
+async function generateFiles(index, fileStructure, rootPath) {
   console.log('📝 Phase 3: Generating files...\n');
+  
+  // Определяем путь к config.yaml
+  const configPath = path.join(rootPath, 'config.yaml');
   
   const orchestrator = new BuildOrchestrator({
     projectRoot: process.cwd(),
-    distDir: 'dist'
+    distDir: 'dist',
+    configPath: configPath
   });
   
   orchestrator.startBuild();
@@ -236,7 +240,7 @@ async function generateFiles(index, fileStructure) {
     for (const file of repo.files) {
       if (file.type === 'markdown') {
         const relativePath = file.localRelativePath.replace(/\\/g, '/');
-        const outputFileName = relativePath.replace(/\.md$/i, '.html').replace(/readme\.html$/i, 'index.html');
+        const outputFileName = relativePath.replace(/\.md$/i, '.html').replace(/readme\.html$/i, 'index.html').toLowerCase();
         const outputPath = path.join('dist', repoAlias, outputFileName);
         orchestrator.indexFile(file.localPath, outputPath);
       }
@@ -273,7 +277,7 @@ async function generateFiles(index, fileStructure) {
         for (const file of repoInfo.files) {
           if (file.type === 'markdown') {
             const relativePath = file.localRelativePath.replace(/\\/g, '/');
-            const outputFileName = relativePath.replace(/\.md$/i, '.html').replace(/readme\.html$/i, 'index.html');
+            const outputFileName = relativePath.replace(/\.md$/i, '.html').replace(/readme\.html$/i, 'index.html').toLowerCase();
             const outputPath = path.join(outputDir, outputFileName);
             
             await orchestrator.processFile(file.localPath, outputPath);
@@ -443,7 +447,7 @@ async function build(rootPath) {
     const fileStructure = generateNavigationTemplates(index);
     
     // Phase 3: Generate files
-    await generateFiles(index, fileStructure);
+    await generateFiles(index, fileStructure, rootPath);
     
     // Phase 4: Generate error pages
     console.log('\n🚨 Phase 4: Generating error pages...\n');
@@ -544,7 +548,7 @@ function buildFileStructure(index) {
     if (item.file) {
       const fileName = path.basename(item.file, '.md');
       const isHome = fileName.toLowerCase() === 'home';
-      const outputName = isHome ? 'index.html' : fileName + '.html';
+      const outputName = isHome ? 'index.html' : fileName.toLowerCase() + '.html';
       
       return {
         type: 'file',
@@ -595,7 +599,7 @@ function buildFileStructure(index) {
           if (sectionItem.file) {
             const fileName = path.basename(sectionItem.file, '.md');
             const isHome = fileName.toLowerCase() === 'home';
-            const outputName = isHome ? 'index.html' : fileName + '.html';
+            const outputName = isHome ? 'index.html' : fileName.toLowerCase() + '.html';
             
             if (isHome) {
               folderStructure.hasIndex = true;
@@ -633,7 +637,7 @@ function buildFileStructure(index) {
           const fileIgnoredLocal = folderIgnored.has(file.name);
           
           if (fileIgnoredRoot || fileIgnoredLocal) {
-            const outputName = file.isReadme ? 'index.html' : file.baseName + '.html';
+            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
             folderStructure.ignoredFiles.push({
               type: 'file',
               source: file.relativePath,
@@ -645,7 +649,7 @@ function buildFileStructure(index) {
               isIgnored: true
             });
           } else if (!fileInHierarchy) {
-            const outputName = file.isReadme ? 'index.html' : file.baseName + '.html';
+            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
             folderStructure.hiddenFiles.push({
               type: 'file',
               source: file.relativePath,
@@ -663,7 +667,7 @@ function buildFileStructure(index) {
           const fileIgnoredLocal = folderIgnored.has(file.name);
           
           if (fileIgnoredRoot || fileIgnoredLocal) {
-            const outputName = file.isReadme ? 'index.html' : file.baseName + '.html';
+            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
             folderStructure.ignoredFiles.push({
               type: 'file',
               source: file.relativePath,
@@ -675,7 +679,7 @@ function buildFileStructure(index) {
               isIgnored: true
             });
           } else {
-            const outputName = file.isReadme ? 'index.html' : file.baseName + '.html';
+            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
             if (file.isReadme) {
               folderStructure.hasIndex = true;
             }
