@@ -52,18 +52,48 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
   }
   
   const generateLinkHtml = (link, additionalClass = '') => {
-    // Определяем активность ссылки
+    // Определяем активность ссылки на основе секции (папки)
     let isActive = false;
     
     // Для якорных ссылок (начинающихся с #)
     if (link.url.startsWith('#')) {
       isActive = currentPage === 'index.html' || currentPage === '/' || currentPage === '';
     } else {
-      // Для файловых ссылок проверяем соответствие
-      const linkFileName = path.basename(link.url);
-      isActive = currentPage === linkFileName || 
-                 currentPage.includes(linkFileName) ||
-                 (link.url === '/' && currentPage === 'index.html');
+      // Извлекаем секцию из outputFile (первая папка после dist/)
+      let currentSection = '';
+      if (outputFile) {
+        const normalizedPath = outputFile.replace(/\\/g, '/');
+        const parts = normalizedPath.split('/');
+        const distIndex = parts.indexOf('dist');
+        if (distIndex >= 0 && distIndex < parts.length - 1) {
+          currentSection = parts[distIndex + 1];
+        }
+      }
+      
+      // Извлекаем секцию из URL ссылки
+      let linkSection = '';
+      if (link.url && !link.url.startsWith('http') && !link.url.startsWith('#')) {
+        const linkPath = link.url.replace(/^\.\//, '');
+        const linkParts = linkPath.split('/');
+        if (linkParts.length > 0) {
+          // Если это файл в корне (например, index.html), берем имя файла
+          if (linkParts.length === 1) {
+            linkSection = path.basename(linkParts[0], '.html');
+          } else {
+            // Иначе берем первую папку
+            linkSection = linkParts[0];
+          }
+        }
+      }
+      
+      // Проверяем соответствие секций
+      if (link.url === '/' || link.url === './index.html' || link.url === 'index.html') {
+        // Для главной страницы проверяем, что мы на index.html в корне
+        isActive = currentPage === 'index.html' && !currentSection;
+      } else if (currentSection && linkSection) {
+        // Для остальных ссылок проверяем соответствие секций
+        isActive = currentSection === linkSection;
+      }
     }
     
     const activeClass = isActive ? ' active' : '';
