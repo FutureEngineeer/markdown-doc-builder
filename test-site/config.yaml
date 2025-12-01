@@ -1,0 +1,31 @@
+# Тестовая конфигурация сайта
+site:
+  name: "Test Site"
+  title: "Test Documentation"
+  description: "Test site for build system"
+  baseUrl: "https://example.com/test"
+  language: "ru"
+  logoClickUrl: "index.html"
+
+navigation:
+  - text: "Главная"
+    url: "index.html"
+  - text: "О проекте"
+    url: "about.html"
+
+footer:
+  copyright:
+    line1: "Copyright © 2024"
+    line2: "Test Company"
+
+icons:
+  site:
+    logo: "./assets/logo.svg"
+    favicon:
+      ico: "./assets/favicon.png"
+
+external:
+  stylesheets:
+    - href: "./assets/styles.css"
+      type: "local"
+  scripts: []

@@ -26,23 +26,15 @@
 [build.processing.images]
   compress = true
 
-# SPA fallback - для правильной работы роутинга
+# Custom error pages (должны быть ПЕРЕД SPA fallback)
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
-  
-# Custom error pages
-[[redirects]]
-  from = "/*"
-  to = "/assets/errors/404.html"
+  to = "/404.html"
   status = 404
 
-# Server error page  
 [[redirects]]
   from = "/*"
-  to = "/assets/errors/500.html"
+  to = "/500.html"
   status = 500
 
 # Кеширование CSS и JS (immutable - никогда не меняются)

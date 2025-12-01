@@ -141,7 +141,8 @@ async function indexAllFiles(rootPath) {
     index.rootConfig._basePath = rootPath;
   }
 
-  console.log(`\n   ✓ Total indexed: ${index.files.length} files, ${index.repositories.length} repositories\n`);
+  const totalRepoFiles = index.repositories.reduce((sum, repo) => sum + (repo.projectData?.files?.length || 0), 0);
+  console.log(`\n   ✓ Total indexed: ${index.files.length} files, ${index.repositories.length} repositories (${totalRepoFiles} files)\n`);
   
   return index;
 }
@@ -411,14 +412,32 @@ function copyErrorPages() {
 /**
  * Main build function
  */
-async function build() {
+async function build(rootPath) {
+  if (!rootPath) {
+    throw new Error('Root path is required');
+  }
   console.log('🚀 Starting build v3 (modular architecture)...\n');
+  console.log(`📂 Root path: ${rootPath}\n`);
   
   const startTime = Date.now();
   
   try {
+    // Validate root path
+    if (!fs.existsSync(rootPath)) {
+      throw new Error(`Root path does not exist: ${rootPath}`);
+    }
+    
+    // Check for config.yaml in root path
+    const configPath = path.join(rootPath, 'config.yaml');
+    if (!fs.existsSync(configPath)) {
+      console.warn(`⚠️  Warning: config.yaml not found in ${rootPath}`);
+      console.warn('   Using default configuration\n');
+    } else {
+      console.log(`✓ Found config.yaml in ${rootPath}\n`);
+    }
+    
     // Phase 1: Index all files
-    const index = await indexAllFiles('website');
+    const index = await indexAllFiles(rootPath);
     
     // Phase 2: Build file structure
     const fileStructure = generateNavigationTemplates(index);
@@ -428,7 +447,15 @@ async function build() {
     
     // Phase 4: Generate error pages
     console.log('\n🚨 Phase 4: Generating error pages...\n');
-    generateErrorPages();
+    const errorPagesConfigPath = path.join(rootPath, 'config.yaml');
+    generateErrorPages(errorPagesConfigPath);
+    
+    // Phase 5: Generate _redirects for Netlify
+    console.log('\n🔀 Phase 5: Generating _redirects...\n');
+    const redirectsPath = path.join('dist', '_redirects');
+    const redirectsContent = `# Custom error pages for Netlify\n/* /404.html 404\n/* /500.html 500\n`;
+    fs.writeFileSync(redirectsPath, redirectsContent, 'utf8');
+    console.log('   ✓ Generated _redirects\n');
     
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
     console.log(`\n✅ Build completed in ${duration}s`);
@@ -701,6 +728,62 @@ function buildFileStructure(index) {
 }
 
 /**
+ * Build file tree from flat list of files
+ */
+function buildFileTree(files) {
+  const tree = {};
+  
+  files.forEach(file => {
+    const filePath = file.localRelativePath || file.originalPath || '';
+    const parts = filePath.split(/[/\\]/).filter(p => p);
+    
+    let current = tree;
+    parts.forEach((part, index) => {
+      if (index === parts.length - 1) {
+        // This is a file
+        if (!current._files) current._files = [];
+        current._files.push({ name: part, file });
+      } else {
+        // This is a folder
+        if (!current[part]) current[part] = {};
+        current = current[part];
+      }
+    });
+  });
+  
+  return tree;
+}
+
+/**
+ * Display file tree recursively
+ */
+function displayFileTree(tree, indent, colors, isRoot = true) {
+  const entries = Object.keys(tree).filter(k => k !== '_files');
+  const files = tree._files || [];
+  const totalItems = entries.length + files.length;
+  
+  // Display folders first
+  entries.forEach((folderName, index) => {
+    const isLast = index === entries.length - 1 && files.length === 0;
+    const connector = isLast ? '└── ' : '├── ';
+    const extension = isLast ? '    ' : '│   ';
+    
+    console.log(`${indent}${connector}📁 ${colors.cyan}${folderName}/${colors.reset}`);
+    displayFileTree(tree[folderName], indent + extension, colors, false);
+  });
+  
+  // Display files
+  files.forEach((fileObj, index) => {
+    const isLast = index === files.length - 1;
+    const connector = isLast ? '└── ' : '├── ';
+    const fileName = fileObj.name;
+    const fileIcon = fileName.toLowerCase().includes('readme') ? '📘' : '📄';
+    
+    console.log(`${indent}${connector}${fileIcon} ${colors.green}${fileName}${colors.reset}`);
+  });
+}
+
+/**
  * Display file structure
  */
 function displayFileStructure(structure) {
@@ -761,7 +844,18 @@ function displayFileStructure(structure) {
         });
       }
     } else if (item.type === 'repository') {
-      console.log(`${indent}${connector}📦 ${colors.magenta}${item.output}/${colors.reset}`);
+      const repoFiles = item.repoInfo?.projectData?.files || [];
+      const filesCount = repoFiles.length;
+      const filesInfo = filesCount > 0
+        ? ` ${colors.gray}[${filesCount} files]${colors.reset}` 
+        : '';
+      console.log(`${indent}${connector}📦 ${colors.magenta}${item.output}/${colors.reset}${filesInfo}`);
+      
+      // Build tree structure from file paths
+      if (repoFiles.length > 0) {
+        const tree = buildFileTree(repoFiles);
+        displayFileTree(tree, indent + extension, colors);
+      }
     } else if (item.type === 'section') {
       console.log(`${indent}${connector}📂 ${colors.blue}${item.title}${colors.reset}`);
       item.children.forEach((child, index) => {
@@ -777,7 +871,25 @@ function displayFileStructure(structure) {
 
 // Run build
 if (require.main === module) {
-  build();
+  // Get root path from command line arguments
+  const args = process.argv.slice(2);
+  
+  console.log('╔════════════════════════════════════════════════════════════╗');
+  console.log('║         Static Site Generator - Build System v3           ║');
+  console.log('╚════════════════════════════════════════════════════════════╝\n');
+  
+  if (args.length === 0) {
+    console.error('❌ Error: Root path is required!\n');
+    console.log('Usage: node build-all-v3.js <root-path>');
+    console.log('\nExamples:');
+    console.log('  node build-all-v3.js website');
+    console.log('  node build-all-v3.js docs-site');
+    console.log('  node build-all-v3.js my-project\n');
+    process.exit(1);
+  }
+  
+  const rootPath = args[0];
+  build(rootPath);
 }
 
 module.exports = {

@@ -302,8 +302,8 @@ const errorTypes = [
  */
 function generateErrorPageHTML(errorCode, errorTitle, config) {
   const siteName = config.site.name || 'creapunk';
-  const logoPath = config.icons.site.logo || './assets/creapunk-icon.svg';
-  const homeUrl = config.site.logoClickUrl || 'index.html';
+  // Используем homeUrl для кнопки "Back to Home", logoClickUrl для клика на лого
+  const homeUrl = config.site.homeUrl || config.site.logoClickUrl || '/index.html';
   const messages = errorMessages[errorCode] || errorMessages[404];
   
   // Читаем CSS и JS файлы
@@ -312,6 +312,11 @@ function generateErrorPageHTML(errorCode, errorTitle, config) {
   
   const cssContent = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
   const jsContent = fs.existsSync(jsPath) ? fs.readFileSync(jsPath, 'utf8') : '';
+  
+  // SVG логотип встроенный
+  const logoSvg = `<svg version="1.1" viewBox="0 0 65.954474 51.821379" xmlns="http://www.w3.org/2000/svg">
+    <path d="m 46.894909,51.821381 a 2.4234402,2.4234402 0 0 0 0,-4.71103 h -9.20664 a 2.3555168,2.3555168 0 0 1 -2.35551,-2.35552 v -14.34118 a 3.1406892,3.1406892 0 0 1 5.10362,-2.4517 15.703446,15.703446 0 1 0 -2.31983,-22.2260799 L 24.197589,22.680751 a 10.992413,10.992413 0 1 1 0,-13.9546101 l 1.87895,2.2874401 a 2.3555213,2.3555213 0 0 0 3.64035,-2.9902801 l -1.87896,-2.2874298 a 15.703446,15.703446 0 1 0 0,19.9351499 L 41.756889,8.7261409 a 10.992413,10.992413 0 1 1 1.62389,15.5582601 7.8517232,7.8517232 0 0 0 -12.75906,6.12925 v 14.34118 a 2.3555168,2.3555168 0 0 1 -2.35552,2.35552 h -9.20663 a 2.4234402,2.4234402 0 0 0 0,4.71103 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.0806979;stroke-dasharray:none"/>
+  </svg>`;
   
   return `<!DOCTYPE html>
 <html lang="en">
@@ -327,7 +332,9 @@ ${cssContent}
 <canvas id="canvas"></canvas>
 <div class="content">
   <div class="logo-container">
-    <img src="${logoPath}" alt="${siteName}" class="logo">
+    <div class="logo-wrapper">
+      ${logoSvg}
+    </div>
     <div class="site-name">${siteName}</div>
   </div>
   <h1 class="hero glitch layers" data-text="${errorCode}"><span>${errorCode}</span></h1>
