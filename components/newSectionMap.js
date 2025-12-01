@@ -433,9 +433,12 @@ function findSectionNode(config, baseDir, sectionName) {
                   dirTree.files.forEach(file => {
                     const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
                     const filePath = file.htmlPath.replace(/\\/g, '/');
-                    if (fileName === 'readme' && filePath === `${alias}/readme.html`) {
-                      file.path = `${alias}/index.html`;
-                      file.htmlPath = `${alias}/index.html`;
+                    // Заменяем все readme.html на index.html, не только корневой
+                    if (fileName === 'readme') {
+                      const dirPath = path.dirname(filePath);
+                      const newPath = path.posix.join(dirPath, 'index.html');
+                      file.path = newPath;
+                      file.htmlPath = newPath;
                     }
                   });
                 }
@@ -508,9 +511,12 @@ function findSectionNode(config, baseDir, sectionName) {
             dirTree.files.forEach(file => {
               const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
               const filePath = file.htmlPath.replace(/\\/g, '/');
-              if (fileName === 'readme' && filePath === `${alias}/readme.html`) {
-                file.path = `${alias}/index.html`;
-                file.htmlPath = `${alias}/index.html`;
+              // Заменяем все readme.html на index.html, не только корневой
+              if (fileName === 'readme') {
+                const dirPath = path.dirname(filePath);
+                const newPath = path.posix.join(dirPath, 'index.html');
+                file.path = newPath;
+                file.htmlPath = newPath;
               }
             });
           }

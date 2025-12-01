@@ -482,7 +482,16 @@ async function build(rootPath) {
     // Phase 5: Generate _redirects for Netlify
     console.log('\n🔀 Phase 5: Generating _redirects...\n');
     const redirectsPath = path.join('dist', '_redirects');
-    const redirectsContent = `# Custom error pages for Netlify\n/* /404.html 404\n/* /500.html 500\n`;
+    const redirectsContent = `# Redirect old readme.html links to index.html
+/*/readme.html /*/index.html 301
+/*/*/readme.html /*/*/index.html 301
+/*/*/*/readme.html /*/*/*/index.html 301
+/*/*/*/*/readme.html /*/*/*/*/index.html 301
+
+# Custom error pages for Netlify
+/* /404.html 404
+/* /500.html 500
+`;
     fs.writeFileSync(redirectsPath, redirectsContent, 'utf8');
     console.log('   ✓ Generated _redirects\n');
     
