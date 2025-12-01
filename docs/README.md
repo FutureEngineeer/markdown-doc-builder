@@ -9,6 +9,7 @@
 - **[DEPLOYMENT_FIX.md](DEPLOYMENT_FIX.md)** - Исправления проблем с деплоем
 - **[CHANGELOG_DEPLOY.md](CHANGELOG_DEPLOY.md)** - История изменений конфигурации деплоя
 - **[FILENAME_NORMALIZATION.md](FILENAME_NORMALIZATION.md)** - Нормализация имен файлов в нижний регистр
+- **[BUILD_ORDER_FIX.md](BUILD_ORDER_FIX.md)** - Исправление порядка сборки для репозиториев
 
 ### Architecture & Implementation
 - **[АРХИТЕКТУРА.md](АРХИТЕКТУРА.md)** - Архитектура проекта

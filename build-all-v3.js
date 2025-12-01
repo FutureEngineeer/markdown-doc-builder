@@ -247,8 +247,47 @@ async function generateFiles(index, fileStructure, rootPath) {
     }
   }
   
-  // Обрабатываем файлы
-  async function processStructureItem(item) {
+  // Обрабатываем файлы в два прохода:
+  // Проход 1: Сначала обрабатываем ВСЕ репозитории
+  // Проход 2: Затем обрабатываем локальные файлы
+  
+  console.log('   📦 Pass 1: Processing repository files...');
+  
+  async function processRepositories(item) {
+    if (item.type === 'repository') {
+      const repoInfo = item.repoInfo;
+      if (repoInfo) {
+        const outputDir = path.join('dist', item.output);
+        console.log(`      Processing repository: ${item.output}`);
+        
+        for (const file of repoInfo.files) {
+          if (file.type === 'markdown') {
+            const relativePath = file.localRelativePath.replace(/\\/g, '/');
+            const outputFileName = relativePath.replace(/\.md$/i, '.html').replace(/readme\.html$/i, 'index.html').toLowerCase();
+            const outputPath = path.join(outputDir, outputFileName);
+            
+            await orchestrator.processFile(file.localPath, outputPath);
+          }
+        }
+      }
+    } else if (item.type === 'folder' || item.type === 'section') {
+      const children = item.type === 'folder' ? item.files : item.children;
+      if (children) {
+        for (const child of children) {
+          await processRepositories(child);
+        }
+      }
+    }
+  }
+  
+  // Проход 1: Обрабатываем репозитории
+  for (const item of fileStructure.root) {
+    await processRepositories(item);
+  }
+  
+  console.log('   📄 Pass 2: Processing local files...');
+  
+  async function processLocalFiles(item) {
     if (item.type === 'file' && !item.isIgnored) {
       const sourceFile = index.files.find(f => {
         const normalizedSource = item.source.replace(/\\/g, '/');
@@ -262,37 +301,23 @@ async function generateFiles(index, fileStructure, rootPath) {
       }
     } else if (item.type === 'folder') {
       for (const file of item.files) {
-        await processStructureItem(file);
+        await processLocalFiles(file);
       }
       if (item.hiddenFiles) {
         for (const file of item.hiddenFiles) {
-          await processStructureItem(file);
-        }
-      }
-    } else if (item.type === 'repository') {
-      const repoInfo = item.repoInfo;
-      if (repoInfo) {
-        const outputDir = path.join('dist', item.output);
-        
-        for (const file of repoInfo.files) {
-          if (file.type === 'markdown') {
-            const relativePath = file.localRelativePath.replace(/\\/g, '/');
-            const outputFileName = relativePath.replace(/\.md$/i, '.html').replace(/readme\.html$/i, 'index.html').toLowerCase();
-            const outputPath = path.join(outputDir, outputFileName);
-            
-            await orchestrator.processFile(file.localPath, outputPath);
-          }
+          await processLocalFiles(file);
         }
       }
     } else if (item.type === 'section') {
       for (const child of item.children) {
-        await processStructureItem(child);
+        await processLocalFiles(child);
       }
     }
   }
   
+  // Проход 2: Обрабатываем локальные файлы
   for (const item of fileStructure.root) {
-    await processStructureItem(item);
+    await processLocalFiles(item);
   }
   
   // Обрабатываем изображения из markdown файлов
