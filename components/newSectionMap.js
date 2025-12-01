@@ -641,7 +641,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
     }
     
     if (readmeFile) {
-      const cleanPath = readmeFile.htmlPath.replace(/\\/g, '/');
+      const cleanPath = readmeFile.htmlPath.replace(/\\/g, '/').toLowerCase();
       const href = relativeRoot + cleanPath;
       
       // Проверяем, является ли README файл активным
@@ -656,7 +656,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
       html += `${indent}    <span class="link">${sectionTitle}</span>\n`;
     } else if (!hasChildFolders && filesWithoutReadme.length === 1) {
       const singleFile = filesWithoutReadme[0];
-      const cleanPath = singleFile.htmlPath.replace(/\\/g, '/');
+      const cleanPath = singleFile.htmlPath.replace(/\\/g, '/').toLowerCase();
       const href = relativeRoot + cleanPath;
       const fileName = path.basename(singleFile.path, '.html').toLowerCase();
       
@@ -720,7 +720,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
         // Точное сравнение путей
         const isFileActive = normalizedCurrentFile === fileHtmlPath;
         
-        const cleanPath = file.htmlPath.replace(/\\/g, '/');
+        const cleanPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
         const href = relativeRoot + cleanPath;
         
         html += `${indent}    <li>\n`;
@@ -935,7 +935,7 @@ function generateNewSectionMap(currentFile = '', outputFile = '') {
       // Точное сравнение путей (с учетом того, что normalizedCurrentFile уже без "dist/")
       const isActive = normalizedCurrentFile === fileHtmlPath;
       
-      const cleanPath = file.htmlPath.replace(/\\/g, '/');
+      const cleanPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
       const href = relativeRoot + cleanPath;
       
       html += `        <li>\n`;

@@ -236,7 +236,7 @@ async function generateFiles(index, fileStructure, rootPath) {
   
   // Индексируем файлы репозиториев
   for (const repo of index.repositories) {
-    const repoAlias = repo.alias || `${repo.owner}-${repo.repo}`;
+    const repoAlias = (repo.alias || `${repo.owner}-${repo.repo}`).toLowerCase();
     for (const file of repo.files) {
       if (file.type === 'markdown') {
         const relativePath = file.localRelativePath.replace(/\\/g, '/');
@@ -257,8 +257,9 @@ async function generateFiles(index, fileStructure, rootPath) {
     if (item.type === 'repository') {
       const repoInfo = item.repoInfo;
       if (repoInfo) {
-        const outputDir = path.join('dist', item.output);
-        console.log(`      Processing repository: ${item.output}`);
+        // Нормализуем путь к папке репозитория в нижний регистр
+        const outputDir = path.join('dist', item.output.toLowerCase());
+        console.log(`      Processing repository: ${item.output.toLowerCase()}`);
         
         for (const file of repoInfo.files) {
           if (file.type === 'markdown') {

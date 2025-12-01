@@ -857,7 +857,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
     }
     
     if (readmeFile) {
-      const cleanPath = readmeFile.htmlPath.replace(/\\/g, '/');
+      const cleanPath = readmeFile.htmlPath.replace(/\\/g, '/').toLowerCase();
       const href = relativeRoot + cleanPath;
       
       // Проверяем, является ли README файл активным
@@ -872,7 +872,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
       html += `${indent}    <span class="link">${sectionTitle}</span>\n`;
     } else if (!hasChildFolders && filesWithoutReadme.length === 1) {
       const singleFile = filesWithoutReadme[0];
-      const cleanPath = singleFile.htmlPath.replace(/\\/g, '/');
+      const cleanPath = singleFile.htmlPath.replace(/\\/g, '/').toLowerCase();
       const href = relativeRoot + cleanPath;
       const fileName = path.basename(singleFile.path, '.html').toLowerCase();
       
@@ -941,7 +941,7 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
         // Точное сравнение путей
         const isFileActive = normalizedCurrentFile === fileHtmlPath;
         
-        const cleanPath = file.htmlPath.replace(/\\/g, '/');
+        const cleanPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
         const href = relativeRoot + cleanPath;
         
         html += `${indent}    <li>\n`;
@@ -1047,7 +1047,7 @@ function generateHamburgerMenu(currentFile = '', outputFile = '') {
     // Точное сравнение путей
     const isActive = normalizedCurrentFile === fileHtmlPath;
     
-    const cleanPath = file.htmlPath.replace(/\\/g, '/');
+    const cleanPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
     const href = relativeRoot + cleanPath;
     
     html += `      <li>\n`;

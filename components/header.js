@@ -73,8 +73,8 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
     // Корректируем URL для относительных ссылок
     let href = link.url;
     if (!href.startsWith('http') && !href.startsWith('#')) {
-      // Это относительная ссылка на файл
-      href = relativeRoot + href;
+      // Это относительная ссылка на файл - нормализуем в нижний регистр
+      href = relativeRoot + href.toLowerCase();
     }
     
     return `<li${classAttr}><a href="${href}"${isActive ? ' class="active"' : ''}>${link.text}</a></li>`;
