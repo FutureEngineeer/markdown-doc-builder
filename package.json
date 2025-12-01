@@ -4,9 +4,9 @@
     "description": "Multi-repository documentation builder for GitHub Pages",
     "main": "builder.js",
     "scripts": {
-        "build": "node build-all-v3.js",
-        "build:all": "node build-all-v3.js",
-        "build:netlify": "node build-all-v3.js",
+        "build": "node build-all-v3.js website",
+        "build:all": "node build-all-v3.js website",
+        "build:netlify": "node build-all-v3.js website",
         "build:clean": "node scripts/clean-build.js && npm run build:all",
         "build:test": "node scripts/test-build.js",
         "build:optimized": "npm run build && npm run optimize",
