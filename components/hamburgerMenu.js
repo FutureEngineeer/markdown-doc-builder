@@ -1070,14 +1070,6 @@ function generateHamburgerMenu(currentFile = '', outputFile = '') {
   html += '  </nav>\n';
   html += '</aside>\n';
   
-  // Проверяем, что CLN есть в HTML
-  if (html.includes('CLN')) {
-    console.log('[DEBUG] Hamburger menu contains CLN ✓');
-  } else {
-    console.log('[DEBUG] Hamburger menu DOES NOT contain CLN ✗');
-    console.log('[DEBUG] Children in tree:', Object.keys(fullTree.children));
-  }
-  
   return html;
 }
 

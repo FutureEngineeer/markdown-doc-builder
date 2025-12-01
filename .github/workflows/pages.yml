@@ -55,7 +55,7 @@ jobs:
             build-cache-
       
       - name: Build site
-        run: npm run build:all
+        run: npm run build:fresh
       
       - name: Setup Pages
         uses: actions/configure-pages@v4

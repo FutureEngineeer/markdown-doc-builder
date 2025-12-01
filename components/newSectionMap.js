@@ -391,13 +391,15 @@ function findSectionNode(config, baseDir, sectionName) {
         const sectionDir = path.join(baseDir, 'dist', sectionName);
         
         if (fs.existsSync(sectionDir)) {
+          // Для секций передаем sectionConfig, чтобы фильтровать по hierarchy
           const sectionTree = buildFileTree(sectionDir, path.join(baseDir, 'dist'), sectionName, [], sectionConfig);
           return {
             name: sectionName,
             title: formatSectionTitle(sectionName),
             path: sectionName,
             children: sectionTree.children,
-            files: sectionTree.files
+            files: sectionTree.files,
+            isSection: true
           };
         }
       }
@@ -426,7 +428,8 @@ function findSectionNode(config, baseDir, sectionName) {
                   });
                 }
               } else if (fs.existsSync(repoDir)) {
-                dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), alias, []);
+                // Для репозиториев передаем null как hierarchyConfig, чтобы показать ВСЮ структуру
+                dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), alias, [], null);
               } else {
                 return null;
               }
@@ -438,7 +441,8 @@ function findSectionNode(config, baseDir, sectionName) {
                 title: item.title || formatSectionTitle(alias),
                 path: alias,
                 children: dirTree.children,
-                files: dirTree.files
+                files: dirTree.files,
+                isRepository: true
               };
             }
           }
