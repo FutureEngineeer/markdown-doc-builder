@@ -9,7 +9,7 @@
         "build:netlify": "node build-all-v3.js website",
         "build:fresh": "npm run clean && npm run build:all",
         "build:clean": "node scripts/clean-build.js && npm run build:all",
-        "clean": "node -e \"const fs=require('fs');['.temp','temp','dist'].forEach(d=>{try{fs.rmSync(d,{recursive:true,force:true});console.log('✓ Removed',d)}catch(e){}})\"",
+        "clean": "node -e \"const fs=require('fs');const path=require('path');['.temp','temp','dist'].forEach(d=>{const p=path.join(process.cwd(),d);try{if(fs.existsSync(p)){fs.rmSync(p,{recursive:true,force:true});console.log('✓ Removed',d)}else{console.log('⊘ Not found',d)}}catch(e){console.error('✗ Error removing',d,e.message)}})\"",
         "build:test": "node scripts/test-build.js",
         "build:optimized": "npm run build && npm run optimize",
         "optimize": "node scripts/optimize.js",

@@ -74,6 +74,34 @@
     max-width: 100%;
 }
 
+/* Подчеркивание для link элементов */
+.section-map-nav .item-content > .link::after,
+.hamburger-menu-nav .item-content > .link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform var(--speed-fast) ease;
+}
+
+.section-map-nav .item-content:hover > .link::after,
+.hamburger-menu-nav .item-content:hover > .link::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* Активная ссылка - подчеркивание видно */
+.section-map-nav .item-content.active > .link::after,
+.hamburger-menu-nav .item-content.active > .link::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
 /* Link (кликабельный элемент) */
 .section-map-nav .link,
 .hamburger-menu-nav .link {

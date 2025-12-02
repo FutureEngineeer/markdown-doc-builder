@@ -142,15 +142,17 @@ header {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 0;
+    width: 100%;
     height: 2px;
     background: var(--accent);
-    transition: width var(--speed-fast) ease;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--speed-fast) ease;
 }
 
 .nav-links a:hover::after {
-    width: 100%;
-    color: var(--accent);
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 /* Активная ссылка в навигации - зеленый цвет БЕЗ подчеркивания */
@@ -159,12 +161,13 @@ header {
 }
 
 .nav-links a.active::after {
-    width: 0;
+    transform: scaleX(0);
 }
 
 /* При наведении на активную ссылку показываем подчеркивание */
 .nav-links a.active:hover::after {
-    width: 100%;
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 /* Убираем изменение цвета ссылок после посещения */

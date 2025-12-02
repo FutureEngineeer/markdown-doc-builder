@@ -348,10 +348,111 @@ function buildTreeFromHierarchy(hierarchy, baseDir, hierarchyInfo) {
 }
 
 /**
+ * Строит дерево из fileStructure (самая новая система)
+ */
+function buildTreeFromFileStructure(fileStructure, baseDir) {
+  const tree = { children: {}, files: [] };
+  
+  if (!fileStructure.root || !Array.isArray(fileStructure.root)) {
+    return tree;
+  }
+  
+  function processStructureItem(item) {
+    if (item.type === 'file') {
+      const htmlPath = item.output || item.path || '';
+      return {
+        name: item.title || formatFileName(path.basename(htmlPath, '.html')),
+        path: htmlPath,
+        htmlPath: htmlPath,
+        alias: item.alias,
+        isFile: true
+      };
+    } else if (item.type === 'folder' || item.type === 'section') {
+      // Если это репозиторий (section с isRepository: true), строим дерево из dist
+      if (item.isRepository && item.type === 'section') {
+        const repoDir = path.join(baseDir, 'dist', item.output);
+        if (fs.existsSync(repoDir)) {
+          const repoTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), item.output, []);
+          return {
+            name: item.alias || path.basename(item.output || ''),
+            title: item.title,
+            path: item.output,
+            children: repoTree.children,
+            files: repoTree.files
+          };
+        }
+      }
+      
+      const node = {
+        name: item.alias || path.basename(item.output || ''),
+        title: item.title,
+        path: item.output,
+        children: {},
+        files: []
+      };
+      
+      const items = item.type === 'folder' ? item.files : item.children;
+      if (items && Array.isArray(items)) {
+        items.forEach(child => {
+          const processed = processStructureItem(child);
+          if (processed) {
+            if (processed.isFile) {
+              // Это файл
+              delete processed.isFile;
+              node.files.push(processed);
+            } else {
+              // Это папка/секция
+              node.children[processed.name] = processed;
+            }
+          }
+        });
+      }
+      
+      return node;
+    } else if (item.type === 'repository') {
+      // Репозиторий - строим дерево из dist
+      const repoDir = path.join(baseDir, 'dist', item.output);
+      if (fs.existsSync(repoDir)) {
+        const repoTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), item.output, []);
+        return {
+          name: item.alias || path.basename(item.output || ''),
+          title: item.title,
+          path: item.output,
+          children: repoTree.children,
+          files: repoTree.files
+        };
+      }
+    }
+    
+    return null;
+  }
+  
+  fileStructure.root.forEach(item => {
+    const processed = processStructureItem(item);
+    if (processed) {
+      if (processed.path && !processed.children) {
+        // Это файл
+        tree.files.push(processed);
+      } else if (processed.children) {
+        // Это папка/секция
+        tree.children[processed.name] = processed;
+      }
+    }
+  });
+  
+  return tree;
+}
+
+/**
  * Строит дерево из hierarchy-info.json (новая система)
  */
 function buildTreeFromHierarchyInfo(hierarchyInfo, baseDir) {
   const tree = { children: {}, files: [], order: [] };
+  
+  // Используем fileStructure если доступен (новая система)
+  if (hierarchyInfo.fileStructure && hierarchyInfo.fileStructure.root) {
+    return buildTreeFromFileStructure(hierarchyInfo.fileStructure, baseDir);
+  }
   
   if (!hierarchyInfo.root || !hierarchyInfo.root.hierarchy) {
     return tree;
@@ -804,7 +905,12 @@ function detectScopeItemType(itemPath) {
  * Проверяет, содержит ли узел активную страницу (рекурсивно)
  */
 function containsActivePage(node, normalizedCurrentFile) {
+  if (!node.files || !Array.isArray(node.files)) {
+    return Object.values(node.children || {}).some(child => containsActivePage(child, normalizedCurrentFile));
+  }
+  
   const hasActiveFile = node.files.some(file => {
+    if (!file || !file.htmlPath) return false;
     let fileHtmlPath = file.htmlPath.replace(/\\/g, '/').toLowerCase();
     // Заменяем readme.html на index.html для сравнения
     fileHtmlPath = fileHtmlPath.replace(/\/readme\.html$/i, '/index.html');
@@ -839,12 +945,14 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot) {
     
     // Определяем файлы без README
     const filesWithoutReadme = node.files ? node.files.filter(f => {
+      if (!f || !f.htmlPath) return false;
       const fileName = path.basename(f.htmlPath, '.html').toLowerCase();
       return !['readme', 'index', 'main', 'root'].includes(fileName);
     }) : [];
     
     // Проверяем, есть ли README/index файл
     const readmeFile = node.files && node.files.find(f => {
+      if (!f || !f.htmlPath) return false;
       const fileName = path.basename(f.htmlPath, '.html').toLowerCase();
       return ['readme', 'index', 'main', 'root'].includes(fileName);
     });

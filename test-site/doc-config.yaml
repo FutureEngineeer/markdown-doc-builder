@@ -1,16 +1,16 @@
 # Структура тестового сайта
 hierarchy:
-  - file: home.md
-    title: "Главная"
-    alias: home
-    description: "Главная страница тестового сайта"
+  - Главная:
+      path: home.md
+      alias: home
+      description: "Главная страница тестового сайта"
   
-  - file: about.md
-    title: "О проекте"
-    alias: about
-    description: "Информация о проекте"
+  - О проекте:
+      path: about.md
+      alias: about
+      description: "Информация о проекте"
   
-  - file: docs.md
-    title: "Документация"
-    alias: docs
-    description: "Основная документация"
+  - Документация:
+      path: docs.md
+      alias: docs
+      description: "Основная документация"

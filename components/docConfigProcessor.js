@@ -6,17 +6,23 @@ const yaml = require('js-yaml');
 /**
  * Рекурсивно обрабатывает doc-config.yaml файлы и строит полную карту структуры
  * 
- * Логика:
- * - Если в папке есть doc-config.yaml, он переопределяет структуру этой папки
- * - Если doc-config.yaml нет, показываются все файлы и папки рекурсивно
- * - Вложенные doc-config.yaml обрабатываются рекурсивно
+ * Новый формат:
+ * hierarchy:
+ *   - Home: home.md              # Файл
+ *     description: "..."
+ *   - CLN: "https://github.com/..." # Репозиторий
+ *     section: true
+ *   - Projects:                  # Секция с подразделами
+ *     section: true
+ *     sub:
+ *       - Alpha: project-alpha/  # Папка
  */
 class DocConfigProcessor {
   constructor(rootPath) {
     this.rootPath = rootPath;
-    this.processedConfigs = new Map(); // Кеш обработанных конфигов
-    this.allFiles = []; // Все найденные .md файлы
-    this.allFolders = []; // Все найденные папки
+    this.processedConfigs = new Map();
+    this.allFiles = [];
+    this.allFolders = [];
   }
 
   /**
@@ -29,7 +35,6 @@ class DocConfigProcessor {
       return null;
     }
 
-    // Проверяем кеш
     if (this.processedConfigs.has(configPath)) {
       return this.processedConfigs.get(configPath);
     }
@@ -38,7 +43,6 @@ class DocConfigProcessor {
       const configContent = fs.readFileSync(configPath, 'utf8');
       const config = yaml.load(configContent);
       
-      // Добавляем метаданные
       config._path = configPath;
       config._dirPath = dirPath;
       config._relativePath = path.relative(this.rootPath, dirPath);
@@ -49,6 +53,177 @@ class DocConfigProcessor {
       console.warn(`⚠️  Error loading doc-config at ${configPath}:`, error.message);
       return null;
     }
+  }
+
+  /**
+   * Генерирует alias из названия
+   */
+  generateAlias(name) {
+    // Простая транслитерация кириллицы
+    const translitMap = {
+      'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+      'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+      'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+      'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+      'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+    };
+    
+    return name
+      .toLowerCase()
+      .split('')
+      .map(char => translitMap[char] || char)
+      .join('')
+      .replace(/[^\w\s-]/g, '') // Убираем эмодзи и спец символы
+      .replace(/\s+/g, '-')     // Пробелы в дефисы
+      .replace(/-+/g, '-')      // Множественные дефисы в один
+      .trim();
+  }
+
+  /**
+   * Парсит элемент hierarchy в новом формате
+   */
+  parseHierarchyItem(item, dirPath, relativePath) {
+    // Новый формат: ключ-значение с дополнительными свойствами
+    // Пример: - Home: { path: "home.md", description: "..." }
+    // Или: - Home: "home.md"
+    // Или: - Projects: { section: true, sub: [...] }
+    
+    const key = Object.keys(item)[0];
+    if (!key) return null;
+    
+    const value = item[key];
+    
+    // Если значение - объект
+    if (typeof value === 'object' && value !== null) {
+      const pathValue = value.path;
+      const itemDescription = value.description;
+      const itemSection = value.section === true;
+      const itemSub = value.sub;
+      const itemAlias = value.alias;
+      
+      // Если есть sub - это секция с дочерними элементами
+      if (itemSection && itemSub && Array.isArray(itemSub)) {
+        const alias = itemAlias || this.generateAlias(key);
+        const children = itemSub.map(subItem => 
+          this.parseHierarchyItem(subItem, dirPath, relativePath)
+        ).filter(Boolean);
+        
+        return {
+          type: 'section',
+          title: key,
+          alias,
+          section: true,
+          description: itemDescription,
+          children
+        };
+      }
+      
+      // Если есть path - определяем тип по path
+      if (pathValue) {
+        // Проверяем тип по path
+        if (pathValue.startsWith('http://') || pathValue.startsWith('https://')) {
+          // Репозиторий
+          const alias = itemAlias || this.generateAlias(key);
+          return {
+            type: 'repository',
+            title: key,
+            alias,
+            url: pathValue,
+            section: itemSection,
+            description: itemDescription
+          };
+        } else if (pathValue.endsWith('/')) {
+          // Папка
+          const folderName = pathValue.slice(0, -1);
+          const folderPath = path.join(dirPath, folderName);
+          const folderRelativePath = relativePath ? path.join(relativePath, folderName) : folderName;
+          const alias = itemAlias || this.generateAlias(key);
+          
+          return {
+            type: 'folder',
+            title: key,
+            alias,
+            folder: folderName,
+            path: folderPath,
+            relativePath: folderRelativePath,
+            section: itemSection,
+            description: itemDescription
+          };
+        } else {
+          // Файл
+          const filePath = path.join(dirPath, pathValue);
+          const fileRelativePath = relativePath ? path.join(relativePath, pathValue) : pathValue;
+          const alias = itemAlias || this.generateAlias(key);
+          
+          return {
+            type: 'file',
+            title: key,
+            alias,
+            file: pathValue,
+            path: filePath,
+            relativePath: fileRelativePath,
+            baseName: path.basename(pathValue, '.md'),
+            isReadme: /^readme$/i.test(path.basename(pathValue, '.md')),
+            description: itemDescription
+          };
+        }
+      }
+    }
+    
+    // Если значение - строка
+    if (typeof value === 'string') {
+      const alias = this.generateAlias(key);
+      
+      // Проверяем, является ли это URL репозитория
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        return {
+          type: 'repository',
+          title: key,
+          alias,
+          url: value,
+          section: false,
+          description: undefined
+        };
+      }
+      
+      // Проверяем, является ли это папкой (заканчивается на /)
+      if (value.endsWith('/')) {
+        const folderName = value.slice(0, -1);
+        const folderPath = path.join(dirPath, folderName);
+        const folderRelativePath = relativePath ? path.join(relativePath, folderName) : folderName;
+        
+        return {
+          type: 'folder',
+          title: key,
+          alias,
+          folder: folderName,
+          path: folderPath,
+          relativePath: folderRelativePath,
+          section: false,
+          description: undefined
+        };
+      }
+      
+      // Иначе это файл
+      const filePath = path.join(dirPath, value);
+      const fileRelativePath = relativePath ? path.join(relativePath, value) : value;
+      
+      return {
+        type: 'file',
+        title: key,
+        alias,
+        file: value,
+        path: filePath,
+        relativePath: fileRelativePath,
+        baseName: path.basename(value, '.md'),
+        isReadme: /^readme$/i.test(path.basename(value, '.md')),
+        description: undefined
+      };
+    }
+    
+    // Неизвестный формат
+    console.warn(`⚠️  Unknown hierarchy item format:`, item);
+    return null;
   }
 
   /**
@@ -72,7 +247,6 @@ class DocConfigProcessor {
         const itemRelativePath = relativePath ? path.join(relativePath, item.name) : item.name;
 
         if (item.isDirectory()) {
-          // Пропускаем служебные папки
           if (item.name.startsWith('.') || item.name === 'node_modules') {
             continue;
           }
@@ -110,45 +284,15 @@ class DocConfigProcessor {
 
   /**
    * Рекурсивно строит дерево структуры для папки
-   * 
-   * @param {string} dirPath - Путь к папке
-   * @param {string} relativePath - Относительный путь от root
-   * @param {object} parentConfig - Конфигурация родительской папки
-   * @returns {object} Дерево структуры
    */
   buildTreeForDirectory(dirPath, relativePath = '', parentConfig = null) {
-    // Проверяем наличие doc-config.yaml в текущей папке
     const docConfig = this.loadDocConfig(dirPath);
 
     if (docConfig && docConfig.hierarchy) {
-      // Если есть doc-config с hierarchy, используем его для определения структуры
       return this.buildTreeFromHierarchy(docConfig.hierarchy, dirPath, relativePath, docConfig);
     } else {
-      // Если нет doc-config, показываем все файлы и папки рекурсивно
       return this.buildTreeFromFileSystem(dirPath, relativePath, parentConfig);
     }
-  }
-
-  /**
-   * Проверяет, игнорируется ли файл
-   */
-  isFileIgnored(fileName, config) {
-    if (!config || !config.ignored) {
-      return false;
-    }
-    
-    const ignored = Array.isArray(config.ignored) ? config.ignored : [config.ignored];
-    return ignored.some(pattern => {
-      if (typeof pattern === 'string') {
-        // Простое сравнение или wildcard
-        if (pattern.includes('*')) {
-          const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
-          return regex.test(fileName);
-        }
-        return fileName === pattern || fileName === pattern + '.md';
-      }
-      return false;
-    });
   }
 
   /**
@@ -162,103 +306,30 @@ class DocConfigProcessor {
     };
 
     for (const item of hierarchy) {
-      if (item.file) {
-        // Файл из hierarchy
-        const filePath = path.join(dirPath, item.file);
-        
-        if (fs.existsSync(filePath)) {
-          tree.children.push({
-            type: 'file',
-            file: item.file,
-            title: item.title,
-            alias: item.alias,
-            description: item.description,
-            path: filePath,
-            relativePath: relativePath ? path.join(relativePath, item.file) : item.file,
-            baseName: path.basename(item.file, '.md'),
-            isReadme: /^readme$/i.test(path.basename(item.file, '.md')),
-            inHierarchy: true
-          });
-        } else {
-          console.warn(`⚠️  File not found in hierarchy: ${filePath}`);
-        }
-      } else if (item.repository) {
-        // GitHub репозиторий
-        tree.children.push({
-          type: 'repository',
-          repository: item.repository,
-          alias: item.alias,
-          title: item.title,
-          section: item.section,
-          description: item.description
-        });
-      } else if (item.folder) {
-        // Вложенная папка
-        const folderPath = path.join(dirPath, item.folder);
-        const folderRelativePath = relativePath ? path.join(relativePath, item.folder) : item.folder;
-
-        if (fs.existsSync(folderPath)) {
-          // Рекурсивно обрабатываем вложенную папку
-          const folderTree = this.buildTreeForDirectory(folderPath, folderRelativePath, config);
-
-          tree.children.push({
-            type: 'folder',
-            folder: item.folder,
-            title: item.title,
-            alias: item.alias,
-            section: item.section,
-            description: item.description,
-            path: folderPath,
-            relativePath: folderRelativePath,
-            children: folderTree.children,
-            config: folderTree.config
-          });
-        } else {
-          console.warn(`⚠️  Folder not found in hierarchy: ${folderPath}`);
-        }
-      } else if (item.section && item.children) {
-        // Секция с дочерними элементами
-        const sectionChildren = [];
-
-        for (const child of item.children) {
-          if (child.folder) {
-            const childFolderPath = path.join(dirPath, child.folder);
-            const childRelativePath = relativePath ? path.join(relativePath, child.folder) : child.folder;
-
-            if (fs.existsSync(childFolderPath)) {
-              const childTree = this.buildTreeForDirectory(childFolderPath, childRelativePath, config);
-
-              sectionChildren.push({
-                type: 'folder',
-                folder: child.folder,
-                title: child.title,
-                alias: child.alias,
-                description: child.description,
-                path: childFolderPath,
-                relativePath: childRelativePath,
-                children: childTree.children,
-                config: childTree.config
-              });
-            }
-          } else if (child.repository) {
-            sectionChildren.push({
-              type: 'repository',
-              repository: child.repository,
-              alias: child.alias,
-              title: child.title,
-              description: child.description
-            });
-          }
-        }
-
-        tree.children.push({
-          type: 'section',
-          title: item.title,
-          alias: item.alias,
-          description: item.description,
-          children: sectionChildren
-        });
+      const parsed = this.parseHierarchyItem(item, dirPath, relativePath);
+      
+      if (!parsed) continue;
+      
+      // Для папок рекурсивно обрабатываем содержимое
+      if (parsed.type === 'folder' && fs.existsSync(parsed.path)) {
+        const folderTree = this.buildTreeForDirectory(parsed.path, parsed.relativePath, config);
+        parsed.children = folderTree.children;
+        parsed.config = folderTree.config;
       }
+      
+      // Для секций рекурсивно обрабатываем children
+      if (parsed.type === 'section' && parsed.children) {
+        parsed.children = parsed.children.map(child => {
+          if (child.type === 'folder' && fs.existsSync(child.path)) {
+            const folderTree = this.buildTreeForDirectory(child.path, child.relativePath, config);
+            child.children = folderTree.children;
+            child.config = folderTree.config;
+          }
+          return child;
+        }).filter(Boolean);
+      }
+      
+      tree.children.push(parsed);
     }
 
     return tree;
@@ -276,10 +347,7 @@ class DocConfigProcessor {
 
     const scanned = this.scanDirectory(dirPath, relativePath);
 
-    // Добавляем все файлы
     for (const file of scanned.files) {
-      const isIgnored = this.isFileIgnored(file.name, parentConfig);
-      
       tree.children.push({
         type: 'file',
         file: file.name,
@@ -288,12 +356,11 @@ class DocConfigProcessor {
         baseName: file.baseName,
         isReadme: file.isReadme,
         title: this.formatFileName(file.baseName),
-        inHierarchy: false,
-        ignored: isIgnored
+        alias: this.generateAlias(file.baseName),
+        inHierarchy: false
       });
     }
 
-    // Рекурсивно обрабатываем подпапки
     for (const folder of scanned.folders) {
       const folderTree = this.buildTreeForDirectory(folder.path, folder.relativePath, parentConfig);
 
@@ -303,6 +370,7 @@ class DocConfigProcessor {
         path: folder.path,
         relativePath: folder.relativePath,
         title: this.formatFolderName(folder.name),
+        alias: this.generateAlias(folder.name),
         children: folderTree.children,
         config: folderTree.config
       });
@@ -346,7 +414,7 @@ class DocConfigProcessor {
     const traverse = (node) => {
       if (node.type === 'repository') {
         repositories.push({
-          url: node.repository,
+          url: node.url,
           alias: node.alias,
           title: node.title,
           section: node.section,
@@ -372,7 +440,7 @@ class DocConfigProcessor {
     const files = [];
 
     const traverse = (node) => {
-      if (node.type === 'file' && !node.ignored) {
+      if (node.type === 'file') {
         files.push({
           name: node.file,
           path: node.path,
@@ -381,7 +449,7 @@ class DocConfigProcessor {
           isReadme: node.isReadme,
           title: node.title,
           alias: node.alias,
-          inHierarchy: node.inHierarchy
+          inHierarchy: node.inHierarchy !== false
         });
       }
 
@@ -404,7 +472,6 @@ class DocConfigProcessor {
       totalFiles: 0,
       hierarchyFiles: 0,
       autoFiles: 0,
-      ignoredFiles: 0,
       folders: 0,
       configFolders: 0,
       autoFolders: 0,
@@ -415,9 +482,7 @@ class DocConfigProcessor {
     const traverse = (node) => {
       if (node.type === 'file') {
         stats.totalFiles++;
-        if (node.ignored) {
-          stats.ignoredFiles++;
-        } else if (node.inHierarchy) {
+        if (node.inHierarchy !== false) {
           stats.hierarchyFiles++;
         } else {
           stats.autoFiles++;
@@ -449,7 +514,7 @@ class DocConfigProcessor {
   /**
    * Визуализирует дерево в консоль
    */
-  visualizeTree(tree, indent = '', isLast = true, showAll = false) {
+  visualizeTree(tree, indent = '', isLast = true) {
     const lines = [];
     
     const renderNode = (node, prefix, isLastNode) => {
@@ -457,48 +522,19 @@ class DocConfigProcessor {
       const childPrefix = prefix + (isLastNode ? '   ' : '│  ');
       
       if (node.type === 'file') {
-        let icon = '📄';
-        let badges = [];
-        let color = '';
-        
-        // Определяем иконку
-        if (node.isReadme) {
-          icon = '📋';
-        }
-        
-        // Определяем статус и цвет
-        if (node.ignored) {
-          icon = '🚫';
-          badges.push('IGNORED');
-          color = '\x1b[90m'; // gray
-        } else if (node.inHierarchy) {
-          badges.push('hierarchy');
-          color = '\x1b[32m'; // green
-        } else {
-          badges.push('auto-scanned');
-          color = '\x1b[36m'; // cyan
-        }
-        
+        const icon = node.isReadme ? '📋' : '📄';
+        const badge = node.inHierarchy !== false ? 'hierarchy' : 'auto-scanned';
+        const color = node.inHierarchy !== false ? '\x1b[32m' : '\x1b[36m';
         const reset = '\x1b[0m';
-        const title = node.title || node.file;
-        const badgeStr = badges.length > 0 ? ` [${badges.join(', ')}]` : '';
-        lines.push(`${prefix}${connector}${color}${icon} ${title}${badgeStr}${reset}`);
+        lines.push(`${prefix}${connector}${color}${icon} ${node.title} [${badge}]${reset}`);
         
       } else if (node.type === 'folder') {
         const hasConfig = node.config && node.config.hierarchy;
         const icon = hasConfig ? '📁' : '📂';
-        const badges = [];
-        const color = hasConfig ? '\x1b[33m' : '\x1b[36m'; // yellow : cyan
+        const badge = hasConfig ? 'doc-config' : 'auto-scanned';
+        const color = hasConfig ? '\x1b[33m' : '\x1b[36m';
         const reset = '\x1b[0m';
-        
-        if (hasConfig) {
-          badges.push('doc-config');
-        } else {
-          badges.push('auto-scanned');
-        }
-        
-        const badgeStr = badges.length > 0 ? ` [${badges.join(', ')}]` : '';
-        lines.push(`${prefix}${connector}${color}${icon} ${node.title || node.folder}${badgeStr}${reset}`);
+        lines.push(`${prefix}${connector}${color}${icon} ${node.title} [${badge}]${reset}`);
         
         if (node.children && node.children.length > 0) {
           node.children.forEach((child, index) => {
@@ -508,14 +544,12 @@ class DocConfigProcessor {
         }
         
       } else if (node.type === 'repository') {
-        const color = '\x1b[35m'; // magenta
+        const color = '\x1b[35m';
         const reset = '\x1b[0m';
-        const title = node.title || node.alias;
-        const alias = node.alias ? ` (${node.alias})` : '';
-        lines.push(`${prefix}${connector}${color}📦 ${title}${alias} [REPOSITORY]${reset}`);
+        lines.push(`${prefix}${connector}${color}📦 ${node.title} (${node.alias}) [REPOSITORY]${reset}`);
         
       } else if (node.type === 'section') {
-        const color = '\x1b[34m'; // blue
+        const color = '\x1b[34m';
         const reset = '\x1b[0m';
         lines.push(`${prefix}${connector}${color}📑 ${node.title} [SECTION]${reset}`);
         
@@ -546,13 +580,8 @@ class DocConfigProcessor {
   process() {
     console.log('📋 Processing doc-config structure...\n');
 
-    // Строим дерево начиная с root
     const rootTree = this.buildTreeForDirectory(this.rootPath, '');
-
-    // Собираем все репозитории
     const repositories = this.collectRepositories(rootTree);
-
-    // Собираем все файлы из дерева
     const treeFiles = this.collectFiles(rootTree);
 
     console.log(`   ✓ Processed ${this.processedConfigs.size} doc-config files`);
@@ -595,8 +624,7 @@ class DocConfigProcessor {
       })),
       configs: result.configs.map(c => ({
         path: c._relativePath,
-        hasHierarchy: !!c.hierarchy,
-        hasIgnored: !!c.ignored
+        hasHierarchy: !!c.hierarchy
       })),
       stats: stats
     };
@@ -608,7 +636,7 @@ class DocConfigProcessor {
   extractSections(tree) {
     const sections = {};
 
-    const traverse = (node, currentPath = '') => {
+    const traverse = (node) => {
       if (node.type === 'folder' && node.config && node.config.hierarchy) {
         const sectionName = path.basename(node.relativePath);
         sections[sectionName] = node.config;
@@ -616,7 +644,7 @@ class DocConfigProcessor {
 
       if (node.children) {
         for (const child of node.children) {
-          traverse(child, currentPath);
+          traverse(child);
         }
       }
     };

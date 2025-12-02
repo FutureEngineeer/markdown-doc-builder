@@ -267,19 +267,15 @@ async function downloadGitHubRepoMarkdown(githubUrl, outputDir, alias = null) {
   const totalFiles = files.length;
   let downloadedCount = 0;
 
-  // Функция для отображения прогресс-бара
+  // Функция для отображения прогресса
   function showProgress(current, total) {
-    const percentage = Math.round((current / total) * 100);
     const barLength = 30;
     const filledLength = Math.round((barLength * current) / total);
-    const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
+    const bar = '#'.repeat(filledLength) + '·'.repeat(barLength - filledLength);
     
-    // Используем \r для перезаписи строки
-    process.stdout.write(`   [${bar}] ${percentage}% (${current}/${total})\r`);
-    
-    // Если загрузка завершена, переходим на новую строку
+    // Выводим прогресс без перезаписи строки
     if (current === total) {
-      process.stdout.write('\n');
+      console.log(`   [${bar}] ${current}/${total}`);
     }
   }
 

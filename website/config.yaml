@@ -16,14 +16,14 @@ site:
 navigation:
   # Все ссылки отсюда добавляются в header nav-menu
   - text: "CLN"
-    url: "cln/index.html"
+    url: "cln-driver/index.html"
 
   - text: "RadiX Project"
-    url: "project-beta/radix/index.html"
+    url: "projects/project-beta/radix/index.html"
     alias: "radix"
   
   - text: "Проект Alpha"
-    url: "project-alpha/main.html"
+    url: "projects/project-alpha/main.html"
     alias: "project-alpha"
   
 

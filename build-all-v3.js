@@ -43,20 +43,21 @@ async function indexAllFiles(rootPath) {
 
   async function processRepositoriesFromTree(node) {
     if (node.type === 'repository') {
-      console.log(`   📥 Downloading: ${node.alias || node.repository}`);
+      const repoUrl = node.url || node.repository;
+      console.log(`   📥 Downloading: ${node.alias || repoUrl}`);
       
       // Регистрируем псевдоним в глобальной конфигурации
-      const urlMatch = node.repository.match(/https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
+      const urlMatch = repoUrl.match(/https:\/\/github\.com\/([^\/]+)\/([^\/]+)/);
       if (urlMatch && node.alias) {
         const [, owner, repo] = urlMatch;
         registerRepositoryAlias(owner, repo, node.alias);
       }
       
-      const projectData = await downloadGitHubRepoMarkdown(node.repository, tempDir, node.alias);
+      const projectData = await downloadGitHubRepoMarkdown(repoUrl, tempDir, node.alias);
       
       if (projectData.files.length > 0) {
         index.repositories.push({
-          url: node.repository,
+          url: repoUrl,
           alias: node.alias || projectData.repo,
           owner: projectData.owner,
           repo: projectData.repo,
@@ -142,11 +143,21 @@ function generateNavigationTemplates(index) {
     fileStructure: fileStructure
   };
 
-  const hierarchyPath = path.join(process.cwd(), '.temp', 'hierarchy-info.json');
-  if (!fs.existsSync(path.dirname(hierarchyPath))) {
-    fs.mkdirSync(path.dirname(hierarchyPath), { recursive: true });
+  // Убеждаемся что .temp директория существует и пуста
+  const tempDir = path.join(process.cwd(), '.temp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
   }
-  fs.writeFileSync(hierarchyPath, JSON.stringify(hierarchyInfo, null, 2));
+  
+  // Удаляем старый hierarchy-info.json если существует
+  const hierarchyPath = path.join(tempDir, 'hierarchy-info.json');
+  if (fs.existsSync(hierarchyPath)) {
+    fs.unlinkSync(hierarchyPath);
+  }
+  
+  // Записываем новый hierarchy-info.json
+  fs.writeFileSync(hierarchyPath, JSON.stringify(hierarchyInfo, null, 2), 'utf8');
+  console.log('   ✓ Created hierarchy-info.json\n');
   
   return fileStructure;
 }
@@ -155,7 +166,7 @@ function generateNavigationTemplates(index) {
  * Phase 3: Generate files using BuildOrchestrator
  */
 async function generateFiles(index, fileStructure, rootPath) {
-  console.log('📝 Phase 3: Generating files...\n');
+  console.log('\n📝 Phase 3: Generating files...\n');
   
   // Определяем путь к config.yaml
   const configPath = path.join(rootPath, 'config.yaml');
@@ -396,7 +407,7 @@ async function build(rootPath) {
   if (!rootPath) {
     throw new Error('Root path is required');
   }
-  console.log('🚀 Starting build v3 (modular architecture)...\n');
+  console.log('🚀 Starting build...\n');
   console.log(`📂 Root path: ${rootPath}\n`);
   
   const startTime = Date.now();
@@ -405,6 +416,17 @@ async function build(rootPath) {
     // Validate root path
     if (!fs.existsSync(rootPath)) {
       throw new Error(`Root path does not exist: ${rootPath}`);
+    }
+    
+    // Ensure .temp directory is clean before build
+    const tempDir = path.join(process.cwd(), '.temp');
+    if (fs.existsSync(tempDir)) {
+      // Удаляем только hierarchy-info.json для гарантии свежих данных
+      const hierarchyPath = path.join(tempDir, 'hierarchy-info.json');
+      if (fs.existsSync(hierarchyPath)) {
+        fs.unlinkSync(hierarchyPath);
+        console.log('✓ Cleaned old hierarchy-info.json\n');
+      }
     }
     
     // Check for config.yaml in root path
@@ -495,7 +517,7 @@ async function build(rootPath) {
 // Helper functions moved inline - no dependencies on old code
 
 /**
- * Build file structure from hierarchy
+ * Build file structure from hierarchy (новый формат)
  */
 function buildFileStructure(index) {
   const structure = {
@@ -503,310 +525,125 @@ function buildFileStructure(index) {
     folders: {}
   };
   
-  const rootConfig = index.rootConfig;
-  if (!rootConfig || !rootConfig.hierarchy) {
+  if (!index.docTree) {
     return structure;
   }
   
-  const filesInHierarchy = new Set();
-  const ignoredFiles = new Set(rootConfig.ignored || []);
-  const sectionIgnoredFiles = new Map();
-  
-  function collectSectionIgnored(folderName) {
-    const folderPath = path.join(index.rootConfig._basePath || 'website', folderName);
-    const configPath = path.join(folderPath, 'doc-config.yaml');
-    if (fs.existsSync(configPath)) {
-      try {
-        const configContent = fs.readFileSync(configPath, 'utf8');
-        const folderConfig = yaml.load(configContent);
-        if (folderConfig && folderConfig.ignored) {
-          const ignoredSet = new Set(folderConfig.ignored);
-          sectionIgnoredFiles.set(folderName, ignoredSet);
-          return ignoredSet;
-        }
-      } catch (error) {
-        // Ignore
-      }
-    }
-    return new Set();
-  }
-  
-  function collectHierarchyFiles(items, basePath = '') {
-    items.forEach(item => {
-      if (item.file) {
-        const filePath = basePath ? `${basePath}/${item.file}` : item.file;
-        filesInHierarchy.add(filePath.replace(/\\/g, '/'));
-      } else if (item.folder) {
-        collectSectionIgnored(item.folder);
-        const folderPath = path.join(index.rootConfig._basePath || 'website', item.folder);
-        const configPath = path.join(folderPath, 'doc-config.yaml');
-        if (fs.existsSync(configPath)) {
-          try {
-            const configContent = fs.readFileSync(configPath, 'utf8');
-            const folderConfig = yaml.load(configContent);
-            if (folderConfig && folderConfig.hierarchy) {
-              collectHierarchyFiles(folderConfig.hierarchy, item.folder);
-            }
-          } catch (error) {
-            // Ignore
-          }
-        }
-      }
-      if (item.children) {
-        collectHierarchyFiles(item.children, basePath);
-      }
-    });
-  }
-  
-  collectHierarchyFiles(rootConfig.hierarchy);
-  
-  function processHierarchyItem(item, parentPath = '', isRootLevel = true) {
-    if (item.file) {
-      const fileName = path.basename(item.file, '.md');
+  /**
+   * Обрабатывает узел дерева и преобразует в структуру для генерации
+   */
+  function processTreeNode(node, parentPath = '') {
+    if (node.type === 'file') {
+      const fileName = path.basename(node.file, '.md');
       const isHome = fileName.toLowerCase() === 'home';
       const outputName = isHome ? 'index.html' : fileName.toLowerCase() + '.html';
       
       return {
         type: 'file',
-        source: item.file,
+        source: node.relativePath,
         output: parentPath ? `${parentPath}/${outputName}` : outputName,
-        title: item.title || fileName,
-        alias: item.alias,
+        title: node.title,
+        alias: node.alias,
         inSidebar: true,
         isIndex: isHome
       };
-    } else if (item.folder) {
-      // Если папка помечена как section: true, обрабатываем её как секцию
-      if (item.section === true) {
-        // Загружаем doc-config папки для получения дочерних элементов
-        const folderPath = path.join(index.rootConfig._basePath || 'website', item.folder);
-        const configPath = path.join(folderPath, 'doc-config.yaml');
-        let children = [];
-        
-        if (fs.existsSync(configPath)) {
-          try {
-            const configContent = fs.readFileSync(configPath, 'utf8');
-            const folderConfig = yaml.load(configContent);
-            if (folderConfig && folderConfig.hierarchy) {
-              children = folderConfig.hierarchy.map(child => processHierarchyItem(child, item.folder, false)).filter(Boolean);
-            }
-          } catch (error) {
-            console.warn(`   ⚠️  Error loading ${configPath}:`, error.message);
-          }
-        }
-        
+    }
+    
+    if (node.type === 'repository') {
+      const repoInfo = index.repositories.find(r => r.url === node.url);
+      const repoAlias = node.alias.toLowerCase();
+      
+      if (node.section) {
         return {
           type: 'section',
-          title: item.title || item.folder,
-          alias: item.alias || item.folder,
-          isSection: true,
-          isFolder: true,
-          output: (item.alias || item.folder).toLowerCase(),
-          children: children
-        };
-      }
-      
-      const outputFolder = (item.alias || item.folder).toLowerCase();
-      let sectionConfig = null;
-      const folderPath = path.join(index.rootConfig._basePath || 'website', item.folder);
-      const configPath = path.join(folderPath, 'doc-config.yaml');
-      
-      if (fs.existsSync(configPath)) {
-        try {
-          const configContent = fs.readFileSync(configPath, 'utf8');
-          sectionConfig = yaml.load(configContent);
-        } catch (error) {
-          console.warn(`   ⚠️  Error loading ${configPath}:`, error.message);
-        }
-      }
-      
-      const folderStructure = {
-        type: 'folder',
-        source: item.folder,
-        output: outputFolder,
-        title: item.title || item.folder,
-        alias: item.alias,
-        isSection: false,
-        hasIndex: false,
-        files: [],
-        hiddenFiles: [],
-        ignoredFiles: [],
-        relativePath: item.folder,  // Добавляем relativePath для extractSections
-        config: sectionConfig  // Добавляем config для использования в extractSections
-      };
-      
-      const folderIgnored = sectionIgnoredFiles.get(item.folder) || new Set();
-      const allFolderFiles = index.files.filter(f => {
-        const normalizedPath = f.relativePath.replace(/\\/g, '/');
-        const folderPrefix = item.folder.replace(/\\/g, '/');
-        return normalizedPath.startsWith(folderPrefix + '/');
-      });
-      
-      if (sectionConfig && sectionConfig.hierarchy) {
-        sectionConfig.hierarchy.forEach(sectionItem => {
-          if (sectionItem.file) {
-            const fileName = path.basename(sectionItem.file, '.md');
-            const isHome = fileName.toLowerCase() === 'home';
-            const outputName = isHome ? 'index.html' : fileName.toLowerCase() + '.html';
-            
-            if (isHome) {
-              folderStructure.hasIndex = true;
-            }
-            
-            folderStructure.files.push({
-              type: 'file',
-              source: `${item.folder}/${sectionItem.file}`,
-              output: `${outputFolder}/${outputName}`,
-              title: sectionItem.title || fileName,
-              alias: sectionItem.alias,
-              inSidebar: true,
-              isIndex: isHome
-            });
-          } else if (sectionItem.repository) {
-            const repoInfo = index.repositories.find(r => r.url === sectionItem.repository);
-            const repoAlias = (sectionItem.alias || repoInfo?.alias || sectionItem.repository.split('/').pop()).toLowerCase();
-            
-            // Если репозиторий помечен как section: true, обрабатываем его как секцию
-            if (sectionItem.section === true) {
-              folderStructure.files.push({
-                type: 'section',
-                title: sectionItem.title || repoAlias,
-                alias: sectionItem.alias || repoAlias,
-                isSection: true,
-                isRepository: true,
-                source: sectionItem.repository,
-                output: `${outputFolder}/${repoAlias}`,
-                repoInfo: repoInfo,
-                children: [] // Будет заполнено из doc-config репозитория
-              });
-            } else {
-              folderStructure.files.push({
-                type: 'repository',
-                source: sectionItem.repository,
-                output: `${outputFolder}/${repoAlias}`,
-                title: sectionItem.title || repoAlias,
-                alias: sectionItem.alias,
-                repoInfo: repoInfo,
-                inSidebar: true
-              });
-            }
-          }
-        });
-        
-        allFolderFiles.forEach(file => {
-          const fileRelPath = file.relativePath.replace(/\\/g, '/');
-          const fileInHierarchy = filesInHierarchy.has(fileRelPath);
-          const fileIgnoredRoot = ignoredFiles.has(file.name);
-          const fileIgnoredLocal = folderIgnored.has(file.name);
-          
-          if (fileIgnoredRoot || fileIgnoredLocal) {
-            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
-            folderStructure.ignoredFiles.push({
-              type: 'file',
-              source: file.relativePath,
-              output: `${outputFolder}/${outputName}`,
-              title: file.baseName,
-              alias: null,
-              inSidebar: false,
-              isIndex: file.isReadme,
-              isIgnored: true
-            });
-          } else if (!fileInHierarchy) {
-            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
-            folderStructure.hiddenFiles.push({
-              type: 'file',
-              source: file.relativePath,
-              output: `${outputFolder}/${outputName}`,
-              title: file.baseName,
-              alias: null,
-              inSidebar: false,
-              isIndex: file.isReadme
-            });
-          }
-        });
-      } else {
-        allFolderFiles.forEach(file => {
-          const fileIgnoredRoot = ignoredFiles.has(file.name);
-          const fileIgnoredLocal = folderIgnored.has(file.name);
-          
-          if (fileIgnoredRoot || fileIgnoredLocal) {
-            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
-            folderStructure.ignoredFiles.push({
-              type: 'file',
-              source: file.relativePath,
-              output: `${outputFolder}/${outputName}`,
-              title: file.baseName,
-              alias: null,
-              inSidebar: false,
-              isIndex: file.isReadme,
-              isIgnored: true
-            });
-          } else {
-            const outputName = file.isReadme ? 'index.html' : file.baseName.toLowerCase() + '.html';
-            if (file.isReadme) {
-              folderStructure.hasIndex = true;
-            }
-            folderStructure.files.push({
-              type: 'file',
-              source: file.relativePath,
-              output: `${outputFolder}/${outputName}`,
-              title: file.baseName,
-              alias: null,
-              inSidebar: true,
-              isIndex: file.isReadme
-            });
-          }
-        });
-      }
-      
-      return folderStructure;
-    } else if (item.repository) {
-      const repoInfo = index.repositories.find(r => r.url === item.repository);
-      const repoOutput = (item.alias || repoInfo?.alias || item.repository.split('/').pop()).toLowerCase();
-      
-      // Если репозиторий помечен как section: true, обрабатываем его как секцию
-      if (item.section === true) {
-        return {
-          type: 'section',
-          title: item.title || item.alias,
-          alias: item.alias,
+          title: node.title,
+          alias: node.alias,
           isSection: true,
           isRepository: true,
-          source: item.repository,
-          output: repoOutput,
+          source: node.url,
+          output: parentPath ? `${parentPath}/${repoAlias}` : repoAlias,
           repoInfo: repoInfo,
-          children: [] // Дочерние элементы будут добавлены из doc-config репозитория
+          children: []
         };
       }
       
       return {
         type: 'repository',
-        source: item.repository,
-        output: repoOutput,
-        title: item.title || item.alias,
-        alias: item.alias,
+        source: node.url,
+        output: parentPath ? `${parentPath}/${repoAlias}` : repoAlias,
+        title: node.title,
+        alias: node.alias,
         repoInfo: repoInfo,
         inSidebar: true
       };
-    } else if (item.section && item.children) {
-      return {
-        type: 'section',
-        title: item.title,
-        alias: item.alias,
-        isSection: true,
-        children: item.children.map(child => processHierarchyItem(child, parentPath, false)).filter(Boolean)
+    }
+    
+    if (node.type === 'folder') {
+      const outputFolder = node.alias.toLowerCase();
+      const folderStructure = {
+        type: 'folder',
+        source: node.folder,
+        output: parentPath ? `${parentPath}/${outputFolder}` : outputFolder,
+        title: node.title,
+        alias: node.alias,
+        isSection: node.section || false,
+        hasIndex: false,
+        files: [],
+        relativePath: node.relativePath,
+        config: node.config
       };
+      
+      if (node.children && node.children.length > 0) {
+        const childPath = parentPath ? `${parentPath}/${outputFolder}` : outputFolder;
+        node.children.forEach(child => {
+          const processed = processTreeNode(child, childPath);
+          if (processed) {
+            if (processed.type === 'file' && processed.isIndex) {
+              folderStructure.hasIndex = true;
+            }
+            folderStructure.files.push(processed);
+          }
+        });
+      }
+      
+      return folderStructure;
+    }
+    
+    if (node.type === 'section') {
+      const sectionStructure = {
+        type: 'section',
+        title: node.title,
+        alias: node.alias,
+        isSection: true,
+        output: parentPath ? `${parentPath}/${node.alias.toLowerCase()}` : node.alias.toLowerCase(),
+        children: []
+      };
+      
+      if (node.children && node.children.length > 0) {
+        const childPath = parentPath ? `${parentPath}/${node.alias.toLowerCase()}` : node.alias.toLowerCase();
+        node.children.forEach(child => {
+          const processed = processTreeNode(child, childPath);
+          if (processed) {
+            sectionStructure.children.push(processed);
+          }
+        });
+      }
+      
+      return sectionStructure;
     }
     
     return null;
   }
   
-  rootConfig.hierarchy.forEach(item => {
-    const processed = processHierarchyItem(item, '', true);
-    if (processed) {
-      structure.root.push(processed);
-    }
-  });
+  // Обрабатываем корневые элементы
+  if (index.docTree.children) {
+    index.docTree.children.forEach(child => {
+      const processed = processTreeNode(child);
+      if (processed) {
+        structure.root.push(processed);
+      }
+    });
+  }
   
   return structure;
 }
@@ -1174,16 +1011,6 @@ function displayFileStructure(structure, index) {
   structure.root.forEach((item, index) => {
     displayItem(item, '', index === structure.root.length - 1);
   });
-  
-  // Легенда
-  console.log('\n📖 Legend:');
-  console.log('  🏠 Home page (index.html)');
-  console.log('  📄 Regular file');
-  console.log('  📁 Folder');
-  console.log('  📂 Section (group)');
-  console.log('  📦 GitHub repository');
-  console.log('  🚫 Ignored file');
-  console.log('  (section) - Item is a section container');
   
   // Статистика
   if (index) {

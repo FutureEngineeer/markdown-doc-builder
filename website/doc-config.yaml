@@ -5,43 +5,37 @@
 # ТОЛЬКО файлы из hierarchy будут отображаться в меню и конвертироваться
 hierarchy:
   # Главная страница (верхний уровень)
-  - file: home.md
-    title: "Главная"
-    alias: home
-    description: "Главная страница сайта"
+  - Home:
+      path: home.md
+      description: "Главная страница сайта"
   
   # Основная документация
-  - file: main.md
-    title: "Основная документация"
-    alias: main-docs
-    description: "Полная документация проекта"
+  - Main Docs:
+      path: main.md
+      description: "Полная документация проекта"
   
-  # GitHub репозитории (можно добавлять в hierarchy)
-  - repository: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
-    alias: "cln"
-    title: "CLN Driver"
-    section: true
+  # GitHub репозитории
+  - CLN Driver:
+      path: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
+      section: true
+      description: "CLN ClosedLoop Nema Driver"
   
-
   # Секция проектов (папка как контейнер)
-  - title: "Проекты"
-    alias: projects
-    section: true
-    children:
-      - title: "Проект Alpha"
-        alias: project-alpha
-        folder: project-alpha
-      - title: "Проект Beta"
-        alias: project-beta
-        folder: project-beta
+  - Projects:
+      section: true
+      sub:
+        - Проект Alpha:
+            path: project-alpha/
+            alias: project-alpha
+            section: true
+        - Проект Beta:
+            path: project-beta/
+            alias: project-beta
   
   # Дополнительные материалы
-  - title: "Дополнительно"
-    alias: additional
-    section: true
-    children:
-      - title: "Sub раздел"
-        alias: sub
-        folder: sub
+  - Additional:
+      section: true
+      sub:
+        - Sub Section: sub/
       
 

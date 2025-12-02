@@ -2,18 +2,16 @@
 
 # Иерархия файлов в секции
 hierarchy:
-  - file: overview.md
-    title: "Project Beta Overview"
-    alias: "overview"
-    description: "Main documentation for Project Beta"
+  - Project Beta Overview:
+      path: overview.md
+      description: "Main documentation for Project Beta"
   
-  - file: api-reference.md
-    title: "API Reference"
-    alias: "api-reference"
-    description: "API documentation for Project Beta"
+  - API Reference:
+      path: api-reference.md
+      description: "API documentation for Project Beta"
 
-  - repository: "https://github.com/creapunk/RadiX"
-    alias: "radix"
-    title: "RadiX Project"
-    section: true
+  - RadiX:
+      path: "https://github.com/creapunk/RadiX"
+      description: "RadiX Project repository"
+      section: true
   

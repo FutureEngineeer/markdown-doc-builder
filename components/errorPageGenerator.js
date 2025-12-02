@@ -118,7 +118,6 @@ const errorMessages = {
     "Stack Overflow betrayed us",
     "Rubber duck debugging time",
     "Coffee machine broken too",
-    "It's always DNS",
     "Token expired ages ago",
     "Index missing, whoops",
     "Timeout before timeout",
@@ -169,7 +168,8 @@ const errorMessages = {
     "Causality violation",
     "Wavefunction collapsed badly",
     "404: Simulation glitch",
-    "NPC dialogue not found"
+    "NPC dialogue not found",
+    "Died from cringe"
     ],
   500: [
     "Server on fire",

@@ -59,14 +59,72 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
     if (link.url.startsWith('#')) {
       isActive = currentPage === 'index.html' || currentPage === '/' || currentPage === '';
     } else {
-      // Извлекаем секцию из outputFile (первая папка после dist/)
+      // Извлекаем самую глубокую секцию/репозиторий из outputFile
       let currentSection = '';
       if (outputFile) {
         const normalizedPath = outputFile.replace(/\\/g, '/');
         const parts = normalizedPath.split('/');
         const distIndex = parts.indexOf('dist');
+        
         if (distIndex >= 0 && distIndex < parts.length - 1) {
-          currentSection = parts[distIndex + 1];
+          // Используем ту же логику что и в getRootFolder из newSectionMap.js
+          // Проверяем hierarchy-info.json для определения правильного раздела
+          const hierarchyPath = path.join(process.cwd(), '.temp', 'hierarchy-info.json');
+          const fs = require('fs');
+          
+          if (fs.existsSync(hierarchyPath)) {
+            try {
+              const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+              
+              // Проверяем все уровни вложенности, начиная с самого глубокого
+              for (let i = parts.length - 2; i > distIndex; i--) {
+                const currentPath = parts.slice(distIndex + 1, i + 1).join('/');
+                const folderName = parts[i];
+                
+                // Проверяем, является ли это репозиторием
+                if (hierarchyInfo.allRepositories) {
+                  const isRepo = hierarchyInfo.allRepositories.some(r => r.alias === folderName);
+                  if (isRepo) {
+                    currentSection = currentPath;
+                    break;
+                  }
+                }
+                
+                // Проверяем, является ли это секцией в tree структуре
+                if (hierarchyInfo.tree && hierarchyInfo.tree.children) {
+                  const findSection = (children, targetAlias) => {
+                    for (const child of children) {
+                      if (child.section && (child.alias === targetAlias || child.folder === targetAlias)) {
+                        return true;
+                      }
+                      if (child.children) {
+                        if (findSection(child.children, targetAlias)) {
+                          return true;
+                        }
+                      }
+                    }
+                    return false;
+                  };
+                  
+                  if (findSection(hierarchyInfo.tree.children, folderName)) {
+                    currentSection = currentPath;
+                    break;
+                  }
+                }
+              }
+              
+              // Если не нашли, используем первую папку
+              if (!currentSection) {
+                currentSection = parts[distIndex + 1];
+              }
+            } catch (error) {
+              // Fallback: используем первую папку
+              currentSection = parts[distIndex + 1];
+            }
+          } else {
+            // Fallback: используем первую папку
+            currentSection = parts[distIndex + 1];
+          }
         }
       }
       
@@ -80,8 +138,8 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
           if (linkParts.length === 1) {
             linkSection = path.basename(linkParts[0], '.html');
           } else {
-            // Иначе берем первую папку
-            linkSection = linkParts[0];
+            // Берем полный путь к секции (может быть вложенным)
+            linkSection = linkParts.slice(0, -1).join('/');
           }
         }
       }
@@ -91,7 +149,7 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
         // Для главной страницы проверяем, что мы на index.html в корне
         isActive = currentPage === 'index.html' && !currentSection;
       } else if (currentSection && linkSection) {
-        // Для остальных ссылок проверяем соответствие секций
+        // Для остальных ссылок проверяем точное соответствие секций
         isActive = currentSection === linkSection;
       }
     }

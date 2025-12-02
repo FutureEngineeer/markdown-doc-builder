@@ -53,41 +53,94 @@ function getRelativePathToRoot(outputFile) {
 function getRootFolder(filePath) {
   if (!filePath) return '';
   
-  const parts = filePath.split(path.sep);
+  // Нормализуем путь - заменяем обратные слеши на прямые
+  const normalizedPath = filePath.replace(/\\/g, '/');
+  const parts = normalizedPath.split('/');
   const distIndex = parts.indexOf('dist');
   
-  if (distIndex >= 0 && distIndex < parts.length - 1) {
-    // Проверяем, есть ли вложенный репозиторий (например, project-beta/radix)
-    // Если есть больше одной папки после dist и перед файлом, это может быть вложенный репозиторий
-    const foldersAfterDist = parts.length - distIndex - 2; // -2 для dist и имени файла
-    
-    if (foldersAfterDist >= 2) {
-      // Проверяем, является ли вторая папка репозиторием
-      // Для этого проверяем наличие hierarchy-info.json
-      const hierarchyPath = path.join(process.cwd(), '.temp', 'hierarchy-info.json');
-      if (fs.existsSync(hierarchyPath)) {
-        try {
-          const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
-          const secondFolder = parts[distIndex + 2];
-          
-          // Проверяем, есть ли этот alias в allRepositories
-          if (hierarchyInfo.allRepositories) {
-            const isRepo = hierarchyInfo.allRepositories.some(r => r.alias === secondFolder);
-            if (isRepo) {
-              // Возвращаем путь к репозиторию: parent/repo
-              return path.join(parts[distIndex + 1], parts[distIndex + 2]);
-            }
-          }
-        } catch (error) {
-          // Игнорируем ошибки, используем fallback
-        }
-      }
-    }
-    
-    return parts[distIndex + 1];
+  if (distIndex < 0 || distIndex >= parts.length - 1) {
+    return '';
   }
   
-  return '';
+  // Получаем путь относительно dist (без имени файла)
+  const pathAfterDist = parts.slice(distIndex + 1, -1).join('/');
+  
+  // Проверяем hierarchy-info.json для определения правильного раздела
+  const hierarchyPath = path.join(process.cwd(), '.temp', 'hierarchy-info.json');
+  if (fs.existsSync(hierarchyPath)) {
+    try {
+      const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+      
+      // Проверяем все уровни вложенности, начиная с самого глубокого
+      // Это позволяет найти самый глубокий репозиторий/секцию
+      for (let i = parts.length - 2; i > distIndex; i--) {
+        const currentPath = parts.slice(distIndex + 1, i + 1).join('/');
+        const folderName = parts[i];
+        
+        // Проверяем, является ли это репозиторием
+        if (hierarchyInfo.allRepositories) {
+          const isRepo = hierarchyInfo.allRepositories.some(r => r.alias === folderName);
+          if (isRepo) {
+            return currentPath;
+          }
+        }
+        
+        // Проверяем, является ли это секцией в tree структуре (section: true в конфиге)
+        if (hierarchyInfo.tree && hierarchyInfo.tree.children) {
+          const findSection = (children, targetAlias) => {
+            for (const child of children) {
+              if (child.section && (child.alias === targetAlias || child.folder === targetAlias)) {
+                return true;
+              }
+              if (child.children) {
+                if (findSection(child.children, targetAlias)) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          };
+          
+          if (findSection(hierarchyInfo.tree.children, folderName)) {
+            return currentPath;
+          }
+        }
+      }
+      
+      // Если не нашли репозиторий/секцию, проверяем является ли папка дочерней папкой секции
+      const firstFolder = parts[distIndex + 1];
+      const secondFolder = parts.length > distIndex + 2 ? parts[distIndex + 2] : null;
+      
+      // Проверяем в tree структуре
+      if (hierarchyInfo.tree && hierarchyInfo.tree.children) {
+        // Проверяем, является ли первая папка секцией
+        const firstFolderSection = hierarchyInfo.tree.children.find(child => 
+          child.type === 'section' && (child.alias === firstFolder || child.title.toLowerCase().replace(/\s+/g, '-') === firstFolder)
+        );
+        
+        // Если первая папка - это секция, и есть вторая папка
+        if (firstFolderSection && secondFolder) {
+          // Проверяем, является ли вторая папка дочерней папкой этой секции
+          if (firstFolderSection.children) {
+            const isChildOfSection = firstFolderSection.children.some(subChild => 
+              (subChild.type === 'folder' && (subChild.folder === secondFolder || subChild.alias === secondFolder)) ||
+              (subChild.type === 'repository' && subChild.alias === secondFolder)
+            );
+            
+            if (isChildOfSection) {
+              // Возвращаем alias родительской секции
+              return firstFolderSection.alias || firstFolderSection.title.toLowerCase().replace(/\s+/g, '-');
+            }
+          }
+        }
+      }
+    } catch (error) {
+      // Игнорируем ошибки, используем fallback
+    }
+  }
+  
+  // Fallback: возвращаем первую папку после dist
+  return parts[distIndex + 1];
 }
 
 /**
@@ -402,12 +455,112 @@ function isSingleFileFolder(dirTree) {
 }
 
 /**
+ * Находит секцию в fileStructure
+ */
+function findSectionInFileStructure(fileStructure, sectionName, baseDir) {
+  if (!fileStructure.root || !Array.isArray(fileStructure.root)) {
+    return null;
+  }
+  
+  // Нормализуем sectionName
+  const normalizedSectionName = sectionName.replace(/\\/g, '/');
+  
+  function buildNodeFromItem(item) {
+    const itemPath = item.output || '';
+    
+    // Если это репозиторий, строим дерево из dist
+    if (item.type === 'repository' || (item.isRepository && item.type === 'section')) {
+      const repoDir = path.join(baseDir, 'dist', itemPath);
+      if (fs.existsSync(repoDir)) {
+        const repoTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), itemPath, []);
+        return {
+          name: item.alias || path.basename(itemPath),
+          title: item.title,
+          path: itemPath,
+          children: repoTree.children,
+          files: repoTree.files
+        };
+      }
+    }
+    
+    const node = {
+      name: item.alias || path.basename(itemPath),
+      title: item.title,
+      path: itemPath,
+      children: {},
+      files: []
+    };
+    
+    const childItems = item.type === 'folder' ? item.files : item.children;
+    if (childItems && Array.isArray(childItems)) {
+      childItems.forEach(child => {
+        if (child.type === 'file') {
+          node.files.push({
+            name: child.title || formatFileName(path.basename(child.output, '.html')),
+            path: child.output,
+            htmlPath: child.output,
+            alias: child.alias
+          });
+        } else if (child.type === 'folder' || child.type === 'section') {
+          const childNode = buildNodeFromItem(child);
+          if (childNode) {
+            node.children[childNode.name] = childNode;
+          }
+        } else if (child.type === 'repository') {
+          // Репозиторий - строим дерево из dist
+          const repoDir = path.join(baseDir, 'dist', child.output);
+          if (fs.existsSync(repoDir)) {
+            const repoTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), child.output, []);
+            node.children[child.alias || path.basename(child.output)] = {
+              name: child.alias || path.basename(child.output),
+              title: child.title,
+              path: child.output,
+              children: repoTree.children,
+              files: repoTree.files
+            };
+          }
+        }
+      });
+    }
+    
+    return node;
+  }
+  
+  function searchInItems(items) {
+    for (const item of items) {
+      const itemPath = item.output || '';
+      
+      // Проверяем совпадение пути (полное совпадение или basename)
+      if (itemPath === normalizedSectionName || path.basename(itemPath) === normalizedSectionName) {
+        // Строим дерево для этого элемента
+        if (item.type === 'section' || item.type === 'folder' || item.type === 'repository') {
+          return buildNodeFromItem(item);
+        }
+      }
+      
+      // Рекурсивно ищем в дочерних элементах
+      if (item.type === 'section' || item.type === 'folder') {
+        const childItems = item.type === 'folder' ? item.files : item.children;
+        if (childItems && Array.isArray(childItems)) {
+          const found = searchInItems(childItems);
+          if (found) return found;
+        }
+      }
+    }
+    
+    return null;
+  }
+  
+  return searchInItems(fileStructure.root);
+}
+
+/**
  * Находит узел раздела в полной структуре
  */
 function findSectionNode(config, baseDir, sectionName) {
   if (!sectionName) return null;
   
-  // Проверяем, является ли sectionName путем (например, project-beta/radix)
+  // Проверяем, является ли sectionName путем (например, project-beta/radix или projects/project-alpha)
   const isNestedPath = sectionName.includes('/') || sectionName.includes('\\');
   let actualSectionName = sectionName;
   let parentSection = null;
@@ -423,6 +576,17 @@ function findSectionNode(config, baseDir, sectionName) {
   if (!fs.existsSync(hierarchyPath)) {
     console.warn('⚠️  hierarchy-info.json не найден');
     return null;
+  }
+  
+  try {
+    const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+    
+    // Используем fileStructure если доступен (новая система)
+    if (hierarchyInfo.fileStructure && hierarchyInfo.fileStructure.root) {
+      return findSectionInFileStructure(hierarchyInfo.fileStructure, sectionName, baseDir);
+    }
+  } catch (error) {
+    console.warn('⚠️  Ошибка чтения hierarchy-info.json:', error.message);
   }
   
   try {
@@ -708,7 +872,19 @@ function generateNodeHtml(node, level, normalizedCurrentFile, relativeRoot, isSe
       html = html.replace(`<div class="item-content">`, divReplacement);
       html += `${indent}    <span class="link">${displayName}</span>\n`;
     } else {
-      html += `${indent}    <span class="folder-only">${sectionTitle}</span>\n`;
+      // Если нет README, но есть файлы, делаем папку кликабельной на первый файл
+      if (filesWithoutReadme.length > 0) {
+        const firstFile = filesWithoutReadme[0];
+        let cleanPath = firstFile.htmlPath.replace(/\\/g, '/');
+        cleanPath = cleanPath.replace(/\/readme\.html$/i, '/index.html');
+        const href = getRelativeHref(cleanPath, normalizedCurrentFile);
+        
+        const divReplacement = `<div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='${href}'}">`;
+        html = html.replace(`<div class="item-content">`, divReplacement);
+        html += `${indent}    <span class="link">${sectionTitle}</span>\n`;
+      } else {
+        html += `${indent}    <span class="folder-only">${sectionTitle}</span>\n`;
+      }
     }
     
     html += `${indent}  </div>\n`;
@@ -802,7 +978,21 @@ function isSectionContainer(rootFolder) {
   try {
     const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
     
-    // Проверяем root hierarchy
+    // Проверяем в tree структуре
+    if (hierarchyInfo.tree && hierarchyInfo.tree.children) {
+      for (const child of hierarchyInfo.tree.children) {
+        // Если это секция и её alias совпадает с rootFolder
+        if (child.type === 'section' && (child.alias === rootFolder || child.title.toLowerCase().replace(/\s+/g, '-') === rootFolder)) {
+          return { 
+            isSection: true, 
+            parentSection: child,
+            sectionChildren: child.children // Все дочерние элементы секции
+          };
+        }
+      }
+    }
+    
+    // Fallback: проверяем root hierarchy (старый формат)
     if (hierarchyInfo.root && hierarchyInfo.root.hierarchy) {
       for (const item of hierarchyInfo.root.hierarchy) {
         if (item.section && item.children) {
@@ -839,8 +1029,11 @@ function buildSectionTree(sectionInfo, config, baseDir) {
   
   // Обрабатываем все дочерние элементы секции
   sectionInfo.sectionChildren.forEach((child, index) => {
-    if (child.folder) {
-      const folderPath = path.join(distDir, child.folder);
+    if (child.type === 'folder' && child.folder) {
+      // Путь к папке в dist должен включать родительскую секцию
+      const parentAlias = sectionInfo.parentSection.alias || sectionInfo.parentSection.title.toLowerCase().replace(/\s+/g, '-');
+      const folderPath = path.join(distDir, parentAlias, child.folder);
+      
       if (fs.existsSync(folderPath)) {
         // Загружаем hierarchy для этой папки
         const hierarchyPath = path.join(baseDir, '.temp', 'hierarchy-info.json');
@@ -854,16 +1047,22 @@ function buildSectionTree(sectionInfo, config, baseDir) {
           }
         }
         
-        const folderTree = buildFileTree(folderPath, distDir, child.folder, [], folderHierarchy);
-        tree.children[child.folder] = {
-          name: child.folder,
-          title: child.title || formatSectionTitle(child.folder),
-          path: child.folder,
-          children: folderTree.children,
-          files: folderTree.files,
-          order: index,
-          alias: child.alias
-        };
+        const relativePath = path.join(parentAlias, child.folder);
+        // Не передаём folderHierarchy, чтобы показать все файлы в папке
+        const folderTree = buildFileTree(folderPath, distDir, relativePath, [], null);
+        
+        // Только добавляем папку если в ней есть файлы или подпапки
+        if (Object.keys(folderTree.children).length > 0 || folderTree.files.length > 0) {
+          tree.children[child.folder] = {
+            name: child.folder,
+            title: child.title || formatSectionTitle(child.folder),
+            path: relativePath,
+            children: folderTree.children,
+            files: folderTree.files,
+            order: index,
+            alias: child.alias
+          };
+        }
       }
     }
   });
