@@ -418,121 +418,66 @@ function findSectionNode(config, baseDir, sectionName) {
     actualSectionName = parts[parts.length - 1];
   }
   
-  // Сначала проверяем hierarchy-info.json
+  // Проверяем hierarchy-info.json
   const hierarchyPath = path.join(baseDir, '.temp', 'hierarchy-info.json');
-  if (fs.existsSync(hierarchyPath)) {
-    try {
-      const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+  if (!fs.existsSync(hierarchyPath)) {
+    console.warn('⚠️  hierarchy-info.json не найден');
+    return null;
+  }
+  
+  try {
+    const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+    
+    // Проверяем секции из hierarchy
+    if (hierarchyInfo.sections && hierarchyInfo.sections[sectionName]) {
+      const sectionConfig = hierarchyInfo.sections[sectionName];
+      const sectionDir = path.join(baseDir, 'dist', sectionName);
       
-      // Проверяем секции из hierarchy
-      if (hierarchyInfo.sections && hierarchyInfo.sections[sectionName]) {
-        const sectionConfig = hierarchyInfo.sections[sectionName];
-        const sectionDir = path.join(baseDir, 'dist', sectionName);
-        
-        if (fs.existsSync(sectionDir)) {
-          const sectionTree = buildFileTree(sectionDir, path.join(baseDir, 'dist'), sectionName, [], sectionConfig);
-          return {
-            name: sectionName,
-            title: formatSectionTitle(sectionName),
-            path: sectionName,
-            children: sectionTree.children,
-            files: sectionTree.files
-          };
-        }
+      if (fs.existsSync(sectionDir)) {
+        const sectionTree = buildFileTree(sectionDir, path.join(baseDir, 'dist'), sectionName, [], sectionConfig);
+        return {
+          name: sectionName,
+          title: formatSectionTitle(sectionName),
+          path: sectionName,
+          children: sectionTree.children,
+          files: sectionTree.files
+        };
       }
-      
-      // Проверяем вложенные репозитории в секциях (например, project-beta/radix)
-      if (isNestedPath && parentSection && hierarchyInfo.sections && hierarchyInfo.sections[parentSection]) {
-        const sectionConfig = hierarchyInfo.sections[parentSection];
-        if (sectionConfig.hierarchy) {
-          for (const item of sectionConfig.hierarchy) {
-            if (item.repository) {
-              const alias = item.alias || item.repository.split('/').pop();
-              if (alias === actualSectionName) {
-                const repoDir = path.join(baseDir, 'dist', parentSection, alias);
-                
-                // Находим реальное имя директории репозитория в temp/
-                let tempRepoDir = null;
-                if (hierarchyInfo.allRepositories) {
-                  const repoInfo = hierarchyInfo.allRepositories.find(r => r.alias === alias);
-                  if (repoInfo) {
-                    tempRepoDir = path.join(baseDir, 'temp', `${repoInfo.owner}-${repoInfo.repo}`);
-                  }
-                }
-                
-                if (!tempRepoDir || !fs.existsSync(tempRepoDir)) {
-                  tempRepoDir = path.join(baseDir, 'temp', alias);
-                }
-                
-                let dirTree;
-                const fullPath = path.join(parentSection, alias);
-                if (fs.existsSync(tempRepoDir)) {
-                  dirTree = buildFileTreeFromSource(tempRepoDir, fullPath, []);
-                  
-                  if (dirTree.files) {
-                    dirTree.files.forEach(file => {
-                      const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
-                      if (fileName === 'readme') {
-                        const dirPath = path.dirname(file.htmlPath);
-                        const newPath = path.posix.join(dirPath, 'index.html');
-                        file.path = newPath;
-                        file.htmlPath = newPath;
-                      }
-                    });
-                  }
-                } else if (fs.existsSync(repoDir)) {
-                  dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), fullPath, []);
-                } else {
-                  return null;
-                }
-                
-                return {
-                  name: alias,
-                  title: item.title || formatSectionTitle(alias),
-                  path: fullPath,
-                  children: dirTree.children,
-                  files: dirTree.files
-                };
-              }
-            }
-          }
-        }
-      }
-      
-      // Проверяем репозитории из root hierarchy
-      if (hierarchyInfo.root && hierarchyInfo.root.hierarchy) {
-        for (const item of hierarchyInfo.root.hierarchy) {
+    }
+    
+    // Проверяем вложенные репозитории в секциях (например, project-beta/radix)
+    if (isNestedPath && parentSection && hierarchyInfo.sections && hierarchyInfo.sections[parentSection]) {
+      const sectionConfig = hierarchyInfo.sections[parentSection];
+      if (sectionConfig.hierarchy) {
+        for (const item of sectionConfig.hierarchy) {
           if (item.repository) {
             const alias = item.alias || item.repository.split('/').pop();
-            if (alias === sectionName) {
-              const repoDir = path.join(baseDir, 'dist', alias);
+            if (alias === actualSectionName) {
+              const repoDir = path.join(baseDir, 'dist', parentSection, alias);
               
               // Находим реальное имя директории репозитория в temp/
               let tempRepoDir = null;
               if (hierarchyInfo.allRepositories) {
                 const repoInfo = hierarchyInfo.allRepositories.find(r => r.alias === alias);
                 if (repoInfo) {
-                  // Используем owner-repo формат
                   tempRepoDir = path.join(baseDir, 'temp', `${repoInfo.owner}-${repoInfo.repo}`);
                 }
               }
               
-              // Fallback к старому формату
               if (!tempRepoDir || !fs.existsSync(tempRepoDir)) {
                 tempRepoDir = path.join(baseDir, 'temp', alias);
               }
               
               let dirTree;
+              const fullPath = path.join(parentSection, alias);
               if (fs.existsSync(tempRepoDir)) {
-                dirTree = buildFileTreeFromSource(tempRepoDir, alias, []);
+                dirTree = buildFileTreeFromSource(tempRepoDir, fullPath, []);
                 
                 if (dirTree.files) {
                   dirTree.files.forEach(file => {
                     const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
-                    const filePath = file.htmlPath.replace(/\\/g, '/');
-                    // Заменяем все readme.html на index.html, не только корневой
                     if (fileName === 'readme') {
-                      const dirPath = path.dirname(filePath);
+                      const dirPath = path.dirname(file.htmlPath);
                       const newPath = path.posix.join(dirPath, 'index.html');
                       file.path = newPath;
                       file.htmlPath = newPath;
@@ -540,7 +485,7 @@ function findSectionNode(config, baseDir, sectionName) {
                   });
                 }
               } else if (fs.existsSync(repoDir)) {
-                dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), alias, []);
+                dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), fullPath, []);
               } else {
                 return null;
               }
@@ -548,7 +493,7 @@ function findSectionNode(config, baseDir, sectionName) {
               return {
                 name: alias,
                 title: item.title || formatSectionTitle(alias),
-                path: alias,
+                path: fullPath,
                 children: dirTree.children,
                 files: dirTree.files
               };
@@ -556,112 +501,73 @@ function findSectionNode(config, baseDir, sectionName) {
           }
         }
       }
-    } catch (error) {
-      console.warn('⚠️  Ошибка чтения hierarchy-info.json:', error.message);
-    }
-  }
-  
-  const scopeItems = config?.build?.scope || [];
-  const ignoredFiles = config?.build?.ignoredScope || [];
-  const distDir = path.join(baseDir, 'dist');
-  
-  for (const item of scopeItems) {
-    let itemType = item.type;
-    let itemPath = item.url || item.path || item;
-    
-    if (typeof item === 'string') {
-      itemPath = item;
-      itemType = detectScopeItemType(itemPath);
-      item = { path: itemPath, type: itemType };
-    } else if (!itemType) {
-      itemType = detectScopeItemType(itemPath);
     }
     
-    if (itemType === 'directory') {
-      const dirName = path.basename(itemPath);
-      if (dirName === sectionName) {
-        const relativePath = path.relative(baseDir, itemPath);
-        const htmlDir = path.join(distDir, relativePath);
-        
-        if (fs.existsSync(htmlDir)) {
-          const dirTree = buildFileTree(htmlDir, distDir, relativePath, ignoredFiles);
-          return {
-            name: dirName,
-            title: item.title || formatSectionTitle(dirName),
-            path: relativePath,
-            children: dirTree.children,
-            files: dirTree.files
-          };
-        }
-      }
-    } else if (itemType === 'repository') {
-      const alias = item.alias || itemPath.split('/').pop();
-      if (alias === sectionName) {
-        const repoDir = path.join(distDir, alias);
-        const tempRepoDir = path.join(baseDir, 'temp', alias);
-        
-        let dirTree;
-        if (fs.existsSync(tempRepoDir)) {
-          dirTree = buildFileTreeFromSource(tempRepoDir, alias, ignoredFiles);
-          
-          if (dirTree.files) {
-            dirTree.files.forEach(file => {
-              const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
-              const filePath = file.htmlPath.replace(/\\/g, '/');
-              // Заменяем все readme.html на index.html, не только корневой
-              if (fileName === 'readme') {
-                const dirPath = path.dirname(filePath);
-                const newPath = path.posix.join(dirPath, 'index.html');
-                file.path = newPath;
-                file.htmlPath = newPath;
+    // Проверяем репозитории из root hierarchy
+    if (hierarchyInfo.root && hierarchyInfo.root.hierarchy) {
+      for (const item of hierarchyInfo.root.hierarchy) {
+        if (item.repository) {
+          const alias = item.alias || item.repository.split('/').pop();
+          if (alias === sectionName) {
+            const repoDir = path.join(baseDir, 'dist', alias);
+            
+            // Находим реальное имя директории репозитория в temp/
+            let tempRepoDir = null;
+            if (hierarchyInfo.allRepositories) {
+              const repoInfo = hierarchyInfo.allRepositories.find(r => r.alias === alias);
+              if (repoInfo) {
+                // Используем owner-repo формат
+                tempRepoDir = path.join(baseDir, 'temp', `${repoInfo.owner}-${repoInfo.repo}`);
               }
-            });
+            }
+            
+            // Fallback к старому формату
+            if (!tempRepoDir || !fs.existsSync(tempRepoDir)) {
+              tempRepoDir = path.join(baseDir, 'temp', alias);
+            }
+            
+            let dirTree;
+            if (fs.existsSync(tempRepoDir)) {
+              dirTree = buildFileTreeFromSource(tempRepoDir, alias, []);
+              
+              if (dirTree.files) {
+                dirTree.files.forEach(file => {
+                  const fileName = path.basename(file.htmlPath, '.html').toLowerCase();
+                  const filePath = file.htmlPath.replace(/\\/g, '/');
+                  // Заменяем все readme.html на index.html, не только корневой
+                  if (fileName === 'readme') {
+                    const dirPath = path.dirname(filePath);
+                    const newPath = path.posix.join(dirPath, 'index.html');
+                    file.path = newPath;
+                    file.htmlPath = newPath;
+                  }
+                });
+              }
+            } else if (fs.existsSync(repoDir)) {
+              dirTree = buildFileTree(repoDir, path.join(baseDir, 'dist'), alias, []);
+            } else {
+              return null;
+            }
+            
+            return {
+              name: alias,
+              title: item.title || formatSectionTitle(alias),
+              path: alias,
+              children: dirTree.children,
+              files: dirTree.files
+            };
           }
-        } else if (fs.existsSync(repoDir)) {
-          dirTree = buildFileTree(repoDir, distDir, alias, ignoredFiles);
-        } else {
-          return null;
         }
-        
-        // Doc config processing removed - now handled by doc-config.yaml hierarchy
-        
-        return {
-          name: alias,
-          title: item.title || formatSectionTitle(alias),
-          path: alias,
-          children: dirTree.children,
-          files: dirTree.files
-        };
       }
     }
+  } catch (error) {
+    console.warn('⚠️  Ошибка чтения hierarchy-info.json:', error.message);
   }
   
   return null;
 }
 
-/**
- * Определяет тип элемента scope автоматически
- */
-function detectScopeItemType(itemPath) {
-  if (itemPath.startsWith('https://github.com/')) {
-    return 'repository';
-  }
-  
-  if (fs.existsSync(itemPath)) {
-    const stats = fs.statSync(itemPath);
-    if (stats.isDirectory()) {
-      return 'directory';
-    } else if (stats.isFile() && itemPath.endsWith('.md')) {
-      return 'file';
-    }
-  }
-  
-  if (itemPath.endsWith('.md')) {
-    return 'file';
-  }
-  
-  return 'directory';
-}
+
 
 /**
  * Проверяет, содержит ли узел активную страницу (рекурсивно)

@@ -151,8 +151,8 @@ footer {
 @media (max-width: 650px) {
     footer {
         min-height: auto;  /* Убираем минимальную высоту на мобильных */
-        max-height: 150px;  /* Ограничиваем максимальную высоту */
         padding: 1rem 0.7rem;  /* Уменьшаем padding на 30% */
+        margin-top: auto;  /* Прижимаем footer к низу */
     }
 
     .footer-container {

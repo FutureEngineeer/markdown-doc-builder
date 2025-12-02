@@ -5,7 +5,8 @@
 site:
   name: "creapunk"
   title: "motion control systems"
-  description: "Multi-repository documentation builder for GitHub Pages"
+  description: "Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation."
+  keywords: "motion control, robotics, documentation, GitHub Pages, open source, CLN17, RadiX, creapunk"
   baseUrl: "https://futureengineeer.github.io/markdown-doc-builder"
   language: "en"
   logoClickUrl: "/"  # Ссылка при клике на лого (абсолютный путь от корня)

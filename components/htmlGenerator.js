@@ -106,6 +106,60 @@ class HtmlGenerator {
   }
 
   /**
+   * Генерирует SEO мета-теги
+   */
+  generateSeoMetaTags(title, description, keywords, url, imageUrl) {
+    const siteName = this.config.site?.name || this.config.siteName || 'creapunk';
+    const siteUrl = this.config.site?.baseUrl || 'https://creapunk.com';
+    
+    const tags = [];
+    
+    // Базовые мета-теги
+    if (description) {
+      tags.push(`  <meta name="description" content="${escapeHtml(description)}">`);
+    }
+    if (keywords) {
+      tags.push(`  <meta name="keywords" content="${escapeHtml(keywords)}">`);
+    }
+    tags.push(`  <meta name="author" content="${siteName}">`);
+    
+    // Open Graph теги для социальных сетей
+    tags.push(`  <meta property="og:type" content="website">`);
+    tags.push(`  <meta property="og:site_name" content="${siteName}">`);
+    if (title) {
+      tags.push(`  <meta property="og:title" content="${escapeHtml(title)}">`);
+    }
+    if (description) {
+      tags.push(`  <meta property="og:description" content="${escapeHtml(description)}">`);
+    }
+    if (url) {
+      tags.push(`  <meta property="og:url" content="${url}">`);
+    }
+    if (imageUrl) {
+      tags.push(`  <meta property="og:image" content="${imageUrl}">`);
+    }
+    
+    // Twitter Card теги
+    tags.push(`  <meta name="twitter:card" content="summary_large_image">`);
+    if (title) {
+      tags.push(`  <meta name="twitter:title" content="${escapeHtml(title)}">`);
+    }
+    if (description) {
+      tags.push(`  <meta name="twitter:description" content="${escapeHtml(description)}">`);
+    }
+    if (imageUrl) {
+      tags.push(`  <meta name="twitter:image" content="${imageUrl}">`);
+    }
+    
+    // Canonical URL
+    if (url) {
+      tags.push(`  <link rel="canonical" href="${url}">`);
+    }
+    
+    return tags.join('\n');
+  }
+
+  /**
    * Генерирует теги стилей
    */
   generateStylesheets(outputFile, relativeRoot, htmlContent = '') {
@@ -171,12 +225,25 @@ class HtmlGenerator {
     const productCard = generateProductCard(pageData);
     const hamburgerMenu = generateHamburgerMenu('', outputFile);
     const sectionMap = generateNewSectionMap('', outputFile);
+    
+    // Генерируем модальное окно поиска
+    const { generateSearchModal } = require('./searchModal');
+    const searchModal = generateSearchModal();
 
     // Генерируем теги
     const fullHtml = productCard + contentHtml;
     const faviconTags = this.generateFaviconTags(outputFile, relativeRoot);
     const styleLinks = this.generateStylesheets(outputFile, relativeRoot, fullHtml);
     const scriptTags = this.generateScripts(outputFile, relativeRoot, fullHtml);
+
+    // SEO мета-теги
+    const pageTitle = title || this.config.site?.name || 'Documentation';
+    const pageDescription = pageData?.description || this.config.site?.description || 'Documentation and projects';
+    const pageKeywords = pageData?.keywords || this.config.site?.keywords || '';
+    const siteUrl = this.config.site?.baseUrl || 'https://creapunk.com';
+    const pageUrl = outputFile ? `${siteUrl}/${outputFile.replace(/\\/g, '/').replace('dist/', '')}` : siteUrl;
+    const pageImage = pageData?.image || `${siteUrl}/assets/logo.png`;
+    const seoTags = this.generateSeoMetaTags(pageTitle, pageDescription, pageKeywords, pageUrl, pageImage);
 
     // Обработка аналитики
     const analytics = processAnalytics(this.config);
@@ -189,12 +256,14 @@ class HtmlGenerator {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(title || this.config.site?.name || 'Documentation')}</title>
+  <title>${escapeHtml(pageTitle)}</title>
+${seoTags}
 ${faviconTags}
 ${styleLinks}${analyticsHeadCode}
 </head>
 <body>
   ${header}
+  ${searchModal}
   <div class="scope">
     ${hamburgerMenu}
     ${sectionMap}

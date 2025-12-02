@@ -20,6 +20,7 @@ hierarchy:
   - repository: "https://github.com/creapunk/CLN-ClosedLoopNemaDriver"
     alias: "cln"
     title: "CLN Driver"
+    section: true
   
 
   # Секция проектов (папка как контейнер)
@@ -42,4 +43,5 @@ hierarchy:
       - title: "Sub раздел"
         alias: sub
         folder: sub
+      
 

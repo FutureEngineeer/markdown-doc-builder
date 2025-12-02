@@ -136,49 +136,43 @@ function generateHeader(config, currentPage = '', customBreadcrumb = '', outputF
     // Парсим customBreadcrumb для форматирования
     const parts = customBreadcrumb.split('/').map(part => part.trim());
     
-    // Если это репозиторий (содержит несколько частей)
-    if (parts.length > 1) {
-      // Извлекаем корневую папку (самый высокий уровень)
-      const rootFolder = parts[0].toUpperCase();
-      let fileName = parts[parts.length - 1];
+    // Строим breadcrumb из всех секций/папок
+    const breadcrumbParts = [];
+    const maxLength = 35; // Максимальная длина breadcrumb
+    
+    // Добавляем части по порядку, пока не превысим лимит
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const isRootFileName = /^(index|main|root|readme)$/i.test(part);
       
-      // Проверяем, является ли это корневым файлом (index, main, root, readme)
-      const isRootFileName = /^(index|main|root|readme)$/i.test(fileName);
+      // Пропускаем корневые файлы (они не добавляют информации)
+      if (isRootFileName && i === parts.length - 1) {
+        continue;
+      }
       
-      // Если файл корневой или это уже H1 заголовок (содержит пробелы или длинный)
-      if (isRootFileName || fileName.includes(' ') || fileName.length > 20) {
-        // Это уже H1 заголовок или будет заменен на H1, просто делаем uppercase
-        fileName = fileName.toUpperCase();
+      // Форматируем часть
+      let formattedPart = part.toUpperCase();
+      
+      // Проверяем, поместится ли эта часть
+      const testBreadcrumb = breadcrumbParts.length > 0 
+        ? breadcrumbParts.join(' / ') + ' / ' + formattedPart
+        : formattedPart;
+      
+      if (testBreadcrumb.length <= maxLength) {
+        breadcrumbParts.push(formattedPart);
       } else {
-        // Обычное имя файла
-        fileName = fileName.toUpperCase();
-      }
-      
-      // Отображаем: КОРНЕВАЯ_ПАПКА / НАЗВАНИЕ_ФАЙЛА
-      breadcrumbText = `${rootFolder} / ${fileName}`;
-      
-      // Ограничиваем общую длину breadcrumb до 25 символов
-      if (breadcrumbText.length > 25) {
-        breadcrumbText = breadcrumbText.substring(0, 22) + '...';
-      }
-    } else {
-      // Для обычных файлов в корневой папке показываем только название файла без .html
-      let fileName = customBreadcrumb;
-      const isRootFileName = /^(index|main|root|readme)$/i.test(fileName);
-      
-      if (isRootFileName || fileName.toLowerCase() === 'root') {
-        // Для корневых файлов используем название проекта из config
-        breadcrumbText = config.siteName.toUpperCase();
-      } else {
-        fileName = fileName.toUpperCase();
-        breadcrumbText = fileName;
-      }
-      
-      // Ограничиваем общую длину breadcrumb до 25 символов
-      if (breadcrumbText.length > 25) {
-        breadcrumbText = breadcrumbText.substring(0, 22) + '...';
+        // Если не помещается, прерываем
+        break;
       }
     }
+    
+    // Если ничего не добавили (все части слишком длинные), берем первую часть с обрезкой
+    if (breadcrumbParts.length === 0 && parts.length > 0) {
+      const firstPart = parts[0].toUpperCase();
+      breadcrumbParts.push(firstPart.substring(0, maxLength - 3) + '...');
+    }
+    
+    breadcrumbText = breadcrumbParts.join(' / ');
   } else if (isHomePage) {
     breadcrumbText = 'HOME';  // Для домашней страницы всегда показываем "HOME"
   } else {

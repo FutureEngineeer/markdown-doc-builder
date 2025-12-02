@@ -123,9 +123,9 @@ class BuildOrchestrator {
         outputPath
       );
       
-      // Определяем breadcrumb
+      // Определяем breadcrumb (используем outputPath вместо sourcePath)
       const fileName = path.basename(sourcePath, '.md');
-      const breadcrumb = this.generateBreadcrumb(sourcePath, results.pageData.title);
+      const breadcrumb = this.generateBreadcrumb(outputPath, results.pageData.title);
       
       // Генерируем полную HTML страницу
       const fullHtml = this.htmlGenerator.generateFullPage({
@@ -175,39 +175,166 @@ class BuildOrchestrator {
   }
 
   /**
-   * Генерирует breadcrumb для файла
+   * Генерирует breadcrumb для файла на основе outputPath
    */
-  generateBreadcrumb(sourcePath, pageTitle) {
-    const relativePath = path.relative(this.projectRoot, sourcePath);
+  generateBreadcrumb(outputPath, pageTitle) {
+    const MAX_LENGTH = 35; // Максимальная длина breadcrumb
+    
+    // Используем outputPath (dist/...) вместо sourcePath
+    const relativePath = path.relative(path.join(this.projectRoot, this.distDir), outputPath);
     const pathParts = relativePath.split(path.sep);
     
     // Убираем расширение файла
-    const fileName = path.basename(sourcePath, '.md');
+    const fileName = path.basename(outputPath, '.html');
     
-    // Специальная обработка для root файлов
-    if (fileName === 'root' || fileName === 'home') {
-      return 'Home';
+    // Для корневых файлов в корне проекта
+    if (pathParts.length === 1) {
+      if (['index', 'root', 'home'].includes(fileName.toLowerCase())) {
+        return 'HOME';
+      }
+      // Для обычных файлов в корне - сначала загружаем titles
+      const hierarchyPath = path.join(this.projectRoot, '.temp', 'hierarchy-info.json');
+      let fileTitle = fileName;
+      
+      if (fs.existsSync(hierarchyPath)) {
+        try {
+          const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
+          if (hierarchyInfo.root && hierarchyInfo.root.hierarchy) {
+            const item = hierarchyInfo.root.hierarchy.find(h => {
+              if (h.file) {
+                const baseName = path.basename(h.file, '.md').toLowerCase();
+                return baseName === fileName.toLowerCase() || h.alias?.toLowerCase() === fileName.toLowerCase();
+              }
+              return false;
+            });
+            if (item && item.title) {
+              fileTitle = item.title;
+            }
+          }
+        } catch (error) {
+          // Игнорируем ошибки
+        }
+      }
+      
+      return fileTitle.toUpperCase();
     }
     
-    // Для файлов в подпапках
-    if (pathParts.length > 1) {
-      const folders = pathParts.slice(0, -1).filter(folder => 
-        folder !== 'website' && folder !== 'test-files'
-      );
-      
-      if (folders.length > 0) {
-        const rootFolder = folders[0];
+    // Получаем titles из hierarchy-info.json
+    const hierarchyPath = path.join(this.projectRoot, '.temp', 'hierarchy-info.json');
+    let folderTitles = {};
+    let sectionFolders = new Set(); // Папки которые являются секциями
+    
+    // Загружаем titles из hierarchy-info.json
+    if (fs.existsSync(hierarchyPath)) {
+      try {
+        const hierarchyInfo = JSON.parse(fs.readFileSync(hierarchyPath, 'utf8'));
         
-        // Для readme используем H1 если есть
-        if (fileName.toLowerCase() === 'readme' && pageTitle) {
-          return `${rootFolder} / ${pageTitle}`;
+        // Собираем titles из root.hierarchy
+        if (hierarchyInfo.root && hierarchyInfo.root.hierarchy) {
+          hierarchyInfo.root.hierarchy.forEach(item => {
+            // Для файлов
+            if (item.file && item.alias && item.title) {
+              const baseName = path.basename(item.file, '.md').toLowerCase();
+              folderTitles[baseName] = item.title;
+              folderTitles[item.alias.toLowerCase()] = item.title;
+            }
+            // Для репозиториев
+            if (item.repository && item.alias && item.title) {
+              folderTitles[item.alias.toLowerCase()] = item.title;
+              if (item.section) {
+                sectionFolders.add(item.alias.toLowerCase());
+              }
+            }
+            // Для секций с children
+            if (item.section && item.children) {
+              if (item.alias) {
+                sectionFolders.add(item.alias.toLowerCase());
+              }
+              item.children.forEach(child => {
+                if (child.folder && child.title) {
+                  folderTitles[child.folder.toLowerCase()] = child.title;
+                  folderTitles[child.alias?.toLowerCase()] = child.title;
+                }
+              });
+            }
+          });
         }
         
-        return `${rootFolder} / ${fileName}`;
+        // Собираем titles из sections
+        if (hierarchyInfo.sections) {
+          Object.keys(hierarchyInfo.sections).forEach(sectionName => {
+            const section = hierarchyInfo.sections[sectionName];
+            if (section.hierarchy) {
+              section.hierarchy.forEach(item => {
+                if (item.file && item.title) {
+                  const baseName = path.basename(item.file, '.md').toLowerCase();
+                  folderTitles[baseName] = item.title;
+                  if (item.alias) folderTitles[item.alias.toLowerCase()] = item.title;
+                }
+                if (item.repository && item.alias && item.title) {
+                  folderTitles[item.alias.toLowerCase()] = item.title;
+                }
+              });
+            }
+          });
+        }
+        
+        // Собираем titles из allRepositories
+        if (hierarchyInfo.allRepositories) {
+          hierarchyInfo.allRepositories.forEach(repo => {
+            if (repo.alias && repo.title) {
+              folderTitles[repo.alias.toLowerCase()] = repo.title;
+            }
+          });
+        }
+      } catch (error) {
+        // Игнорируем ошибки
       }
     }
     
-    return fileName;
+    // Для файлов в подпапках
+    const folders = pathParts.slice(0, -1);
+    const isIndexFile = ['index', 'readme', 'root', 'home'].includes(fileName.toLowerCase());
+    
+    // Строим breadcrumb с приоритетом секций
+    const breadcrumbParts = [];
+    
+    // Всегда добавляем корневую секцию (первую папку)
+    if (folders.length > 0) {
+      const rootFolder = folders[0].toLowerCase();
+      const rootTitle = folderTitles[rootFolder] || folders[0];
+      breadcrumbParts.push(rootTitle.toUpperCase());
+    }
+    
+    // Добавляем промежуточные секции и папки
+    for (let i = 1; i < folders.length; i++) {
+      const folder = folders[i].toLowerCase();
+      const folderTitle = folderTitles[folder] || folders[i];
+      const isSection = sectionFolders.has(folder);
+      
+      // Проверяем, поместится ли эта часть
+      const testBreadcrumb = breadcrumbParts.join(' / ') + ' / ' + folderTitle.toUpperCase();
+      
+      if (testBreadcrumb.length <= MAX_LENGTH) {
+        breadcrumbParts.push(folderTitle.toUpperCase());
+      } else {
+        // Не помещается - останавливаемся
+        break;
+      }
+    }
+    
+    // Добавляем имя файла если это не index и если помещается
+    if (!isIndexFile) {
+      const fileTitle = folderTitles[fileName.toLowerCase()] || fileName;
+      const testBreadcrumb = breadcrumbParts.join(' / ') + ' / ' + fileTitle.toUpperCase();
+      
+      if (testBreadcrumb.length <= MAX_LENGTH) {
+        breadcrumbParts.push(fileTitle.toUpperCase());
+      }
+      // Если не помещается - не добавляем имя файла
+    }
+    
+    return breadcrumbParts.join(' / ');
   }
 
   /**
@@ -449,8 +576,28 @@ class BuildOrchestrator {
     // Экспортируем индекс изображений
     this.exportImageIndex();
     
+    // Копируем hierarchy-info.json в dist/
+    this.copyHierarchyInfo();
+    
     // Сохраняем отчет
     this.saveBuildReport();
+  }
+
+  /**
+   * Копирует hierarchy-info.json в корень dist/
+   */
+  copyHierarchyInfo() {
+    const sourcePath = path.join(this.projectRoot, '.temp', 'hierarchy-info.json');
+    const targetPath = path.join(this.projectRoot, this.distDir, 'hierarchy-info.json');
+    
+    if (fs.existsSync(sourcePath)) {
+      try {
+        fs.copyFileSync(sourcePath, targetPath);
+        console.log('   📋 Copied hierarchy-info.json to dist/');
+      } catch (error) {
+        this.stats.warnings.push(`Failed to copy hierarchy-info.json: ${error.message}`);
+      }
+    }
   }
 
   /**
