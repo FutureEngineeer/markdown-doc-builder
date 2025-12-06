@@ -1,0 +1,385 @@
+/* ==================== HEADER ==================== */
+
+header {
+    background: var(--header-footer-bg);
+    padding: var(--header-padding);
+    position: relative;
+    height: 75px;
+    width: 100%;
+    z-index: 1200;  /* Увеличиваем z-index чтобы быть выше sidebar */
+    transition: border-radius var(--speed-quick) var(--ease-smooth);
+    animation: slideDownHeader 0.5s ease-out;
+    flex-shrink: 0;
+}
+
+/* Фиксированная высота header для десктопа */
+@media (min-width: 651px) {
+    header {
+        height: 90px;
+    }
+}
+
+
+/* Переход теперь реализован через mask-image на main */
+
+
+@keyframes slideDownHeader {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: opacity var(--speed-fast) ease;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.logo-section:hover {
+    opacity: 0.8;
+}
+
+.logo {
+    width: var(--logo-size);
+    height: var(--logo-size);
+    object-fit: contain;
+}
+
+/* Уменьшаем logo на 30% для мобильных */
+@media (max-width: 650px) {
+    .logo {
+        width: calc(var(--logo-size) * 0.7);
+        height: calc(var(--logo-size) * 0.7);
+    }
+}
+
+.site-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    transition: all var(--speed-smooth) var(--ease-smooth);
+    overflow: hidden;
+    margin-left: 1rem;
+}
+
+.site-title {
+    font-size: var(--site-title-size);
+    font-weight: 400;
+    white-space: nowrap;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.breadcrumb {
+    font-size: var(--breadcrumb-size);
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-weight: 400;
+    text-align: center;
+}
+
+.sitename {
+    font-size: var(--site-title-size);
+    color: var(--text-primary);
+    white-space: nowrap;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+}
+
+/* ==================== NAVIGATION ==================== */
+
+.nav-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+    transition: gap var(--speed-smooth) var(--ease-smooth);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.nav-links li {
+    box-shadow: none;
+    background: transparent;
+}
+
+.nav-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 4px;
+    font-size: var(--nav-link-size);
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--speed-fast) ease;
+}
+
+.nav-links a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Активная ссылка в навигации - зеленый цвет БЕЗ подчеркивания */
+.nav-links a.active {
+    color: var(--accent);
+}
+
+.nav-links a.active::after {
+    transform: scaleX(0);
+}
+
+/* При наведении на активную ссылку показываем подчеркивание */
+.nav-links a.active:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Убираем изменение цвета ссылок после посещения */
+a:visited {
+    color: var(--accent);
+}
+
+/* Исключения для навигации - черточка НЕ меняет цвет после visited */
+.nav-links a:link,
+.nav-links a:visited {
+    color: var(--text-primary);
+}
+
+.nav-links a.active:link,
+.nav-links a.active:visited {
+    color: var(--accent);
+}
+
+.nav-links a:visited::after {
+    background: var(--accent);
+}
+
+
+/* ==================== HAMBURGER BUTTON ==================== */
+
+.hamburger-button {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 19.2px;
+    cursor: pointer;
+    z-index: 1001;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.hamburger-button span {
+    display: block;
+    width: 100%;
+    height: 2.4px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.15s ease;  /* Увеличиваем скорость в 2 раза (0.3s -> 0.15s) */
+}
+
+.hamburger-button.active span:nth-child(1) {
+    transform: translateY(8.4px) rotate(45deg);
+}
+
+.hamburger-button.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-button.active span:nth-child(3) {
+    transform: translateY(-8.4px) rotate(-45deg);
+}
+
+/* Уменьшаем отступ hamburger на узких экранах */
+@media (max-width: 400px) {
+    .hamburger-button {
+        margin-right: 0.5rem;
+    }
+}
+
+/* Overlay для мобильного меню - плавное размытие */
+.menu-overlay {
+    position: fixed;
+    top: 75px;  /* Под header */
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 75px);
+    height: calc(100dvh - 75px); /* Dynamic viewport height для мобильных браузеров */
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    background: rgba(0, 0, 0, 0);
+    z-index: 999;  /* Ниже footer (1000) и header::after */
+    opacity: 0;
+    transition: backdrop-filter 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                -webkit-backdrop-filter 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0s 0.15s;  /* Увеличиваем скорость в 2 раза */
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* Overlay для десктопа */
+@media (min-width: 651px) {
+    .menu-overlay {
+        top: 90px;
+        height: calc(100vh - 90px);
+        height: calc(100dvh - 90px);
+    }
+}
+
+.menu-overlay.active {
+    visibility: visible;
+    opacity: 1;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.15);
+    pointer-events: auto;
+    transition: backdrop-filter 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+                -webkit-backdrop-filter 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0s 0s;  /* Увеличиваем скорость в 2 раза */
+}
+
+/* Скрываем overlay на широких экранах */
+@media (min-width: 1001px) {
+    .menu-overlay {
+        display: none !important;
+    }
+}
+
+/* Приоритетные ссылки в header (десктоп) */
+.desktop-nav {
+    display: flex;
+    gap: 2rem;
+}
+
+/* Мобильное меню скрыто по умолчанию */
+.mobile-nav {
+    display: none;
+}
+
+/* Примечание: стили для slider-menu (hamburger menu) теперь в sidebar.css */
+
+/* Показываем hamburger при ширине < 1000px */
+@media (max-width: 1000px) {
+    .hamburger-button {
+        display: flex;
+    }
+    
+    .desktop-nav {
+        display: none;
+    }
+}
+
+/* Центрируем логотип между hamburger и кнопкой поиска только при ширине < 550px */
+@media (max-width: 550px) {
+    .header-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+    }
+    
+    .hamburger-button {
+        grid-column: 1;
+        order: 1;
+    }
+    
+    .logo-section {
+        grid-column: 2;
+        order: 2;
+        justify-self: center;
+    }
+    
+    .nav-section {
+        grid-column: 3;
+        order: 3;
+        margin-left: 0;
+    }
+}
+
+/* Скрываем Discord при ширине < 800px */
+@media (max-width: 600px) {
+    .discord-btn {
+        display: none !important;
+    }
+
+    .header-container {
+        gap: 1rem;
+    }
+}
+
+/* Скрываем Ko-Fi при ширине < 700px */
+@media (max-width: 550px) {
+    .kofi-btn {
+        display: none !important;
+    }
+}
+
+/* Поддержка очень узких экранов */
+@media (max-width: 300px) {
+    .header-container {
+        gap: 0.5rem;
+    }
+    
+    .site-title-wrapper {
+        margin-left: 0.5rem;
+    }
+    
+    .sitename {
+        font-size: 0.9rem;
+    }
+    
+    .breadcrumb {
+        font-size: 0.7rem;
+    }
+    
+    .logo {
+        width: calc(var(--logo-size) * 0.5);
+        height: calc(var(--logo-size) * 0.5);
+    }
+}
+
+@media (min-width: 1251px) {
+    header {
+        border-bottom-left-radius: var(--border-radius);
+        border-bottom-right-radius: var(--border-radius);
+    }
+}

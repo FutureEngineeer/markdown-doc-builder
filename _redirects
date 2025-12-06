@@ -1,0 +1,9 @@
+# Redirect old readme.html links to index.html
+/*/readme.html /*/index.html 301
+/*/*/readme.html /*/*/index.html 301
+/*/*/*/readme.html /*/*/*/index.html 301
+/*/*/*/*/readme.html /*/*/*/*/index.html 301
+
+# Custom error pages for Netlify
+/* /404.html 404
+/* /500.html 500

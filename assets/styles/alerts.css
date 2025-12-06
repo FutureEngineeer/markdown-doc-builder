@@ -1,0 +1,199 @@
+/* ==================== GITHUB ALERTS (markdown-it-github-alerts plugin) ==================== */
+
+/* Базовый контейнер alert - Grid с двумя колонками */
+.markdown-alert {
+    display: grid;
+    grid-template-columns: var(--alert-title-width) 1fr;
+    /* 0 по вертикали, 10px по горизонтали */
+    gap: 0 10px;
+    grid-auto-rows: auto;
+    grid-auto-flow: row;
+    padding: 16px 12px;
+    border-radius: 12px;
+    border: 1px solid;
+    border-left: 6px solid;
+    margin: 1.5em 0 0 0;
+    line-height: 1.6;
+    align-items: start;
+}
+
+/* Заголовок alert - первая колонка, только первые три строки */
+.markdown-alert-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.3;
+    text-align: center;
+
+    grid-column: 1;
+    grid-row: 1 / span 5;
+    align-self: center;
+}
+
+/* Скрываем SVG иконки от плагина, используем свои */
+.markdown-alert-title svg {
+    display: none;
+}
+
+/* Добавляем свои иконки через ::before */
+.markdown-alert-title::before {
+    content: '';
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Иконки для каждого типа */
+.markdown-alert-note .markdown-alert-title::before {
+    content: '📝';
+}
+
+.markdown-alert-tip .markdown-alert-title::before {
+    content: '💡';
+}
+
+.markdown-alert-important .markdown-alert-title::before {
+    content: '⚠️';
+}
+
+.markdown-alert-warning .markdown-alert-title::before {
+    content: '⚡';
+}
+
+.markdown-alert-caution .markdown-alert-title::before {
+    content: '🔥';
+}
+
+/* ВСЕ остальные элементы идут во вторую колонку */
+.markdown-alert>*:not(.markdown-alert-title) {
+    grid-column: 2;
+}
+
+/* Параграфы внутри alert: вертикальный зазор через margin */
+.markdown-alert>p:not(.markdown-alert-title) {
+    margin: 0 0 6px 0;
+    line-height: 1.7;
+}
+
+/* Если внутри .markdown-alert только заголовок + один параграф,
+   центрируем этот параграф по высоте трёх строк грида */
+.markdown-alert>p:not(.markdown-alert-title):nth-child(2):last-child {
+    grid-row: 1 / span 5;
+    align-self: center;
+    /* центр в доступной высоте */
+}
+
+/* Последний параграф без дополнительного отступа снизу */
+.markdown-alert>p:not(.markdown-alert-title):last-child {
+    margin-bottom: 0;
+}
+
+/* Списки внутри alert */
+.markdown-alert ul,
+.markdown-alert ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+.markdown-alert li {
+    margin-bottom: 0.25em;
+    font-size: 14px;
+}
+
+.markdown-alert li:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Стили для разных типов alert */
+.markdown-alert-note {
+    background: var(--alert-note-bg);
+    border-color: var(--status-note);
+    color: #D0D0D8;
+}
+
+.markdown-alert-note .markdown-alert-title {
+    color: var(--status-note);
+}
+
+.markdown-alert-tip {
+    background: var(--alert-tip-bg);
+    border-color: var(--status-tip);
+    color: #dbeafe;
+}
+
+.markdown-alert-tip .markdown-alert-title {
+    color: var(--status-tip);
+}
+
+.markdown-alert-important {
+    background: var(--alert-important-bg);
+    border-color: var(--status-important);
+    color: #E9D5FF;
+}
+
+.markdown-alert-important .markdown-alert-title {
+    color: var(--status-important);
+}
+
+.markdown-alert-warning {
+    background: var(--alert-warning-bg);
+    border-color: var(--status-warning);
+    color: #FEF3C7;
+}
+
+.markdown-alert-warning .markdown-alert-title {
+    color: var(--status-warning);
+}
+
+.markdown-alert-caution {
+    background: var(--alert-caution-bg);
+    border-color: var(--status-caution);
+    color: #FEE2E2;
+}
+
+.markdown-alert-caution .markdown-alert-title {
+    color: var(--status-caution);
+}
+
+/* Мобильная версия алертов - ширина меньше 450px */
+@media (max-width: 449px) {
+    .markdown-alert {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .markdown-alert-title {
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 10px;
+
+        grid-column: 1;
+        grid-row: auto;
+        align-self: auto;
+
+        font-size: 20px;
+    }
+
+    /* СБРОС спец-центровки для случая "только один параграф" */
+    .markdown-alert>p:not(.markdown-alert-title):nth-child(2):last-child {
+        grid-row: auto;
+        /* не перезаписываем порядок, остаётся под заголовком */
+        align-self: auto;
+        /* обычное выравнивание */
+    }
+
+    .markdown-alert>*:not(.markdown-alert-title) {
+        grid-column: 1;
+    }
+
+    .markdown-alert-title::before {
+        font-size: 20px;
+    }
+}

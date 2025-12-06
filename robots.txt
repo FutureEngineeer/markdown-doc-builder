@@ -1,0 +1,17 @@
+# robots.txt для creapunk
+User-agent: *
+Allow: /
+
+# Запрещаем индексацию временных и служебных файлов
+Disallow: /.temp/
+Disallow: /temp/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /.archive/
+
+# Разрешаем доступ к ассетам
+Allow: /assets/
+Allow: /dist/
+
+# Карта сайта
+Sitemap: https://futureengineeer.github.io/markdown-doc-builder/sitemap.xml

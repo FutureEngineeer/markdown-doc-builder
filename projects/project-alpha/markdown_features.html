@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кастомные функции Markdown</title>
+  <meta name="description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta name="keywords" content="motion control, robotics, documentation, GitHub Pages, open source, CLN17, RadiX, creapunk">
+  <meta name="author" content="creapunk">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="creapunk">
+  <meta property="og:title" content="Кастомные функции Markdown">
+  <meta property="og:description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta property="og:url" content="https://futureengineeer.github.io/markdown-doc-builder/projects/project-alpha/markdown_features.html">
+  <meta property="og:image" content="https://futureengineeer.github.io/markdown-doc-builder/assets/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Кастомные функции Markdown">
+  <meta name="twitter:description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta name="twitter:image" content="https://futureengineeer.github.io/markdown-doc-builder/assets/logo.png">
+  <link rel="canonical" href="https://futureengineeer.github.io/markdown-doc-builder/projects/project-alpha/markdown_features.html">
+  <link rel="icon" href="../../assets/creapunk-icon.png" sizes="32x32">
+  <link rel="icon" href="../../assets/creapunk-icon.png" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/creapunk-icon.png">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="stylesheet" href="../../assets/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-24MWSHH5RK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-24MWSHH5RK', {
+        page_title: document.title,
+        page_location: window.location.href,
+        custom_map: {
+          'custom_parameter_1': 'project_type',
+          'custom_parameter_2': 'documentation_section'
+        }
+      });
+    </script>
+</head>
+<body>
+  <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
+  <header class="header">
+    <div class="header-container">
+      <div class="hamburger-button" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <div class="logo-section" onclick="window.location.href='../../'">
+        <img src="../../assets/creapunk-icon.svg" alt="Logo" class="logo" />
+        <div class="site-title-wrapper">
+          <span class="sitename">creapunk</span>
+          <span class="breadcrumb">PROJECTS / PROJECT-ALPHA</span>
+        </div>
+      </div>
+      
+      <nav class="nav-section">
+        <ul class="nav-links desktop-nav">
+          <li class="priority-link"><a href="../../cln-driver/index.html">CLN</a></li>
+          <li class="priority-link"><a href="../../projects/project-beta/radix/index.html">RadiX Project</a></li>
+          <li class="priority-link active"><a href="../../projects/project-alpha/main.html" class="active">Проект Alpha</a></li>
+        </ul>
+        
+        <div class="community-buttons">
+          <div class="community-btn discord-btn" onclick="window.open('https://discord.gg/V4aJdTja8v', '_blank')">
+            <svg class="btn-icon" width="var(--btn-icon-size)" height="var(--btn-icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+  </svg>
+            <span class="btn-text">Discord</span>
+          </div>
+          <div class="community-btn kofi-btn" onclick="window.open('https://ko-fi.com/creapunk', '_blank')">
+            <svg class="btn-icon" width="var(--btn-icon-size)" height="var(--btn-icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+  </svg>
+            <span class="btn-text">Support ♥</span>
+          </div>
+        </div>
+        
+        <button class="search-button" onclick="openSearchModal()" aria-label="Search">
+          <svg class="search-button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Search Modal -->
+  <div id="search-modal" class="search-modal">
+    <div class="search-modal-overlay"></div>
+    <div class="search-modal-content">
+      <div class="search-input-wrapper">
+        <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Search documentation..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="search-close-button" onclick="closeSearchModal()" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="search-results" class="search-results">
+        <div class="search-hint">Type at least 2 characters to search</div>
+      </div>
+      
+      <div class="search-footer">
+        <div class="search-footer-shortcuts">
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">↑</kbd>
+            <kbd class="search-footer-key">↓</kbd>
+            <span>navigate</span>
+          </div>
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">Enter</kbd>
+            <span>select</span>
+          </div>
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">Esc</kbd>
+            <span>close</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scope">
+    <aside class="hamburger-menu">
+  <div class="hamburger-menu-header">Site Map</div>
+  <nav class="hamburger-menu-nav">
+    <ul>
+      <li>
+        <div class="item-content" onclick="window.location.href='../../index.html'">
+          <span class="link">Home</span>
+        </div>
+      </li>
+      <li>
+        <div class="item-content" onclick="window.location.href='../../main.html'">
+          <span class="link">Main Docs</span>
+        </div>
+      </li>
+      <li class="has-children">
+        <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/index.html'}">
+          <span class="triangle"></span>
+          <span class="link">CLN Driver</span>
+        </div>
+        <ul class="children">
+          <li>
+            <div class="item-content" onclick="window.location.href='../../cln-driver/license.html'">
+              <span class="link">License</span>
+            </div>
+          </li>
+          <li>
+            <div class="item-content" onclick="window.location.href='../../cln-driver/sponsors.html'">
+              <span class="link">Sponsors</span>
+            </div>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Hardware</span>
+            </div>
+            <ul class="children">
+              <li class="has-children">
+                <div class="item-content">
+                  <span class="triangle"></span>
+                  <span class="folder-only">Cln17</span>
+                </div>
+                <ul class="children">
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/enclosure/index.html'}">
+                      <span class="link">Enclosure</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v1.0 [obsolete]/index.html'}">
+                      <span class="link">V1.0 [obsolete]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v1.5/index.html'}">
+                      <span class="link">V1.5</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.0/index.html'}">
+                      <span class="link">V2.0</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Wiki</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/applications.html'">
+                  <span class="link">Applications</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/design-foundations.html'">
+                  <span class="link">Design Foundations</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/features.html'">
+                  <span class="link">Features</span>
+                </div>
+              </li>
+              <li class="has-children">
+                <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/index.html'}">
+                  <span class="triangle"></span>
+                  <span class="link">Cln17</span>
+                </div>
+                <ul class="children">
+                  <li>
+                    <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/cln17/alternatives.html'">
+                      <span class="link">Alternatives</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v1.0/specification.html'}">
+                      <span class="link">V1.0 - Specification</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v1.5/specification.html'}">
+                      <span class="link">V1.5 - Specification</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v2.0/specification.html'}">
+                      <span class="link">V2.0 - Specification</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li class="has-children">
+                <div class="item-content">
+                  <span class="triangle"></span>
+                  <span class="folder-only">Cln234</span>
+                </div>
+                <ul class="children">
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln234/v0.1/specification.html'}">
+                      <span class="link">V0.1 - Specification</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="has-children expanded">
+        <div class="item-content">
+          <span class="triangle"></span>
+          <span class="folder-only">Projects</span>
+        </div>
+        <ul class="children">
+          <li class="has-children expanded">
+            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-alpha/main.html'}">
+              <span class="triangle"></span>
+              <span class="link">Проект Alpha</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/api-specs.html'">
+                  <span class="link">Api Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cache-test.html'">
+                  <span class="link">Cache Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/checklist-showcase.html'">
+                  <span class="link">Checklist Showcase</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cln17-v1-spec.html'">
+                  <span class="link">Cln17 V1 Spec</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cross-links-test.html'">
+                  <span class="link">Cross Links Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/examples.html'">
+                  <span class="link">Examples</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/github-links-test.html'">
+                  <span class="link">Github Links Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/hardware-specs.html'">
+                  <span class="link">Hardware Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/hidden-test.html'">
+                  <span class="link">Hidden Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/installation.html'">
+                  <span class="link">Installation</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/local-tool.html'">
+                  <span class="link">Local Tool</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content active" onclick="window.location.href='../../projects/project-alpha/markdown_features.html'">
+                  <span class="link">MARKDOWN FEATURES</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/setup.html'">
+                  <span class="link">Setup</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/specs.html'">
+                  <span class="link">Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/specs-test.html'">
+                  <span class="link">Specs Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/troubleshooting.html'">
+                  <span class="link">Troubleshooting</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Проект Beta</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-beta/api-reference.html'">
+                  <span class="link">API Reference</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-beta/overview.html'">
+                  <span class="link">Project Beta Overview</span>
+                </div>
+              </li>
+              <li class="has-children">
+                <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-beta/radix/index.html'}">
+                  <span class="triangle"></span>
+                  <span class="link">RadiX</span>
+                </div>
+                <ul class="children">
+                  <li>
+                    <div class="item-content" onclick="window.location.href='../../projects/project-beta/radix/license.html'">
+                      <span class="link">License</span>
+                    </div>
+                  </li>
+                  <li class="has-children">
+                    <div class="item-content">
+                      <span class="triangle"></span>
+                      <span class="folder-only">Wiki</span>
+                    </div>
+                    <ul class="children">
+                      <li>
+                        <div class="item-content" onclick="window.location.href='../../projects/project-beta/radix/wiki/design-foundations.html'">
+                          <span class="link">Design Foundations</span>
+                        </div>
+                      </li>
+                      <li class="has-children">
+                        <div class="item-content">
+                          <span class="triangle"></span>
+                          <span class="folder-only">Radix Drive</span>
+                        </div>
+                        <ul class="children">
+                          <li class="">
+                            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-beta/radix/wiki/radix-drive/r1.0/specification.html'}">
+                              <span class="link">R1.0 - Specification</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="has-children">
+        <div class="item-content">
+          <span class="triangle"></span>
+          <span class="folder-only">Additional</span>
+        </div>
+        <ul class="children">
+          <li class="">
+            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../additional/sub-section/api.html'}">
+              <span class="link">Sub Section - Api</span>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+    <aside class="section-map">
+  <div class="section-map-header">Проект Alpha</div>
+  <div class="section-map-content">
+    <nav class="section-map-nav">
+      <ul>
+        <li>
+          <div class="item-content" onclick="window.location.href='api-specs.html'">
+            <span class="link">Api Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cache-test.html'">
+            <span class="link">Cache Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='checklist-showcase.html'">
+            <span class="link">Checklist Showcase</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cln17-v1-spec.html'">
+            <span class="link">Cln17 V1 Spec</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cross-links-test.html'">
+            <span class="link">Cross Links Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='examples.html'">
+            <span class="link">Examples</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='github-links-test.html'">
+            <span class="link">Github Links Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='hardware-specs.html'">
+            <span class="link">Hardware Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='hidden-test.html'">
+            <span class="link">Hidden Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='installation.html'">
+            <span class="link">Installation</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='local-tool.html'">
+            <span class="link">Local Tool</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='main.html'">
+            <span class="link">Main</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content active" onclick="window.location.href='markdown_features.html'">
+            <span class="link">MARKDOWN FEATURES</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='setup.html'">
+            <span class="link">Setup</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='specs.html'">
+            <span class="link">Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='specs-test.html'">
+            <span class="link">Specs Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='troubleshooting.html'">
+            <span class="link">Troubleshooting</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+    <main>
+      <section id="overview" class="section">
+  <div class="product-card">
+    <div class="product-content">
+      <div class="product-image">
+      <img src="../../assets/images/root/image.png" alt="Кастомные функции Markdown" loading="lazy">
+    </div>
+      
+      <div class="product-details">
+        <div class="status-version-row">
+      <div class="status">
+      <span class="status-dot active"></span>
+      <span class="active">Active</span>
+    </div>
+      <span class="version-pill">v2.0</span>
+    </div>
+        <div class="card-header">
+    <h2 class="card-title">Кастомные функции Markdown</h2>
+  </div>
+        <div class="price">$99</div>
+        <div class="price-note">Pre-order available</div>
+        <p class="description">Краткое описание продукта.</p>
+    <p class="description">Может быть несколько строк.</p>
+        <div class="interfaces">
+      <span class="interface-tag">USB</span>
+      <span class="interface-tag">UART</span>
+      <span class="interface-tag">SPI</span>
+    </div>
+        <div class="specs">
+      <ul>
+        <li>Первая особенность</li>
+        <li>Вторая особенность</li>
+        <li>Третья особенность</li>
+      </ul>
+    </div>
+        <div class="tags">
+      <span class="tag">Hardware</span>
+      <span class="tag">Driver</span>
+      <span class="tag">Open Source</span>
+    </div>
+      </div>
+    </div>
+  </div>
+</section>
+      <section id="1-overview-карточка-продукта" class="section">
+<h2 id="1-overview-карточка-продукта" class="section-title heading-with-anchor">📋 1. Overview (Карточка продукта)<a href="#1-overview-карточка-продукта" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Создает красивую карточку продукта с изображением, статусом, ценой и характеристиками.</p>
+<h3 id="синтаксис" class="heading-with-anchor">Синтаксис<a href="#синтаксис-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">---
+</code></pre>
+<h3 id="поддерживаемые-поля" class="heading-with-anchor">Поддерживаемые поля<a href="#поддерживаемые-поля-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Поле</th>
+<th>Формат</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>**Revision:**</code></td>
+<td>Текст</td>
+<td>Версия продукта (v1.0, v2.5, etc.)</td>
+</tr>
+<tr>
+<td><code>**Version:**</code></td>
+<td>Текст</td>
+<td>Альтернатива Revision</td>
+</tr>
+<tr>
+<td><code>**Status:**</code></td>
+<td>Текст</td>
+<td>Статус (Active, Preview, Obsolete, etc.)</td>
+</tr>
+<tr>
+<td><code>**Price:**</code></td>
+<td>Текст</td>
+<td>Цена с опциональной заметкой в скобках</td>
+</tr>
+<tr>
+<td><code>**Cost:**</code></td>
+<td>Текст</td>
+<td>Альтернатива Price</td>
+</tr>
+<tr>
+<td><code>**Key Features:**</code></td>
+<td>Список</td>
+<td>Ключевые особенности (после списком)</td>
+</tr>
+<tr>
+<td><code>**Interfaces:**</code></td>
+<td>Через запятую</td>
+<td>Интерфейсы подключения</td>
+</tr>
+<tr>
+<td><code>**Tags:**</code></td>
+<td>Через запятую</td>
+<td>Теги для категоризации</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="статусы" class="heading-with-anchor">Статусы<a href="#статусы-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p>Статус автоматически окрашивается:</p>
+<ul>
+<li><strong>Active/Stable/Released</strong> → зеленый</li>
+<li><strong>Preview/Beta/Development</strong> → синий</li>
+<li><strong>Obsolete</strong> → красный</li>
+<li><strong>Not Recommended/Deprecated</strong> → желтый</li>
+</ul>
+<h3 id="пример" class="heading-with-anchor">Пример<a href="#пример-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">---
+</code></pre>
+<hr>
+</div></section>
+<section id="2-feature-cards-карточки-функций" class="section">
+<h2 id="2-feature-cards-карточки-функций" class="section-title heading-with-anchor">🎴 2. Feature Cards (Карточки функций)<a href="#2-feature-cards-карточки-функций" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Автоматически преобразует списки или подзаголовки с эмодзи в красивые карточки.</p>
+<h3 id="вариант-1-список" class="heading-with-anchor">Вариант 1: Список<a href="#вариант-1-список-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">## Features
+
+</code></pre>
+<h3 id="вариант-2-подзаголовки" class="heading-with-anchor">Вариант 2: Подзаголовки<a href="#вариант-2-подзаголовки-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">## Features
+
+### Правила
+
+1. **Эмодзи обязательны** - без эмодзи карточки не создаются
+2. **Минимум 2 элемента** - нужно минимум 2 элемента для карточек
+3. **Описание до 40 слов** - длинные описания обрезаются
+4. **Ссылки поддерживаются** - `[Title](url)` делает карточку кликабельной
+
+### Секции для карточек
+
+Карточки автоматически создаются в секциях:
+- `## Features`
+- `## Applications`
+- `## Resources`
+
+### Сетка карточек
+
+Автоматически определяется:
+- 1 карточка → полная ширина
+- 2 карточки → 2 колонки
+- 3 карточки → 3 колонки
+- 4 карточки → 4 колонки
+- 5+ карточек → 3-5 колонок (зависит от длины описаний)
+
+---
+
+## 📊 3. Specification Cards (Карточки спецификаций)
+
+Создает карточки с техническими характеристиками.
+
+### Вариант 1: Секция Specifications
+## Specifications
+
+### Hardware
+- **MCU:** STM32F103
+- **Clock:** 72 MHz
+- **RAM:** 20 KB
+- **Flash:** 64 KB
+
+### Power
+- **Input Voltage:** 12-24V DC
+- **Current:** Up to 2A
+- **Power:** 24W max
+</code></pre>
+<h3 id="вариант-2-документ-спецификации" class="heading-with-anchor">Вариант 2: Документ спецификации<a href="#вариант-2-документ-спецификации-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p>Если H1 содержит слово “Specification”, все H2 становятся карточками:</p>
+<pre><code class="language-markdown">## Hardware Specifications
+## Electrical Specifications
+- **Voltage:** 12-24V
+- **Current:** 2A max
+
+## Mechanical Specifications
+## 🔄 4. Interactive Selectors (Интерактивные селекторы)
+
+Создает переключаемые вкладки для разных вариантов (NPM/Yarn, Windows/Linux, etc.).
+
+### Синтаксис
+
+```markdown
+
+&lt;!--SELECTOR_PLACEHOLDER_0--&gt;
+
+### Правила
+
+
+&lt;!--SELECTOR_PLACEHOLDER_1--&gt;
+
+2. **Заголовки должны совпадать** с названиями опций
+3. **Якоря не обязательны** - используются для идентификации
+4. **Контент до следующего заголовка** того же уровня
+
+### Синхронизация
+
+Селекторы с одинаковыми опциями синхронизируются автоматически:
+
+```markdown
+
+&lt;!--SELECTOR_PLACEHOLDER_2--&gt;
+
+---
+
+
+&lt;!--SELECTOR_PLACEHOLDER_3--&gt;
+
+### Примеры использования
+
+**Менеджеры пакетов:**
+```markdown
+
+&lt;!--SELECTOR_PLACEHOLDER_4--&gt;
+
+</code></pre>
+<p><strong>Операционные системы:</strong></p>
+<pre><code class="language-markdown">
+&lt;!--SELECTOR_PLACEHOLDER_5--&gt;
+
+</code></pre>
+<p><strong>Языки программирования:</strong></p>
+<pre><code class="language-markdown">
+&lt;!--SELECTOR_PLACEHOLDER_6--&gt;
+
+</code></pre>
+<p><strong>Версии:</strong></p>
+<pre><code class="language-markdown">
+&lt;!--SELECTOR_PLACEHOLDER_7--&gt;
+
+</code></pre>
+<hr>
+</div></section>
+<section id="5-anchor-links-якорные-ссылки" class="section">
+<h2 id="5-anchor-links-якорные-ссылки" class="section-title heading-with-anchor">🔗 5. Anchor Links (Якорные ссылки)<a href="#5-anchor-links-якорные-ссылки" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Все заголовки автоматически получают якорные ссылки.</p>
+<h3 id="автоматическая-генерация" class="heading-with-anchor">Автоматическая генерация<a href="#автоматическая-генерация-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">## My Section Title
+</code></pre>
+<p>Создает:</p>
+<pre><code class="language-html">&lt;h2 id=&quot;my-section-title&quot;&gt;
+  My Section Title
+  &lt;a href=&quot;#my-section-title&quot; class=&quot;anchor-link&quot;&gt;🔗&lt;/a&gt;
+&lt;/h2&gt;
+</code></pre>
+<h3 id="правила-генерации-id" class="heading-with-anchor">Правила генерации ID<a href="#правила-генерации-id-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><ul>
+<li>Lowercase</li>
+<li>Пробелы → дефисы</li>
+<li>Спец символы удаляются</li>
+<li>Уникальность (добавляется <code>-1</code>, <code>-2</code> при дубликатах)</li>
+</ul>
+<h3 id="примеры" class="heading-with-anchor">Примеры<a href="#примеры-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Заголовок</th>
+<th>ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>## Getting Started</code></td>
+<td><code>getting-started</code></td>
+</tr>
+<tr>
+<td><code>## API Reference</code></td>
+<td><code>api-reference</code></td>
+</tr>
+<tr>
+<td><code>## FAQ</code></td>
+<td><code>faq</code></td>
+</tr>
+<tr>
+<td><code>## v2.0 Release</code></td>
+<td><code>v20-release</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div></section>
+<section id="6-images-изображения" class="section">
+<h2 id="6-images-изображения" class="section-title heading-with-anchor">📸 6. Images (Изображения)<a href="#6-images-изображения" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Автоматическая обработка и оптимизация изображений.</p>
+<h3 id="синтаксис-2" class="heading-with-anchor">Синтаксис<a href="#синтаксис-3" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">![Alt text](path/to/image.png)
+</code></pre>
+<h3 id="поддерживаемые-пути" class="heading-with-anchor">Поддерживаемые пути<a href="#поддерживаемые-пути-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Относительные:</strong></p>
+<pre><code class="language-markdown">![Image](images/photo.png)
+![Image](dist/projects/assets/logo.png)
+</code></pre>
+<p><strong>Абсолютные от корня:</strong></p>
+<pre><code class="language-markdown">![Image](/assets/images/banner.png)
+</code></pre>
+<p><strong>Assets:</strong></p>
+<pre><code class="language-markdown">![Image](../../assets/images/root/logo.png)
+</code></pre>
+<p><strong>URL:</strong></p>
+<pre><code class="language-markdown">![Image](https://example.com/image.png)
+</code></pre>
+<h3 id="автоматическая-обработка" class="heading-with-anchor">Автоматическая обработка<a href="#автоматическая-обработка-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><ol>
+<li><strong>Оптимизация</strong> - сжатие до 85% качества</li>
+<li><strong>Resize</strong> - максимум 1920x1080px</li>
+<li><strong>Дедупликация</strong> - одинаковые изображения не копируются дважды</li>
+<li><strong>Организация</strong> - все в <code>dist/assets/images/</code></li>
+</ol>
+<h3 id="структура-хранения" class="heading-with-anchor">Структура хранения<a href="#структура-хранения-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code>dist/assets/images/
+  root/           # Изображения из корневой папки assets
+  website/        # Изображения из website/
+  project-alpha/  # Изображения из project-alpha/
+</code></pre>
+<hr>
+</div></section>
+<section id="7-markdown-alerts" class="section">
+<h2 id="7-markdown-alerts" class="section-title heading-with-anchor">📝 7. Markdown Alerts<a href="#7-markdown-alerts" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Используйте GitHub-style alerts для важных заметок.</p>
+<h3 id="синтаксис-4" class="heading-with-anchor">Синтаксис<a href="#синтаксис-5" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">&gt; [!NOTE]
+&gt; Полезная информация для пользователей.
+
+&gt; [!TIP]
+&gt; Совет для лучшего использования.
+
+&gt; [!IMPORTANT]
+&gt; Ключевая информация.
+
+&gt; [!WARNING]
+&gt; Критическая информация о рисках.
+
+&gt; [!CAUTION]
+&gt; Негативные последствия действий.
+</code></pre>
+<h3 id="типы" class="heading-with-anchor">Типы<a href="#типы-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Тип</th>
+<th>Цвет</th>
+<th>Использование</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NOTE</code></td>
+<td>Синий</td>
+<td>Общая информация</td>
+</tr>
+<tr>
+<td><code>TIP</code></td>
+<td>Зеленый</td>
+<td>Полезные советы</td>
+</tr>
+<tr>
+<td><code>IMPORTANT</code></td>
+<td>Фиолетовый</td>
+<td>Важная информация</td>
+</tr>
+<tr>
+<td><code>WARNING</code></td>
+<td>Оранжевый</td>
+<td>Предупреждения</td>
+</tr>
+<tr>
+<td><code>CAUTION</code></td>
+<td>Красный</td>
+<td>Опасность</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div></section>
+<section id="8-sections-секции" class="section">
+<h2 id="8-sections-секции" class="section-title heading-with-anchor">🎯 8. Sections (Секции)<a href="#8-sections-секции" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>H2 заголовки автоматически создают секции с якорями.</p>
+<h3 id="автоматическое-создание" class="heading-with-anchor">Автоматическое создание<a href="#автоматическое-создание-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">## Features
+
+Content here...
+
+## Installation
+
+More content...
+</code></pre>
+<p>Создает:</p>
+<pre><code class="language-html">&lt;section id=&quot;features&quot; class=&quot;section&quot;&gt;
+  &lt;h2 id=&quot;features&quot;&gt;Features&lt;/h2&gt;
+  &lt;div class=&quot;section-content&quot;&gt;
+    Content here...
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;installation&quot; class=&quot;section&quot;&gt;
+  &lt;h2 id=&quot;installation&quot;&gt;Installation&lt;/h2&gt;
+  &lt;div class=&quot;section-content&quot;&gt;
+    More content...
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre>
+<h3 id="специальные-секции" class="heading-with-anchor">Специальные секции<a href="#специальные-секции-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p>Некоторые секции обрабатываются особым образом:</p>
+<ul>
+<li><code>## Overview</code> → Product card</li>
+<li><code>## Features</code> → Feature cards</li>
+<li><code>## Applications</code> → Application cards</li>
+<li><code>## Resources</code> → Resource cards</li>
+<li><code>## Specifications</code> → Spec cards</li>
+</ul>
+<hr>
+</div></section>
+<section id="9-inline-formatting" class="section">
+<h2 id="9-inline-formatting" class="section-title heading-with-anchor">💡 9. Inline Formatting<a href="#9-inline-formatting" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Стандартный markdown с расширениями.</p>
+<h3 id="базовый-синтаксис" class="heading-with-anchor">Базовый синтаксис<a href="#базовый-синтаксис-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">**Bold text**
+*Italic text*
+`Code inline`
+[Link](url)
+</code></pre>
+<h3 id="код" class="heading-with-anchor">Код<a href="#код-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Inline:</strong></p>
+<pre><code class="language-markdown">Use `npm install` to install packages.
+</code></pre>
+<p><strong>Блоки:</strong></p>
+<pre><code class="language-markdown">```javascript
+const hello = &quot;world&quot;;
+console.log(hello);
+```
+</code></pre>
+<h3 id="списки" class="heading-with-anchor">Списки<a href="#списки-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Неупорядоченные:</strong></p>
+<pre><code class="language-markdown">- Item 1
+- Item 2
+  - Nested item
+</code></pre>
+<p><strong>Упорядоченные:</strong></p>
+<pre><code class="language-markdown">1. First
+2. Second
+3. Third
+</code></pre>
+<h3 id="таблицы" class="heading-with-anchor">Таблицы<a href="#таблицы-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |
+| Cell 3   | Cell 4   |
+</code></pre>
+<hr>
+</div></section>
+<section id="10-spoilers-спойлеры" class="section">
+<h2 id="10-spoilers-спойлеры" class="section-title heading-with-anchor">🎨 10. Spoilers (Спойлеры)<a href="#10-spoilers-спойлеры" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>Создает раскрывающиеся блоки контента.</p>
+<h3 id="синтаксис-6" class="heading-with-anchor">Синтаксис<a href="#синтаксис-7" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">&lt;details&gt;
+&lt;summary&gt;Click to expand&lt;/summary&gt;
+
+Hidden content here.
+
+Can include:
+- Lists
+- Code blocks
+- Images
+- Any markdown
+
+&lt;/details&gt;
+</code></pre>
+<h3 id="открытый-по-умолчанию" class="heading-with-anchor">Открытый по умолчанию<a href="#открытый-по-умолчанию-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">&lt;details open&gt;
+&lt;summary&gt;Already expanded&lt;/summary&gt;
+
+This content is visible by default.
+
+&lt;/details&gt;
+</code></pre>
+<h3 id="вложенные-спойлеры" class="heading-with-anchor">Вложенные спойлеры<a href="#вложенные-спойлеры-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">&lt;details&gt;
+&lt;summary&gt;Level 1&lt;/summary&gt;
+
+Content level 1
+
+&lt;details&gt;
+&lt;summary&gt;Level 2&lt;/summary&gt;
+
+Content level 2
+
+&lt;/details&gt;
+
+&lt;/details&gt;
+</code></pre>
+<hr>
+</div></section>
+<section id="полный-пример" class="section">
+<h2 id="полный-пример" class="section-title heading-with-anchor">📋 Полный пример<a href="#полный-пример" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<pre><code class="language-markdown">---
+
+## Features
+
+
+## Installation
+
+
+&lt;!--SELECTOR_PLACEHOLDER_8--&gt;
+
+## Specifications
+## Applications
+
+
+
+## Resources
+
+
+
+## FAQ
+
+&lt;details&gt;
+&lt;summary&gt;How to update firmware?&lt;/summary&gt;
+
+1. Download latest firmware
+2. Connect via USB
+3. Run update tool
+4. Wait for completion
+
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;What motors are supported?&lt;/summary&gt;
+
+All NEMA17 stepper motors with:
+- Voltage: 12-24V
+- Current: &lt; 2A per phase
+- Steps: 200 or 400 per revolution
+
+&lt;/details&gt;
+</code></pre>
+<hr>
+</div></section>
+<section id="советы-по-использованию" class="section">
+<h2 id="советы-по-использованию" class="section-title heading-with-anchor">🚀 Советы по использованию<a href="#советы-по-использованию" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="1-структура-документа" class="heading-with-anchor">1. Структура документа<a href="#1-структура-документа-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-markdown">## Overview - карточка продукта (опционально)
+
+## Features - карточки функций
+
+## Installation - инструкции с селекторами
+
+## Specifications - технические характеристики
+## Applications - примеры использования
+
+## Resources - полезные ссылки
+
+## FAQ - частые вопросы со спойлерами
+</code></pre>
+<h3 id="2-эмодзи-для-карточек" class="heading-with-anchor">2. Эмодзи для карточек<a href="#2-эмодзи-для-карточек-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p>Используйте релевантные эмодзи:</p>
+<ul>
+<li>🚀 Производительность</li>
+<li>🔒 Безопасность</li>
+<li>🎨 Дизайн</li>
+<li>📱 Мобильность</li>
+<li>⚡ Скорость</li>
+<li>🔧 Настройка</li>
+<li>📊 Аналитика</li>
+<li>🌐 Интернационализация</li>
+</ul>
+<h3 id="3-изображения" class="heading-with-anchor">3. Изображения<a href="#3-изображения-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><ul>
+<li>Используйте WebP для лучшего сжатия</li>
+<li>Оптимальный размер: 1200x800px</li>
+<li>Alt text обязателен для SEO</li>
+<li>Храните в <code>assets/images/</code></li>
+</ul>
+<h3 id="4-селекторы" class="heading-with-anchor">4. Селекторы<a href="#4-селекторы-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><ul>
+<li>Используйте для альтернативных инструкций</li>
+<li>Группируйте похожие опции</li>
+<li>Синхронизация работает автоматически</li>
+</ul>
+<h3 id="5-alerts" class="heading-with-anchor">5. Alerts<a href="#5-alerts-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><ul>
+<li>NOTE - для дополнительной информации</li>
+<li>TIP - для полезных советов</li>
+<li>WARNING - для важных предупреждений</li>
+<li>CAUTION - для критических моментов</li>
+</ul>
+<hr>
+</div></section>
+<section id="дополнительные-ресурсы" class="section">
+<h2 id="дополнительные-ресурсы" class="section-title heading-with-anchor">📚 Дополнительные ресурсы<a href="#дополнительные-ресурсы" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<ul>
+<li><a href="doc_config_format.html">DOC_CONFIG_FORMAT.md</a> - формат конфигурации</li>
+<li><a href="doc_config_examples.html">DOC_CONFIG_EXAMPLES.md</a> - примеры структур</li>
+<li><a href="migration_guide.html">MIGRATION_GUIDE.md</a> - миграция проектов</li>
+</ul>
+</div></section>
+
+    </main>
+    <footer class="footer">
+    <div class="footer-container">
+      <div class="copyright">
+        <span class="copyright-line1">Copyright © 2023-Present</span>
+        <span class="copyright-line2">creapunk, Anton Khrustalev</span>
+      </div>
+      
+      <div class="social-links">
+        <div class="social-pill email" 
+        style="--pill-color: #4A90E2; --pill-hover-color: #3A7BC8; color: #4A90E2;"
+        onclick="window.open('mailto:creapunktech@gmail.com', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+  </svg>
+        <span class="social-label">Email</span>
+      </div>
+        <div class="social-pill github" 
+        style="--pill-color: #FFFFFF; --pill-hover-color: #1a1a1a; color: #FFFFFF;"
+        onclick="window.open('https://github.com/creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+  </svg>
+        <span class="social-label">GitHub</span>
+      </div>
+        <div class="social-pill youtube" 
+        style="--pill-color: #FF0000; --pill-hover-color: #CC0000; color: #FF0000;"
+        onclick="window.open('https://youtube.com/@creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+        <span class="social-label">YouTube</span>
+      </div>
+        <div class="social-pill discord filled" 
+        style="--pill-color: #5865F2; --pill-hover-color: #4752C4; color: #5865F2;"
+        onclick="window.open('https://discord.gg/V4aJdTja8v', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+  </svg>
+        <span class="social-label">Discord</span>
+      </div>
+        <div class="social-pill kofi filled" 
+        style="--pill-color: #FF5E5B; --pill-hover-color: #E54E4B; color: #FF5E5B;"
+        onclick="window.open('https://ko-fi.com/creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+  </svg>
+        <span class="social-label">Ko-Fi</span>
+      </div>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="../../assets/scripts/core.js"></script>
+  <script src="../../assets/scripts/code-blocks.js"></script>
+  <script src="../../assets/scripts/animations.js"></script>
+  <script src="../../assets/scripts/search.js"></script>
+  <script>
+// Google Analytics расширенное отслеживание
+(function() {
+    // Проверяем доступность gtag
+    if (typeof gtag === 'undefined') {
+        console.warn('Google Analytics не загружен');
+        return;
+    }
+
+    // Базовые функции отслеживания
+    window.trackEvent = function(eventName, parameters = {}) {
+        gtag('event', eventName, parameters);
+    };
+
+    window.trackPageView = function(pagePath, pageTitle) {
+        gtag('config', 'G-24MWSHH5RK', {
+            page_path: pagePath,
+            page_title: pageTitle
+        });
+    };
+
+    // Отслеживание внешних ссылок
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.href.includes(window.location.hostname)) {
+            gtag('event', 'click', {
+                event_category: 'outbound',
+                event_label: link.href,
+                transport_type: 'beacon'
+            });
+        }
+    });
+
+    // Отслеживание скачиваний
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+            const downloadExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', '.exe', '.dmg', '.apk'];
+            const isDownload = downloadExtensions.some(ext => link.href.toLowerCase().includes(ext));
+            
+            if (isDownload) {
+                const filename = link.href.split('/').pop();
+                gtag('event', 'file_download', {
+                    event_category: 'engagement',
+                    event_label: filename,
+                    file_extension: filename.split('.').pop()
+                });
+            }
+        }
+    });
+
+    // Отслеживание прокрутки
+    let scrollMilestones = [25, 50, 75, 90];
+    let trackedMilestones = new Set();
+    
+    function trackScrollDepth() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+        
+        scrollMilestones.forEach(milestone => {
+            if (scrollPercent >= milestone && !trackedMilestones.has(milestone)) {
+                trackedMilestones.add(milestone);
+                gtag('event', 'scroll', {
+                    event_category: 'engagement',
+                    event_label: milestone + '%',
+                    value: milestone
+                });
+            }
+        });
+    }
+    
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(trackScrollDepth, 250);
+    });
+
+    // Отслеживание времени на странице
+    const pageStartTime = Date.now();
+    let timeTrackingInterval;
+    
+    function startTimeTracking() {
+        timeTrackingInterval = setInterval(() => {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            
+            // Отправляем milestone каждые 30 секунд
+            if (timeSpent % 30 === 0) {
+                gtag('event', 'timing_complete', {
+                    name: 'page_read_time',
+                    value: timeSpent
+                });
+            }
+        }, 1000);
+    }
+    
+    // Отслеживание ухода со страницы
+    window.addEventListener('beforeunload', function() {
+        const totalTime = Math.round((Date.now() - pageStartTime) / 1000);
+        gtag('event', 'page_view_time', {
+            event_category: 'engagement',
+            event_label: 'session_duration',
+            value: totalTime,
+            transport_type: 'beacon'
+        });
+        
+        if (timeTrackingInterval) {
+            clearInterval(timeTrackingInterval);
+        }
+    });
+    
+    // Запускаем отслеживание времени
+    startTimeTracking();
+
+    // Отслеживание взаимодействий с проектами
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button, .btn');
+        if (button) {
+            const buttonText = button.textContent.trim();
+            const section = button.closest('section');
+            const sectionId = section ? section.id : 'unknown';
+            
+            gtag('event', 'button_click', {
+                event_category: 'interaction',
+                event_label: buttonText,
+                section: sectionId
+            });
+        }
+    });
+
+    // Отслеживание навигации по якорным ссылкам
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href^="#"]');
+        if (link) {
+            const targetSection = link.getAttribute('href').substring(1);
+            gtag('event', 'internal_navigation', {
+                event_category: 'navigation',
+                event_label: targetSection
+            });
+        }
+    });
+
+})();</script>
+</body>
+</html>

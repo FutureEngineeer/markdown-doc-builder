@@ -1,0 +1,90 @@
+/* ==================== TABLES ==================== */
+
+/* Обертка для таблицы с горизонтальной прокруткой */
+.table-wrapper {
+    overflow-x: auto;
+    margin: 0.5em 0;
+    width: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) rgba(255, 255, 255, 0);
+}
+
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0);
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #25a049;
+}
+
+table {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    box-sizing: border-box;
+    table-layout: auto;
+}
+
+thead {
+    background: rgba(47, 182, 90, 0.1);
+    border-bottom: 2px solid var(--accent);
+}
+
+th {
+    padding: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+}
+
+th[align="left"],
+td[align="left"] {
+    text-align: left;
+}
+
+th[align="center"],
+td[align="center"] {
+    text-align: center;
+}
+
+th[align="right"],
+td[align="right"] {
+    text-align: right;
+}
+
+td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 14px;
+    color: var(--text-bright);
+    text-align: center;
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background: rgba(47, 182, 90, 0.05);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
