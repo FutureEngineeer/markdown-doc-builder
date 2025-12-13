@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Example Projects</title>
+  <meta name="description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta name="keywords" content="motion control, robotics, documentation, GitHub Pages, open source, CLN17, RadiX, creapunk">
+  <meta name="author" content="creapunk">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="creapunk">
+  <meta property="og:title" content="Example Projects">
+  <meta property="og:description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta property="og:url" content="https://futureengineeer.github.io/markdown-doc-builder/projects/project-alpha/examples.html">
+  <meta property="og:image" content="https://futureengineeer.github.io/markdown-doc-builder/assets/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Example Projects">
+  <meta name="twitter:description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta name="twitter:image" content="https://futureengineeer.github.io/markdown-doc-builder/assets/logo.png">
+  <link rel="canonical" href="https://futureengineeer.github.io/markdown-doc-builder/projects/project-alpha/examples.html">
+  <link rel="icon" href="../../assets/creapunk-icon.png" sizes="32x32">
+  <link rel="icon" href="../../assets/creapunk-icon.png" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/creapunk-icon.png">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="stylesheet" href="../../assets/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-24MWSHH5RK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-24MWSHH5RK', {
+        page_title: document.title,
+        page_location: window.location.href,
+        custom_map: {
+          'custom_parameter_1': 'project_type',
+          'custom_parameter_2': 'documentation_section'
+        }
+      });
+    </script>
+</head>
+<body>
+  <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
+  <header class="header">
+    <div class="header-container">
+      <div class="hamburger-button" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <div class="logo-section" onclick="window.location.href='../../'">
+        <img src="../../assets/creapunk-icon.svg" alt="Logo" class="logo" />
+        <div class="site-title-wrapper">
+          <span class="sitename">creapunk</span>
+          <span class="breadcrumb">PROJECTS / PROJECT-ALPHA / EXAMPLES</span>
+        </div>
+      </div>
+      
+      <nav class="nav-section">
+        <ul class="nav-links desktop-nav">
+          <li class="priority-link"><a href="../../cln-driver/index.html">CLN</a></li>
+          <li class="priority-link"><a href="../../projects/project-beta/radix/index.html">RadiX Project</a></li>
+          <li class="priority-link active"><a href="../../projects/project-alpha/main.html" class="active">Проект Alpha</a></li>
+        </ul>
+        
+        <div class="community-buttons">
+          <div class="community-btn discord-btn" onclick="window.open('https://discord.gg/V4aJdTja8v', '_blank')">
+            <svg class="btn-icon" width="var(--btn-icon-size)" height="var(--btn-icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+  </svg>
+            <span class="btn-text">Discord</span>
+          </div>
+          <div class="community-btn kofi-btn" onclick="window.open('https://ko-fi.com/creapunk', '_blank')">
+            <svg class="btn-icon" width="var(--btn-icon-size)" height="var(--btn-icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+  </svg>
+            <span class="btn-text">Support ♥</span>
+          </div>
+        </div>
+        
+        <button class="search-button" onclick="openSearchModal()" aria-label="Search">
+          <svg class="search-button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Search Modal -->
+  <div id="search-modal" class="search-modal">
+    <div class="search-modal-overlay"></div>
+    <div class="search-modal-content">
+      <div class="search-input-wrapper">
+        <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Search documentation..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="search-close-button" onclick="closeSearchModal()" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="search-results" class="search-results">
+        <div class="search-hint">Type at least 2 characters to search</div>
+      </div>
+      
+      <div class="search-footer">
+        <div class="search-footer-shortcuts">
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">↑</kbd>
+            <kbd class="search-footer-key">↓</kbd>
+            <span>navigate</span>
+          </div>
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">Enter</kbd>
+            <span>select</span>
+          </div>
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">Esc</kbd>
+            <span>close</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scope">
+    <aside class="hamburger-menu">
+  <div class="hamburger-menu-header">Site Map</div>
+  <nav class="hamburger-menu-nav">
+    <ul>
+      <li>
+        <div class="item-content" onclick="window.location.href='../../index.html'">
+          <span class="link">Home</span>
+        </div>
+      </li>
+      <li>
+        <div class="item-content" onclick="window.location.href='../../main.html'">
+          <span class="link">Main Docs</span>
+        </div>
+      </li>
+      <li class="has-children">
+        <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/index.html'}">
+          <span class="triangle"></span>
+          <span class="link">CLN Driver</span>
+        </div>
+        <ul class="children">
+          <li>
+            <div class="item-content" onclick="window.location.href='../../cln-driver/license.html'">
+              <span class="link">License</span>
+            </div>
+          </li>
+          <li>
+            <div class="item-content" onclick="window.location.href='../../cln-driver/sponsors.html'">
+              <span class="link">Sponsors</span>
+            </div>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Hardware</span>
+            </div>
+            <ul class="children">
+              <li class="has-children">
+                <div class="item-content">
+                  <span class="triangle"></span>
+                  <span class="folder-only">Cln17</span>
+                </div>
+                <ul class="children">
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/enclosure/index.html'}">
+                      <span class="link">Enclosure</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v1.0 [obsolete]/index.html'}">
+                      <span class="link">V1.0 [obsolete]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v1.5 [obsolete]/index.html'}">
+                      <span class="link">V1.5 [obsolete]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.0 [nrfnd]/index.html'}">
+                      <span class="link">V2.0 [nrfnd]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.1/index.html'}">
+                      <span class="link">V2.1</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.5/index.html'}">
+                      <span class="link">V2.5</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Wiki</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/applications.html'">
+                  <span class="link">Applications</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/design-foundations.html'">
+                  <span class="link">Design Foundations</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/features.html'">
+                  <span class="link">Features</span>
+                </div>
+              </li>
+              <li class="has-children">
+                <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/index.html'}">
+                  <span class="triangle"></span>
+                  <span class="link">Cln17</span>
+                </div>
+                <ul class="children">
+                  <li>
+                    <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/cln17/alternatives.html'">
+                      <span class="link">Alternatives</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v1.0/specification.html'}">
+                      <span class="link">V1.0 - Specification</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v1.5/specification.html'}">
+                      <span class="link">V1.5 - Specification</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v2.0/specification.html'}">
+                      <span class="link">V2.0 - Specification</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li class="has-children">
+                <div class="item-content">
+                  <span class="triangle"></span>
+                  <span class="folder-only">Cln234</span>
+                </div>
+                <ul class="children">
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln234/v0.1/specification.html'}">
+                      <span class="link">V0.1 - Specification</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="has-children expanded">
+        <div class="item-content">
+          <span class="triangle"></span>
+          <span class="folder-only">Projects</span>
+        </div>
+        <ul class="children">
+          <li class="has-children expanded">
+            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-alpha/main.html'}">
+              <span class="triangle"></span>
+              <span class="link">Проект Alpha</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/api-specs.html'">
+                  <span class="link">Api Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cache-test.html'">
+                  <span class="link">Cache Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/checklist-showcase.html'">
+                  <span class="link">Checklist Showcase</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cln17-v1-spec.html'">
+                  <span class="link">Cln17 V1 Spec</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cross-links-test.html'">
+                  <span class="link">Cross Links Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content active" onclick="window.location.href='../../projects/project-alpha/examples.html'">
+                  <span class="link">Examples</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/github-links-test.html'">
+                  <span class="link">Github Links Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/hardware-specs.html'">
+                  <span class="link">Hardware Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/hidden-test.html'">
+                  <span class="link">Hidden Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/installation.html'">
+                  <span class="link">Installation</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/local-tool.html'">
+                  <span class="link">Local Tool</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/markdown_features.html'">
+                  <span class="link">MARKDOWN FEATURES</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/setup.html'">
+                  <span class="link">Setup</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/specs.html'">
+                  <span class="link">Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/specs-test.html'">
+                  <span class="link">Specs Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/troubleshooting.html'">
+                  <span class="link">Troubleshooting</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Проект Beta</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-beta/api-reference.html'">
+                  <span class="link">API Reference</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-beta/overview.html'">
+                  <span class="link">Project Beta Overview</span>
+                </div>
+              </li>
+              <li class="has-children">
+                <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-beta/radix/index.html'}">
+                  <span class="triangle"></span>
+                  <span class="link">RadiX</span>
+                </div>
+                <ul class="children">
+                  <li>
+                    <div class="item-content" onclick="window.location.href='../../projects/project-beta/radix/license.html'">
+                      <span class="link">License</span>
+                    </div>
+                  </li>
+                  <li class="has-children">
+                    <div class="item-content">
+                      <span class="triangle"></span>
+                      <span class="folder-only">Wiki</span>
+                    </div>
+                    <ul class="children">
+                      <li>
+                        <div class="item-content" onclick="window.location.href='../../projects/project-beta/radix/wiki/design-foundations.html'">
+                          <span class="link">Design Foundations</span>
+                        </div>
+                      </li>
+                      <li class="has-children">
+                        <div class="item-content">
+                          <span class="triangle"></span>
+                          <span class="folder-only">Radix Drive</span>
+                        </div>
+                        <ul class="children">
+                          <li class="">
+                            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-beta/radix/wiki/radix-drive/r1.0/specification.html'}">
+                              <span class="link">R1.0 - Specification</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="has-children">
+        <div class="item-content">
+          <span class="triangle"></span>
+          <span class="folder-only">Additional</span>
+        </div>
+        <ul class="children">
+          <li class="">
+            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../additional/sub-section/api.html'}">
+              <span class="link">Sub Section - Api</span>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+    <aside class="section-map">
+  <div class="section-map-header">Проект Alpha</div>
+  <div class="section-map-content">
+    <nav class="section-map-nav">
+      <ul>
+        <li>
+          <div class="item-content" onclick="window.location.href='api-specs.html'">
+            <span class="link">Api Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cache-test.html'">
+            <span class="link">Cache Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='checklist-showcase.html'">
+            <span class="link">Checklist Showcase</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cln17-v1-spec.html'">
+            <span class="link">Cln17 V1 Spec</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cross-links-test.html'">
+            <span class="link">Cross Links Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content active" onclick="window.location.href='examples.html'">
+            <span class="link">Examples</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='github-links-test.html'">
+            <span class="link">Github Links Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='hardware-specs.html'">
+            <span class="link">Hardware Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='hidden-test.html'">
+            <span class="link">Hidden Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='installation.html'">
+            <span class="link">Installation</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='local-tool.html'">
+            <span class="link">Local Tool</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='main.html'">
+            <span class="link">Main</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='markdown_features.html'">
+            <span class="link">MARKDOWN FEATURES</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='setup.html'">
+            <span class="link">Setup</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='specs.html'">
+            <span class="link">Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='specs-test.html'">
+            <span class="link">Specs Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='troubleshooting.html'">
+            <span class="link">Troubleshooting</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+    <main>
+      
+      <h1>Example Projects</h1>
+<section id="basic-setup" class="section">
+<h2 id="basic-setup" class="section-title heading-with-anchor">Basic Setup<a href="#basic-setup" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="simple-position-control" class="heading-with-anchor">Simple Position Control<a href="#simple-position-control-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p>This example demonstrates basic position control using Python:</p>
+<pre><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;
+Basic CLN17 Position Control Example
+Moves motor between two positions repeatedly
+&quot;&quot;&quot;
+
+import serial
+import time
+import sys
+
+class CLN17Controller:
+    def __init__(self, port='/dev/ttyUSB0', baudrate=115200):
+        try:
+            self.serial = serial.Serial(port, baudrate, timeout=1)
+            time.sleep(0.5)  # Allow connection to establish
+            print(f&quot;Connected to CLN17 on {port}&quot;)
+        except serial.SerialException as e:
+            print(f&quot;Error connecting to {port}: {e}&quot;)
+            sys.exit(1)
+    
+    def send_command(self, cmd):
+        &quot;&quot;&quot;Send command and return response&quot;&quot;&quot;
+        self.serial.write(f&quot;{cmd}\r\n&quot;.encode())
+        response = self.serial.readline().decode().strip()
+        print(f&quot;CMD: {cmd} -&gt; {response}&quot;)
+        return response
+    
+    def initialize(self):
+        &quot;&quot;&quot;Initialize driver with safe settings&quot;&quot;&quot;
+        self.send_command(&quot;SET CURRENT 2000&quot;)  # 2A current
+        self.send_command(&quot;SET VEL 1000&quot;)      # 1000 steps/sec
+        self.send_command(&quot;SET ACCEL 2000&quot;)    # 2000 steps/sec²
+        self.send_command(&quot;SET ENABLE 1&quot;)      # Enable motor
+        time.sleep(0.1)
+    
+    def move_to_position(self, position):
+        &quot;&quot;&quot;Move to absolute position and wait for completion&quot;&quot;&quot;
+        self.send_command(f&quot;SET POS {position}&quot;)
+        
+        # Wait for movement to complete
+        while True:
+            status = self.send_command(&quot;GET STATUS&quot;)
+            if &quot;MOVING&quot; not in status:
+                break
+            time.sleep(0.1)
+    
+    def get_position(self):
+        &quot;&quot;&quot;Get current position&quot;&quot;&quot;
+        response = self.send_command(&quot;GET POS&quot;)
+        return int(response.split()[1])
+
+def main():
+    # Initialize controller
+    controller = CLN17Controller()
+    controller.initialize()
+    
+    # Define positions
+    positions = [0, 1000, 2000, 1000, 0]
+    
+    print(&quot;Starting position sequence...&quot;)
+    
+    try:
+        for i, pos in enumerate(positions):
+            print(f&quot;\nStep {i+1}: Moving to position {pos}&quot;)
+            controller.move_to_position(pos)
+            
+            # Verify position
+            actual_pos = controller.get_position()
+            print(f&quot;Target: {pos}, Actual: {actual_pos}&quot;)
+            
+            time.sleep(1)  # Pause between moves
+            
+    except KeyboardInterrupt:
+        print(&quot;\nStopping...&quot;)
+        controller.send_command(&quot;SET ENABLE 0&quot;)
+    
+    print(&quot;Example complete!&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<h3 id="arduino-stepper-control" class="heading-with-anchor">Arduino Stepper Control<a href="#arduino-stepper-control-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-cpp">/*
+  CLN17 Arduino Control Example
+  Controls stepper motor via UART commands
+*/
+
+#include &lt;SoftwareSerial.h&gt;
+
+// Create serial connection to CLN17
+SoftwareSerial driverSerial(2, 3); // RX, TX pins
+
+// Position array for demo
+int positions[] = {0, 500, 1000, 1500, 2000, 1000, 0};
+int numPositions = sizeof(positions) / sizeof(positions[0]);
+int currentIndex = 0;
+
+void setup() {
+  Serial.begin(115200);
+  driverSerial.begin(115200);
+  
+  Serial.println(&quot;CLN17 Arduino Control Example&quot;);
+  
+  // Initialize driver
+  delay(1000);
+  sendCommand(&quot;SET CURRENT 2000&quot;);
+  sendCommand(&quot;SET VEL 800&quot;);
+  sendCommand(&quot;SET ACCEL 1500&quot;);
+  sendCommand(&quot;SET ENABLE 1&quot;);
+  
+  Serial.println(&quot;Driver initialized&quot;);
+}
+
+void loop() {
+  int targetPos = positions[currentIndex];
+  
+  Serial.print(&quot;Moving to position: &quot;);
+  Serial.println(targetPos);
+  
+  // Send position command
+  String cmd = &quot;SET POS &quot; + String(targetPos);
+  sendCommand(cmd);
+  
+  // Wait for movement to complete
+  waitForCompletion();
+  
+  // Verify position
+  String response = sendCommand(&quot;GET POS&quot;);
+  Serial.println(&quot;Position confirmed: &quot; + response);
+  
+  // Move to next position
+  currentIndex = (currentIndex + 1) % numPositions;
+  
+  delay(2000); // Wait 2 seconds between moves
+}
+
+String sendCommand(String cmd) {
+  driverSerial.println(cmd);
+  delay(50); // Allow processing time
+  
+  String response = &quot;&quot;;
+  unsigned long timeout = millis() + 1000; // 1 second timeout
+  
+  while (millis() &lt; timeout) {
+    if (driverSerial.available()) {
+      char c = driverSerial.read();
+      if (c == '\n') break;
+      if (c != '\r') response += c;
+    }
+  }
+  
+  Serial.println(&quot;CMD: &quot; + cmd + &quot; -&gt; &quot; + response);
+  return response;
+}
+
+void waitForCompletion() {
+  Serial.print(&quot;Waiting for movement completion&quot;);
+  
+  while (true) {
+    String status = sendCommand(&quot;GET STATUS&quot;);
+    
+    if (status.indexOf(&quot;MOVING&quot;) == -1) {
+      Serial.println(&quot; Done!&quot;);
+      break;
+    }
+    
+    Serial.print(&quot;.&quot;);
+    delay(100);
+  }
+}
+</code></pre>
+</div></section>
+<section id="multi-axis-control" class="section">
+<h2 id="multi-axis-control" class="section-title heading-with-anchor">Multi-Axis Control<a href="#multi-axis-control" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="coordinated-xy-movement" class="heading-with-anchor">Coordinated XY Movement<a href="#coordinated-xy-movement-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;
+Multi-axis coordinated movement example
+Controls X and Y axes for 2D positioning
+&quot;&quot;&quot;
+
+import serial
+import time
+import math
+
+class MultiAxisController:
+    def __init__(self, x_port='/dev/ttyUSB0', y_port='/dev/ttyUSB1'):
+        self.x_axis = CLN17Controller(x_port)
+        self.y_axis = CLN17Controller(y_port)
+        
+        # Initialize both axes
+        for axis in [self.x_axis, self.y_axis]:
+            axis.initialize()
+    
+    def move_to_xy(self, x, y, speed=1000):
+        &quot;&quot;&quot;Move to X,Y coordinate with synchronized timing&quot;&quot;&quot;
+        
+        # Get current positions
+        current_x = self.x_axis.get_position()
+        current_y = self.y_axis.get_position()
+        
+        # Calculate distances
+        dx = abs(x - current_x)
+        dy = abs(y - current_y)
+        total_distance = math.sqrt(dx*dx + dy*dy)
+        
+        if total_distance == 0:
+            return  # Already at target
+        
+        # Calculate time for movement
+        move_time = total_distance / speed
+        
+        # Set velocities for synchronized arrival
+        if dx &gt; 0:
+            x_vel = int(dx / move_time)
+            self.x_axis.send_command(f&quot;SET VEL {x_vel}&quot;)
+        
+        if dy &gt; 0:
+            y_vel = int(dy / move_time)
+            self.y_axis.send_command(f&quot;SET VEL {y_vel}&quot;)
+        
+        # Start movements simultaneously
+        print(f&quot;Moving to ({x}, {y})&quot;)
+        self.x_axis.send_command(f&quot;SET POS {x}&quot;)
+        self.y_axis.send_command(f&quot;SET POS {y}&quot;)
+        
+        # Wait for both axes to complete
+        self.wait_for_both_axes()
+        
+        print(f&quot;Reached ({self.x_axis.get_position()}, {self.y_axis.get_position()})&quot;)
+    
+    def wait_for_both_axes(self):
+        &quot;&quot;&quot;Wait for both axes to stop moving&quot;&quot;&quot;
+        while True:
+            x_status = self.x_axis.send_command(&quot;GET STATUS&quot;)
+            y_status = self.y_axis.send_command(&quot;GET STATUS&quot;)
+            
+            if &quot;MOVING&quot; not in x_status and &quot;MOVING&quot; not in y_status:
+                break
+            
+            time.sleep(0.1)
+    
+    def draw_circle(self, center_x, center_y, radius, points=36):
+        &quot;&quot;&quot;Draw a circle using coordinated movement&quot;&quot;&quot;
+        print(f&quot;Drawing circle: center=({center_x},{center_y}), radius={radius}&quot;)
+        
+        for i in range(points + 1):  # +1 to close the circle
+            angle = 2 * math.pi * i / points
+            x = center_x + radius * math.cos(angle)
+            y = center_y + radius * math.sin(angle)
+            
+            self.move_to_xy(int(x), int(y))
+            time.sleep(0.1)  # Small pause at each point
+    
+    def draw_square(self, x1, y1, x2, y2):
+        &quot;&quot;&quot;Draw a square with given corners&quot;&quot;&quot;
+        points = [(x1, y1), (x2, y1), (x2, y2), (x1, y2), (x1, y1)]
+        
+        print(f&quot;Drawing square: ({x1},{y1}) to ({x2},{y2})&quot;)
+        
+        for x, y in points:
+            self.move_to_xy(x, y)
+            time.sleep(0.5)
+
+def main():
+    # Initialize multi-axis controller
+    controller = MultiAxisController()
+    
+    try:
+        # Move to origin
+        controller.move_to_xy(0, 0)
+        time.sleep(1)
+        
+        # Draw a square
+        controller.draw_square(0, 0, 1000, 1000)
+        time.sleep(2)
+        
+        # Draw a circle
+        controller.draw_circle(500, 500, 400)
+        time.sleep(2)
+        
+        # Return to origin
+        controller.move_to_xy(0, 0)
+        
+    except KeyboardInterrupt:
+        print(&quot;\nStopping all axes...&quot;)
+        controller.x_axis.send_command(&quot;SET ENABLE 0&quot;)
+        controller.y_axis.send_command(&quot;SET ENABLE 0&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</div></section>
+<section id="cnc-integration" class="section">
+<h2 id="cnc-integration" class="section-title heading-with-anchor">CNC Integration<a href="#cnc-integration" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="g-code-interpreter" class="heading-with-anchor">G-code Interpreter<a href="#g-code-interpreter-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-python">#!/usr/bin/env python3
+&quot;&quot;&quot;
+Simple G-code interpreter for CLN17 drivers
+Supports basic G0/G1 linear movements
+&quot;&quot;&quot;
+
+import re
+import math
+
+class GCodeInterpreter:
+    def __init__(self, x_controller, y_controller, z_controller=None):
+        self.controllers = {
+            'X': x_controller,
+            'Y': y_controller,
+            'Z': z_controller
+        }
+        
+        # Current position
+        self.position = {'X': 0, 'Y': 0, 'Z': 0}
+        
+        # Feed rate (steps per minute)
+        self.feed_rate = 1000
+        
+        # Initialize all controllers
+        for controller in self.controllers.values():
+            if controller:
+                controller.initialize()
+    
+    def parse_gcode_line(self, line):
+        &quot;&quot;&quot;Parse a single line of G-code&quot;&quot;&quot;
+        line = line.strip().upper()
+        
+        # Remove comments
+        if ';' in line:
+            line = line[:line.index(';')]
+        
+        if not line:
+            return None
+        
+        # Extract command and parameters
+        tokens = re.findall(r'[A-Z]-?\d*\.?\d*', line)
+        
+        if not tokens:
+            return None
+        
+        command = tokens[0]
+        params = {}
+        
+        for token in tokens[1:]:
+            letter = token[0]
+            value = float(token[1:]) if len(token) &gt; 1 else 0
+            params[letter] = value
+        
+        return {'command': command, 'params': params}
+    
+    def execute_g0_g1(self, params, rapid=False):
+        &quot;&quot;&quot;Execute G0 (rapid) or G1 (linear) movement&quot;&quot;&quot;
+        
+        # Extract target coordinates
+        target = self.position.copy()
+        
+        for axis in ['X', 'Y', 'Z']:
+            if axis in params:
+                target[axis] = params[axis]
+        
+        # Calculate movement distance
+        distance = 0
+        for axis in ['X', 'Y', 'Z']:
+            delta = target[axis] - self.position[axis]
+            distance += delta * delta
+        distance = math.sqrt(distance)
+        
+        if distance == 0:
+            return
+        
+        # Set feed rate
+        if 'F' in params:
+            self.feed_rate = params['F']
+        
+        # Calculate movement time
+        speed = 5000 if rapid else self.feed_rate  # steps/min
+        move_time = (distance * 60) / speed  # seconds
+        
+        print(f&quot;Moving to X:{target['X']} Y:{target['Y']} Z:{target['Z']} (F:{speed})&quot;)
+        
+        # Set velocities for coordinated movement
+        for axis in ['X', 'Y', 'Z']:
+            controller = self.controllers[axis]
+            if controller and axis in params:
+                delta = abs(target[axis] - self.position[axis])
+                if delta &gt; 0 and move_time &gt; 0:
+                    velocity = int(delta / move_time)
+                    controller.send_command(f&quot;SET VEL {velocity}&quot;)
+        
+        # Start movements
+        for axis in ['X', 'Y', 'Z']:
+            controller = self.controllers[axis]
+            if controller and axis in params:
+                controller.send_command(f&quot;SET POS {int(target[axis])}&quot;)
+        
+        # Wait for completion
+        self.wait_for_all_axes()
+        
+        # Update position
+        self.position = target
+    
+    def wait_for_all_axes(self):
+        &quot;&quot;&quot;Wait for all axes to complete movement&quot;&quot;&quot;
+        while True:
+            all_stopped = True
+            
+            for controller in self.controllers.values():
+                if controller:
+                    status = controller.send_command(&quot;GET STATUS&quot;)
+                    if &quot;MOVING&quot; in status:
+                        all_stopped = False
+                        break
+            
+            if all_stopped:
+                break
+            
+            time.sleep(0.1)
+    
+    def execute_gcode_file(self, filename):
+        &quot;&quot;&quot;Execute G-code from file&quot;&quot;&quot;
+        print(f&quot;Executing G-code file: {filename}&quot;)
+        
+        try:
+            with open(filename, 'r') as f:
+                lines = f.readlines()
+            
+            for line_num, line in enumerate(lines, 1):
+                parsed = self.parse_gcode_line(line)
+                
+                if not parsed:
+                    continue
+                
+                command = parsed['command']
+                params = parsed['params']
+                
+                print(f&quot;Line {line_num}: {line.strip()}&quot;)
+                
+                if command == 'G0':
+                    self.execute_g0_g1(params, rapid=True)
+                elif command == 'G1':
+                    self.execute_g0_g1(params, rapid=False)
+                elif command.startswith('M'):
+                    # M-codes (tool control, etc.)
+                    print(f&quot;M-code {command} not implemented&quot;)
+                else:
+                    print(f&quot;Unknown command: {command}&quot;)
+                
+                time.sleep(0.1)  # Small delay between commands
+        
+        except FileNotFoundError:
+            print(f&quot;Error: File {filename} not found&quot;)
+        except Exception as e:
+            print(f&quot;Error executing G-code: {e}&quot;)
+
+# Example G-code file content
+sample_gcode = &quot;&quot;&quot;
+; Simple square toolpath
+G0 X0 Y0          ; Rapid to origin
+G1 X100 Y0 F1000  ; Line to (100,0)
+G1 X100 Y100      ; Line to (100,100)
+G1 X0 Y100        ; Line to (0,100)
+G1 X0 Y0          ; Line to origin
+&quot;&quot;&quot;
+
+def main():
+    # Create G-code file
+    with open('sample.gcode', 'w') as f:
+        f.write(sample_gcode)
+    
+    # Initialize controllers
+    x_controller = CLN17Controller('/dev/ttyUSB0')
+    y_controller = CLN17Controller('/dev/ttyUSB1')
+    
+    # Create interpreter
+    interpreter = GCodeInterpreter(x_controller, y_controller)
+    
+    try:
+        # Execute sample G-code
+        interpreter.execute_gcode_file('sample.gcode')
+        
+    except KeyboardInterrupt:
+        print(&quot;\nStopping...&quot;)
+        for controller in interpreter.controllers.values():
+            if controller:
+                controller.send_command(&quot;SET ENABLE 0&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</div></section>
+<section id="3d-printer-integration" class="section">
+<h2 id="3d-printer-integration" class="section-title heading-with-anchor">3D Printer Integration<a href="#3d-printer-integration" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="marlin-firmware-integration" class="heading-with-anchor">Marlin Firmware Integration<a href="#marlin-firmware-integration-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p>For integrating CLN17 drivers with 3D printer firmware, see our <a href="../../../projects/project-alpha/setup.html#marlin-integration">Marlin configuration guide</a>.</p>
+<h3 id="klipper-configuration" class="heading-with-anchor">Klipper Configuration<a href="#klipper-configuration-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-ini"># Klipper configuration for CLN17 drivers
+# Add to printer.cfg
+
+[stepper_x]
+step_pin: !PC2
+dir_pin: PB9
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 40
+endstop_pin: ^PA5
+position_endstop: 0
+position_max: 235
+homing_speed: 50
+
+# CLN17 specific settings
+[tmc_uart stepper_x]
+uart_pin: PC10
+tx_pin: PC11
+uart_address: 0
+run_current: 0.580
+stealthchop_threshold: 999999
+
+# Closed-loop feedback
+[closed_loop stepper_x]
+enable: true
+encoder_pin: ^PA6
+encoder_ppr: 1000
+max_error: 50
+</code></pre>
+<p>For more integration examples, visit our <a href="https://github.com/creapunk/cln17-examples">GitHub repository</a>.</p>
+</div></section>
+
+    </main>
+    <footer class="footer">
+    <div class="footer-container">
+      <div class="copyright">
+        <span class="copyright-line1">Copyright © 2023-Present</span>
+        <span class="copyright-line2">creapunk, Anton Khrustalev</span>
+      </div>
+      
+      <div class="social-links">
+        <div class="social-pill email" 
+        style="--pill-color: #4A90E2; --pill-hover-color: #3A7BC8; color: #4A90E2;"
+        onclick="window.open('mailto:creapunktech@gmail.com', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+  </svg>
+        <span class="social-label">Email</span>
+      </div>
+        <div class="social-pill github" 
+        style="--pill-color: #FFFFFF; --pill-hover-color: #1a1a1a; color: #FFFFFF;"
+        onclick="window.open('https://github.com/creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+  </svg>
+        <span class="social-label">GitHub</span>
+      </div>
+        <div class="social-pill youtube" 
+        style="--pill-color: #FF0000; --pill-hover-color: #CC0000; color: #FF0000;"
+        onclick="window.open('https://youtube.com/@creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+        <span class="social-label">YouTube</span>
+      </div>
+        <div class="social-pill discord filled" 
+        style="--pill-color: #5865F2; --pill-hover-color: #4752C4; color: #5865F2;"
+        onclick="window.open('https://discord.gg/V4aJdTja8v', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+  </svg>
+        <span class="social-label">Discord</span>
+      </div>
+        <div class="social-pill kofi filled" 
+        style="--pill-color: #FF5E5B; --pill-hover-color: #E54E4B; color: #FF5E5B;"
+        onclick="window.open('https://ko-fi.com/creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+  </svg>
+        <span class="social-label">Ko-Fi</span>
+      </div>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="../../assets/scripts/core.js"></script>
+  <script src="../../assets/scripts/code-blocks.js"></script>
+  <script src="../../assets/scripts/animations.js"></script>
+  <script src="../../assets/scripts/search.js"></script>
+  <script>
+// Google Analytics расширенное отслеживание
+(function() {
+    // Проверяем доступность gtag
+    if (typeof gtag === 'undefined') {
+        console.warn('Google Analytics не загружен');
+        return;
+    }
+
+    // Базовые функции отслеживания
+    window.trackEvent = function(eventName, parameters = {}) {
+        gtag('event', eventName, parameters);
+    };
+
+    window.trackPageView = function(pagePath, pageTitle) {
+        gtag('config', 'G-24MWSHH5RK', {
+            page_path: pagePath,
+            page_title: pageTitle
+        });
+    };
+
+    // Отслеживание внешних ссылок
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.href.includes(window.location.hostname)) {
+            gtag('event', 'click', {
+                event_category: 'outbound',
+                event_label: link.href,
+                transport_type: 'beacon'
+            });
+        }
+    });
+
+    // Отслеживание скачиваний
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+            const downloadExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', '.exe', '.dmg', '.apk'];
+            const isDownload = downloadExtensions.some(ext => link.href.toLowerCase().includes(ext));
+            
+            if (isDownload) {
+                const filename = link.href.split('/').pop();
+                gtag('event', 'file_download', {
+                    event_category: 'engagement',
+                    event_label: filename,
+                    file_extension: filename.split('.').pop()
+                });
+            }
+        }
+    });
+
+    // Отслеживание прокрутки
+    let scrollMilestones = [25, 50, 75, 90];
+    let trackedMilestones = new Set();
+    
+    function trackScrollDepth() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+        
+        scrollMilestones.forEach(milestone => {
+            if (scrollPercent >= milestone && !trackedMilestones.has(milestone)) {
+                trackedMilestones.add(milestone);
+                gtag('event', 'scroll', {
+                    event_category: 'engagement',
+                    event_label: milestone + '%',
+                    value: milestone
+                });
+            }
+        });
+    }
+    
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(trackScrollDepth, 250);
+    });
+
+    // Отслеживание времени на странице
+    const pageStartTime = Date.now();
+    let timeTrackingInterval;
+    
+    function startTimeTracking() {
+        timeTrackingInterval = setInterval(() => {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            
+            // Отправляем milestone каждые 30 секунд
+            if (timeSpent % 30 === 0) {
+                gtag('event', 'timing_complete', {
+                    name: 'page_read_time',
+                    value: timeSpent
+                });
+            }
+        }, 1000);
+    }
+    
+    // Отслеживание ухода со страницы
+    window.addEventListener('beforeunload', function() {
+        const totalTime = Math.round((Date.now() - pageStartTime) / 1000);
+        gtag('event', 'page_view_time', {
+            event_category: 'engagement',
+            event_label: 'session_duration',
+            value: totalTime,
+            transport_type: 'beacon'
+        });
+        
+        if (timeTrackingInterval) {
+            clearInterval(timeTrackingInterval);
+        }
+    });
+    
+    // Запускаем отслеживание времени
+    startTimeTracking();
+
+    // Отслеживание взаимодействий с проектами
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button, .btn');
+        if (button) {
+            const buttonText = button.textContent.trim();
+            const section = button.closest('section');
+            const sectionId = section ? section.id : 'unknown';
+            
+            gtag('event', 'button_click', {
+                event_category: 'interaction',
+                event_label: buttonText,
+                section: sectionId
+            });
+        }
+    });
+
+    // Отслеживание навигации по якорным ссылкам
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href^="#"]');
+        if (link) {
+            const targetSection = link.getAttribute('href').substring(1);
+            gtag('event', 'internal_navigation', {
+                event_category: 'navigation',
+                event_label: targetSection
+            });
+        }
+    });
+
+})();</script>
+</body>
+</html>

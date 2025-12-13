@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>402 - Payment Required | creapunk</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="./assets/creapunk-icon.png" sizes="32x32">
+<link rel="icon" href="./assets/creapunk-icon.png" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./assets/creapunk-icon.png">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: #ccc;
+  background: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  overflow: hidden;
+}
+
+#canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+  max-width: 90%;
+}
+
+.logo-container {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-wrapper {
+  display: block;
+  width: 150px;
+  height: 150px;
+}
+
+.logo-wrapper svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.site-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h1, h2 {
+  margin: 0;
+}
+
+.error-message {
+  font-size: 18px;
+  color: #aaa;
+  margin: 20px 0;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+
+.hero {
+  font-size: clamp(60px, 12vw, 120px);
+  line-height: 1;
+  display: inline-block;
+  color: #fff;
+  z-index: 2;
+  letter-spacing: 10px;
+  filter: drop-shadow(0 1px 3px);
+}
+
+.layers {
+  position: relative;
+}
+
+.layers::before,
+.layers::after {
+  content: attr(data-text);
+  position: absolute;
+  width: 110%;
+  z-index: -1;
+}
+
+.layers::before {
+  top: 10px;
+  left: 15px;
+  color: #e0287d;
+}
+
+.layers::after {
+  top: 5px;
+  left: -10px;
+  color: #1bc7fb;
+}
+
+.single-path {
+  clip-path: polygon(
+    0% 12%, 53% 12%, 53% 26%, 25% 26%, 25% 86%, 31% 86%, 31% 0%, 53% 0%, 53% 84%,
+    92% 84%, 92% 82%, 70% 82%, 70% 29%, 78% 29%, 78% 65%, 69% 65%, 69% 66%, 77% 66%,
+    77% 45%, 85% 45%, 85% 26%, 97% 26%, 97% 28%, 84% 28%, 84% 34%, 54% 34%, 54% 89%,
+    30% 89%, 30% 58%, 83% 58%, 83% 5%, 68% 5%, 68% 36%, 62% 36%, 62% 1%, 12% 1%,
+    12% 34%, 60% 34%, 60% 57%, 98% 57%, 98% 83%, 1% 83%, 1% 53%, 91% 53%, 91% 84%,
+    8% 84%, 8% 83%, 4% 83%
+  );
+}
+
+.paths {
+  animation: paths 5s step-end infinite;
+}
+
+@keyframes paths {
+  0% {
+    clip-path: polygon(0% 43%, 83% 43%, 83% 22%, 23% 22%, 23% 24%, 91% 24%, 91% 26%, 18% 26%, 18% 83%, 29% 83%, 29% 17%, 41% 17%, 41% 39%, 18% 39%, 18% 82%, 54% 82%, 54% 88%, 19% 88%, 19% 4%, 39% 4%, 39% 14%, 76% 14%, 76% 52%, 23% 52%, 23% 35%, 19% 35%, 19% 8%, 36% 8%, 36% 31%, 73% 31%, 73% 16%, 1% 16%, 1% 56%, 50% 56%, 50% 8%);
+  }
+  5% {
+    clip-path: polygon(0% 29%, 44% 29%, 44% 83%, 94% 83%, 94% 56%, 11% 56%, 11% 64%, 94% 64%, 94% 70%, 88% 70%, 88% 32%, 18% 32%, 18% 96%, 10% 96%, 10% 62%, 9% 62%, 9% 84%, 68% 84%, 68% 50%, 52% 50%, 52% 55%, 35% 55%, 35% 87%, 25% 87%, 25% 39%, 15% 39%, 15% 88%, 52% 88%);
+  }
+  30% {
+    clip-path: polygon(0% 53%, 93% 53%, 93% 62%, 68% 62%, 68% 37%, 97% 37%, 97% 89%, 13% 89%, 13% 45%, 51% 45%, 51% 88%, 17% 88%, 17% 54%, 81% 54%, 81% 75%, 79% 75%, 79% 76%, 38% 76%, 38% 28%, 61% 28%, 61% 12%, 55% 12%, 55% 62%, 68% 62%, 68% 51%, 0% 51%, 0% 92%, 63% 92%, 63% 4%, 65% 4%);
+  }
+  45% {
+    clip-path: polygon(0% 33%, 2% 33%, 2% 69%, 58% 69%, 58% 94%, 55% 94%, 55% 25%, 33% 25%, 33% 85%, 16% 85%, 16% 19%, 5% 19%, 5% 20%, 79% 20%, 79% 96%, 93% 96%, 93% 50%, 5% 50%, 5% 74%, 55% 74%, 55% 57%, 96% 57%, 96% 59%, 87% 59%, 87% 65%, 82% 65%, 82% 39%, 63% 39%, 63% 92%, 4% 92%, 4% 36%, 24% 36%, 24% 70%, 1% 70%, 1% 43%, 15% 43%, 15% 28%, 23% 28%, 23% 71%, 90% 71%, 90% 86%, 97% 86%, 97% 1%, 60% 1%, 60% 67%, 71% 67%, 71% 91%, 17% 91%, 17% 14%, 39% 14%, 39% 30%, 58% 30%, 58% 11%, 52% 11%, 52% 83%, 68% 83%);
+  }
+  76% {
+    clip-path: polygon(0% 26%, 15% 26%, 15% 73%, 72% 73%, 72% 70%, 77% 70%, 77% 75%, 8% 75%, 8% 42%, 4% 42%, 4% 61%, 17% 61%, 17% 12%, 26% 12%, 26% 63%, 73% 63%, 73% 43%, 90% 43%, 90% 67%, 50% 67%, 50% 41%, 42% 41%, 42% 46%, 50% 46%, 50% 84%, 96% 84%, 96% 78%, 49% 78%, 49% 25%, 63% 25%, 63% 14%);
+  }
+  90% {
+    clip-path: polygon(0% 41%, 13% 41%, 13% 6%, 87% 6%, 87% 93%, 10% 93%, 10% 13%, 89% 13%, 89% 6%, 3% 6%, 3% 8%, 16% 8%, 16% 79%, 0% 79%, 0% 99%, 92% 99%, 92% 90%, 5% 90%, 5% 60%, 0% 60%, 0% 48%, 89% 48%, 89% 13%, 80% 13%, 80% 43%, 95% 43%, 95% 19%, 80% 19%, 80% 85%, 38% 85%, 38% 62%);
+  }
+  1%, 7%, 33%, 47%, 78%, 93% {
+    clip-path: none;
+  }
+}
+
+.movement {
+  position: relative;
+  animation: movement 8s step-end infinite;
+}
+
+@keyframes movement {
+  0% { top: 0px; left: -20px; }
+  15% { top: 10px; left: 10px; }
+  60% { top: 5px; left: -10px; }
+  75% { top: -5px; left: 20px; }
+  100% { top: 10px; left: 5px; }
+}
+
+.opacity {
+  animation: opacity 5s step-end infinite;
+}
+
+@keyframes opacity {
+  0% { opacity: 0.1; }
+  5% { opacity: 0.7; }
+  30% { opacity: 0.4; }
+  45% { opacity: 0.6; }
+  76% { opacity: 0.4; }
+  90% { opacity: 0.8; }
+  1%, 7%, 33%, 47%, 78%, 93% { opacity: 0; }
+}
+
+.font {
+  animation: font 7s step-end infinite;
+}
+
+@keyframes font {
+  0% { font-weight: 100; color: #e0287d; filter: blur(3px); }
+  20% { font-weight: 500; color: #fff; filter: blur(0); }
+  50% { font-weight: 300; color: #1bc7fb; filter: blur(2px); }
+  60% { font-weight: 700; color: #fff; filter: blur(0); }
+  90% { font-weight: 500; color: #00FF00; filter: blur(6px); }
+}
+
+.glitch span {
+  animation: paths 5s step-end infinite;
+}
+
+.glitch::before {
+  animation: paths 5s step-end infinite, opacity 5s step-end infinite,
+             font 8s step-end infinite, movement 10s step-end infinite;
+}
+
+.glitch::after {
+  animation: paths 5s step-end infinite, opacity 5s step-end infinite,
+             font 7s step-end infinite, movement 8s step-end infinite;
+}
+
+@media (max-width: 768px) {
+  .logo-wrapper { width: 120px; height: 120px; }
+  .site-name { font-size: 20px; }
+  .site-title { font-size: 12px; }
+  .error-message { font-size: 16px; }
+}
+
+a {
+    background: transparent;
+    color: #FFFFFF;
+    border: 2px solid #FFFFFF;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    align-self: center;
+    margin-top: 30px;
+}
+
+a:hover {
+    background: #FFFFFF;
+    color: #000000;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="content">
+  <div class="logo-container">
+    <div class="logo-wrapper">
+      <svg version="1.1" viewBox="0 0 65.954474 51.821379" xmlns="http://www.w3.org/2000/svg">
+    <path d="m 46.894909,51.821381 a 2.4234402,2.4234402 0 0 0 0,-4.71103 h -9.20664 a 2.3555168,2.3555168 0 0 1 -2.35551,-2.35552 v -14.34118 a 3.1406892,3.1406892 0 0 1 5.10362,-2.4517 15.703446,15.703446 0 1 0 -2.31983,-22.2260799 L 24.197589,22.680751 a 10.992413,10.992413 0 1 1 0,-13.9546101 l 1.87895,2.2874401 a 2.3555213,2.3555213 0 0 0 3.64035,-2.9902801 l -1.87896,-2.2874298 a 15.703446,15.703446 0 1 0 0,19.9351499 L 41.756889,8.7261409 a 10.992413,10.992413 0 1 1 1.62389,15.5582601 7.8517232,7.8517232 0 0 0 -12.75906,6.12925 v 14.34118 a 2.3555168,2.3555168 0 0 1 -2.35552,2.35552 h -9.20663 a 2.4234402,2.4234402 0 0 0 0,4.71103 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.0806979;stroke-dasharray:none"/>
+  </svg>
+    </div>
+    <div class="site-name">creapunk</div>
+  </div>
+  <h1 class="hero glitch layers" data-text="402"><span>402</span></h1>
+  <h2 style="margin-top: 20px; color: #fff;" id="errorMessage">Payment Required</h2>
+  <a href="https://futureengineeer.github.io/markdown-doc-builder">← Back to Home</a>
+</div>
+<script>
+// Случайный выбор сообщения об ошибке
+const messages = ["Insert coin to continue","Premium content only","Show me the crypto","Trial period ended 1970","Gas fees too high","Insufficient credits","Donate coffee to unlock","Paywall hit hard","Freeloader detected","Money buffer empty","Upgrade your plan","Demo mode expired","Your wallet is 404","Send Bitcoin to proceed","Cloud isn't free, bro","Bandwidth bills pending","SaaS life is hard","Microtransaction needed","Card declined (sad noise)","Need gold to respawn"];
+const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+document.getElementById('errorMessage').textContent = randomMessage;
+</script>
+<script>
+// Canvas анимация для страниц ошибок
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const particleCount = 200;
+const SPEED = 3;
+const TRAIL_LENGTH = 100;
+const MIN_ALPHA = 0.0;
+const FADE_IN_TIME = 300;
+const EXCLUSION_WIDTH_PERCENT = 0.25;
+const EXCLUSION_HEIGHT_PERCENT = 0.35;
+
+let particles = [];
+let animationId = null;
+let centerX, centerY;
+let exclusionZone = { left: 0, right: 0, top: 0, bottom: 0 };
+
+function updateCanvasSize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  centerX = canvas.width / 2;
+  centerY = canvas.height / 2;
+  const exclusionWidth = canvas.width * EXCLUSION_WIDTH_PERCENT;
+  const exclusionHeight = canvas.height * EXCLUSION_HEIGHT_PERCENT;
+  exclusionZone.left = centerX - exclusionWidth / 2;
+  exclusionZone.right = centerX + exclusionWidth / 2;
+  exclusionZone.top = centerY - exclusionHeight / 2;
+  exclusionZone.bottom = centerY + exclusionHeight / 2;
+}
+
+function isInExclusionZone(x, y) {
+  return x >= exclusionZone.left && x <= exclusionZone.right && 
+         y >= exclusionZone.top && y <= exclusionZone.bottom;
+}
+
+updateCanvasSize();
+
+class Particle {
+  constructor() {
+    this.history = [];
+    this.reset();
+  }
+  
+  reset() {
+    let x, y;
+    let attempts = 0;
+    do {
+      x = Math.random() * canvas.width;
+      y = Math.random() * canvas.height;
+      attempts++;
+      if (attempts > 50) break;
+    } while (isInExclusionZone(x, y));
+    
+    this.x = x;
+    this.y = y;
+    this.z = Math.random() * 1500;
+    this.size = Math.random() * 2;
+    this.history.length = 0;
+    this.birthTime = performance.now();
+  }
+  
+  update(deltaMs) {
+    this.z -= SPEED * (deltaMs / 16.67);
+    if (this.z <= 0) {
+      this.reset();
+      return;
+    }
+    
+    const scale = 1500 / this.z;
+    const sx = (this.x - centerX) * scale + centerX;
+    const sy = (this.y - centerY) * scale + centerY;
+    const r = this.size * scale;
+    const baseOpacity = Math.min(1, (1500 - this.z) / 500);
+    
+    if (isInExclusionZone(sx, sy)) {
+      this.reset();
+      return;
+    }
+    
+    this.history.push({ x: sx, y: sy, r, alpha: baseOpacity });
+    if (this.history.length > TRAIL_LENGTH) {
+      this.history.shift();
+    }
+  }
+  
+  draw(currentTime) {
+    const len = this.history.length;
+    if (len < 2) return;
+    
+    const age = currentTime - this.birthTime;
+    const fadeInFactor = Math.min(1, age / FADE_IN_TIME);
+    const tail = this.history[0];
+    const head = this.history[len - 1];
+    const dx = head.x - tail.x;
+    const dy = head.y - tail.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance < 0.5) return;
+    
+    const perpX = -dy / distance;
+    const perpY = dx / distance;
+    const baseWidth = head.r * 2;
+    const gradient = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+    
+    for (let i = 0; i < len; i++) {
+      const t = i / (len - 1);
+      const fadeFactor = t * t * t;
+      const p = this.history[i];
+      const alpha = p.alpha * fadeFactor * 0.9 * fadeInFactor;
+      if (alpha < MIN_ALPHA) {
+        gradient.addColorStop(t, `rgba(255, 255, 255, 0)`);
+      } else {
+        gradient.addColorStop(t, `rgba(255, 255, 255, ${alpha})`);
+      }
+    }
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(tail.x, tail.y);
+    ctx.lineTo(head.x + perpX * baseWidth / 2, head.y + perpY * baseWidth / 2);
+    ctx.lineTo(head.x - perpX * baseWidth / 2, head.y - perpY * baseWidth / 2);
+    ctx.closePath();
+    ctx.fill();
+    
+    const headAlpha = head.alpha * fadeInFactor * 0.95;
+    if (headAlpha >= MIN_ALPHA) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${headAlpha})`;
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, head.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+  }
+}
+
+initParticles();
+
+let lastTime = performance.now();
+
+function animate(time) {
+  const deltaMs = time - lastTime;
+  lastTime = time;
+  
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].update(deltaMs);
+    particles[i].draw(time);
+  }
+  
+  animationId = requestAnimationFrame(animate);
+}
+
+animationId = requestAnimationFrame(animate);
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    updateCanvasSize();
+    initParticles();
+    lastTime = performance.now();
+  }, 150);
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+  } else {
+    if (!animationId) {
+      lastTime = performance.now();
+      animationId = requestAnimationFrame(animate);
+    }
+  }
+});
+
+</script>
+</body>
+</html>

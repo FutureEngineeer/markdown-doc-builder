@@ -1,0 +1,570 @@
+/* ==================== CHECKLIST STYLES ==================== */
+
+/* Основные стили для чек-листов */
+.checklist,
+.contains-task-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 1em 0;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding: 8px 0;
+    position: relative;
+    line-height: 1.6;
+    transition: all 0.2s ease;
+}
+
+.checklist-item:hover {
+    background: rgba(47, 182, 90, 0.05);
+    border-radius: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* Чекбокс */
+.checklist-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--text-secondary);
+    border-radius: 4px;
+    background: transparent;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.3s ease;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Состояние: не отмечено */
+.checklist-item:not(.checked) .checklist-checkbox {
+    border-color: var(--text-secondary);
+    background: transparent;
+}
+
+.checklist-item:not(.checked) .checklist-checkbox:hover {
+    border-color: var(--accent);
+    background: rgba(47, 182, 90, 0.1);
+}
+
+/* Состояние: отмечено */
+.checklist-item.checked .checklist-checkbox {
+    border-color: var(--accent);
+    background: var(--accent);
+}
+
+/* Галочка для отмеченных элементов */
+.checklist-item.checked .checklist-checkbox::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+/* Текст элемента */
+.checklist-text {
+    flex: 1;
+    color: var(--text-bright);
+    transition: all 0.3s ease;
+}
+
+/* Зачеркнутый текст для выполненных задач */
+.checklist-item.checked .checklist-text {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Поддержка вложенных списков */
+.checklist .checklist {
+    margin-left: 30px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+/* Анимация при наведении на весь элемент */
+.checklist-item:hover .checklist-checkbox {
+    transform: scale(1.1);
+}
+
+.checklist-item.checked:hover .checklist-checkbox {
+    transform: scale(1.05);
+}
+
+/* Стили для чек-листов внутри карточек */
+.card .checklist {
+    margin: 0.5em 0;
+}
+
+.card .checklist-item {
+    margin-bottom: 6px;
+    padding: 6px 0;
+}
+
+.card .checklist-item:hover {
+    background: rgba(47, 182, 90, 0.08);
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+/* Стили для чек-листов в блокквотах */
+blockquote .checklist {
+    margin: 0.5em 0;
+}
+
+blockquote .checklist-item {
+    margin-bottom: 4px;
+}
+
+blockquote .checklist-checkbox {
+    width: 16px;
+    height: 16px;
+}
+
+blockquote .checklist-item.checked .checklist-checkbox::after {
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 8px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .checklist-item {
+        gap: 10px;
+        margin-bottom: 6px;
+    }
+
+    .checklist-checkbox {
+        width: 16px;
+        height: 16px;
+    }
+
+    .checklist-item.checked .checklist-checkbox::after {
+        left: 4px;
+        top: 1px;
+        width: 5px;
+        height: 8px;
+    }
+}
+
+/* Темная тема - дополнительные стили */
+@media (prefers-color-scheme: dark) {
+    .checklist-item:hover {
+        background: rgba(47, 182, 90, 0.08);
+    }
+
+    .checklist-item:not(.checked) .checklist-checkbox:hover {
+        background: rgba(47, 182, 90, 0.15);
+    }
+}
+
+/* Интерактивность - если чекбоксы кликабельные */
+.checklist-checkbox.interactive {
+    cursor: pointer;
+    user-select: none;
+}
+
+.checklist-checkbox.interactive:active {
+    transform: scale(0.95);
+}
+
+/* Стили для разных состояний задач */
+.checklist-item.priority-high .checklist-checkbox {
+    border-color: var(--status-caution);
+}
+
+.checklist-item.priority-high.checked .checklist-checkbox {
+    background: var(--status-caution);
+    border-color: var(--status-caution);
+}
+
+.checklist-item.priority-medium .checklist-checkbox {
+    border-color: var(--status-warning);
+}
+
+.checklist-item.priority-medium.checked .checklist-checkbox {
+    background: var(--status-warning);
+    border-color: var(--status-warning);
+}
+
+.checklist-item.priority-low .checklist-checkbox {
+    border-color: var(--status-tip);
+}
+
+.checklist-item.priority-low.checked .checklist-checkbox {
+    background: var(--status-tip);
+    border-color: var(--status-tip);
+}
+
+/* ==================== MARKDOWN-IT-TASK-LISTS INTEGRATION ==================== */
+
+/* Скрываем стандартные чекбоксы и делаем их некликабельными */
+.task-list-item-checkbox {
+    display: none;
+    pointer-events: none;
+}
+
+/* Стили для элементов task-list - БЕЗ display: flex */
+.task-list-item {
+    list-style: none;
+    position: relative;
+    margin-bottom: 8px;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Стили для label с кастомным чекбоксом */
+.task-list-item-label {
+    color: var(--text-bright);
+    transition: all 0.3s ease;
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    min-height: 22px;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Кастомный чекбокс */
+.task-list-item-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    background: transparent;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+/* Состояние: отмечено - зеленое заполнение */
+.task-list-item-checkbox:checked+.task-list-item-label::before {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Галочка для отмеченных элементов - белая, по центру */
+.task-list-item-checkbox:checked+.task-list-item-label::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 5px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Зачеркнутый текст для выполненных задач */
+.task-list-item-checkbox:checked+.task-list-item-label {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* ==================== СТИЛИ ДЛЯ ЖИРНОГО ТЕКСТА В ЧЕК-ЛИСТАХ ==================== */
+
+/* Стили для жирного текста перед label */
+.task-list-item>strong {
+    color: var(--text-bright);
+    font-weight: 600;
+    position: relative;
+    padding-left: 30px;
+    display: block;
+    min-height: 22px;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Кастомный чекбокс для жирного текста */
+.task-list-item>strong::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    background: transparent;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+/* Состояние: отмечено для жирного текста */
+.task-list-item-checkbox:checked+strong::before {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Галочка для жирного текста */
+.task-list-item-checkbox:checked+strong::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 5px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Зачеркнутый текст для выполненных задач с жирным текстом */
+.task-list-item-checkbox:checked+strong {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Скрываем пустые label после strong */
+.task-list-item>strong+.task-list-item-label:empty {
+    display: none;
+}
+
+/* ==================== ВЛОЖЕННЫЕ СПИСКИ ==================== */
+
+/* Вложенные списки - отступ через margin для корректного выравнивания чекбоксов */
+.task-list-item>.contains-task-list {
+    margin-left: 30px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    padding-left: 0;
+}
+
+/* Все вложенные списки получают отступ 30px */
+.contains-task-list .contains-task-list {
+    margin-left: 30px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    padding-left: 0;
+}
+
+/* ==================== ПСЕВДО-ЧЕКБОКСЫ ==================== */
+
+/* Стили для обычных списков внутри чек-листов - заменяем маркеры на чекбоксы */
+.regular-list-in-checklist {
+    list-style: none;
+    padding-left: 0;
+    margin: 4px 0;
+}
+
+.pseudo-checkbox-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 4px;
+    line-height: 1.6;
+    color: var(--text-bright);
+    transition: all 0.2s ease;
+    min-height: 22px;
+}
+
+.pseudo-checkbox-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--text-secondary);
+    border-radius: 4px;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+/* Hover эффект для псевдо-чекбоксов */
+.pseudo-checkbox-item:hover {
+    background: rgba(47, 182, 90, 0.05);
+    border-radius: 8px;
+    padding-left: 38px;
+    padding-right: 8px;
+    margin-left: -8px;
+}
+
+.pseudo-checkbox-item:hover::before {
+    border-color: var(--accent);
+    background: rgba(47, 182, 90, 0.1);
+    transform: scale(1.1);
+}
+
+/* Вложенные обычные списки внутри псевдо-чекбоксов */
+.pseudo-checkbox-item .regular-list-in-checklist {
+    margin-left: 30px;
+    margin-top: 4px;
+    padding-left: 0;
+}
+
+.pseudo-checkbox-item .pseudo-checkbox-item {
+    padding-left: 30px;
+    margin-left: 0;
+}
+
+/* Исправляем отступы для вложенных псевдо-чекбоксов */
+.regular-list-in-checklist .pseudo-checkbox-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 4px;
+    line-height: 1.6;
+    color: var(--text-bright);
+    transition: all 0.2s ease;
+    min-height: 22px;
+}
+
+.regular-list-in-checklist .pseudo-checkbox-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--text-secondary);
+    border-radius: 4px;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+/* ==================== КОНТЕКСТНЫЕ СТИЛИ ==================== */
+
+/* Стили для чек-листов внутри карточек */
+.card .contains-task-list {
+    margin: 0.5em 0;
+}
+
+.card .task-list-item {
+    margin-bottom: 6px;
+}
+
+/* Стили для чек-листов в блокквотах */
+blockquote .contains-task-list {
+    margin: 0.5em 0;
+}
+
+blockquote .task-list-item {
+    margin-bottom: 4px;
+}
+
+blockquote .task-list-item-label::before {
+    width: 16px;
+    height: 16px;
+}
+
+blockquote .task-list-item-checkbox:checked+.task-list-item-label::after {
+    left: 4px;
+    top: 3px;
+    width: 5px;
+    height: 8px;
+}
+
+/* ==================== PROGRESS BAR ==================== */
+
+.checklist-progress {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(47, 182, 90, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+}
+
+.checklist-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.checklist-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, #4CAF50 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.checklist-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 500%;
+    background: linear-gradient(90deg, transparent 0%, transparent 25%, rgba(255, 255, 255, 0.2) 50%, transparent 75%, transparent 100%);
+    animation: progressShine 5s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        transform: translateX(-100%);
+    }
+    
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.checklist-progress-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checklist-progress-count {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* Стили прогресс-бара в карточках */
+.card .checklist-progress {
+    margin: 0 0 12px 0;
+    padding: 8px;
+    background: rgba(47, 182, 90, 0.08);
+}
+
+.card .checklist-progress-text {
+    font-size: 11px;
+}
+
+.card .checklist-progress-count {
+    font-size: 11px;
+}
+
+/* Стили прогресс-бара в блокквотах */
+blockquote .checklist-progress {
+    margin: 0 0 8px 0;
+    padding: 6px;
+    background: rgba(47, 182, 90, 0.1);
+}
+
+blockquote .checklist-progress-bar {
+    height: 6px;
+    margin-bottom: 6px;
+}
+
+blockquote .checklist-progress-text {
+    font-size: 10px;
+}
+
+blockquote .checklist-progress-count {
+    font-size: 10px;
+}

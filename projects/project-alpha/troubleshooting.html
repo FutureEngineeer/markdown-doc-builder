@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Troubleshooting Guide</title>
+  <meta name="description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta name="keywords" content="motion control, robotics, documentation, GitHub Pages, open source, CLN17, RadiX, creapunk">
+  <meta name="author" content="creapunk">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="creapunk">
+  <meta property="og:title" content="Troubleshooting Guide">
+  <meta property="og:description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta property="og:url" content="https://futureengineeer.github.io/markdown-doc-builder/projects/project-alpha/troubleshooting.html">
+  <meta property="og:image" content="https://futureengineeer.github.io/markdown-doc-builder/assets/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Troubleshooting Guide">
+  <meta name="twitter:description" content="Multi-repository documentation builder for GitHub Pages. Open-source motion control systems, robotics projects, and technical documentation.">
+  <meta name="twitter:image" content="https://futureengineeer.github.io/markdown-doc-builder/assets/logo.png">
+  <link rel="canonical" href="https://futureengineeer.github.io/markdown-doc-builder/projects/project-alpha/troubleshooting.html">
+  <link rel="icon" href="../../assets/creapunk-icon.png" sizes="32x32">
+  <link rel="icon" href="../../assets/creapunk-icon.png" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/creapunk-icon.png">
+  <link rel="manifest" href="../../manifest.webmanifest">
+  <link rel="stylesheet" href="../../assets/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-24MWSHH5RK"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-24MWSHH5RK', {
+        page_title: document.title,
+        page_location: window.location.href,
+        custom_map: {
+          'custom_parameter_1': 'project_type',
+          'custom_parameter_2': 'documentation_section'
+        }
+      });
+    </script>
+</head>
+<body>
+  <div class="menu-overlay" onclick="toggleMobileMenu()"></div>
+  <header class="header">
+    <div class="header-container">
+      <div class="hamburger-button" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <div class="logo-section" onclick="window.location.href='../../'">
+        <img src="../../assets/creapunk-icon.svg" alt="Logo" class="logo" />
+        <div class="site-title-wrapper">
+          <span class="sitename">creapunk</span>
+          <span class="breadcrumb">PROJECTS / PROJECT-ALPHA</span>
+        </div>
+      </div>
+      
+      <nav class="nav-section">
+        <ul class="nav-links desktop-nav">
+          <li class="priority-link"><a href="../../cln-driver/index.html">CLN</a></li>
+          <li class="priority-link"><a href="../../projects/project-beta/radix/index.html">RadiX Project</a></li>
+          <li class="priority-link active"><a href="../../projects/project-alpha/main.html" class="active">Проект Alpha</a></li>
+        </ul>
+        
+        <div class="community-buttons">
+          <div class="community-btn discord-btn" onclick="window.open('https://discord.gg/V4aJdTja8v', '_blank')">
+            <svg class="btn-icon" width="var(--btn-icon-size)" height="var(--btn-icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+  </svg>
+            <span class="btn-text">Discord</span>
+          </div>
+          <div class="community-btn kofi-btn" onclick="window.open('https://ko-fi.com/creapunk', '_blank')">
+            <svg class="btn-icon" width="var(--btn-icon-size)" height="var(--btn-icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+  </svg>
+            <span class="btn-text">Support ♥</span>
+          </div>
+        </div>
+        
+        <button class="search-button" onclick="openSearchModal()" aria-label="Search">
+          <svg class="search-button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Search Modal -->
+  <div id="search-modal" class="search-modal">
+    <div class="search-modal-overlay"></div>
+    <div class="search-modal-content">
+      <div class="search-input-wrapper">
+        <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Search documentation..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="search-close-button" onclick="closeSearchModal()" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="search-results" class="search-results">
+        <div class="search-hint">Type at least 2 characters to search</div>
+      </div>
+      
+      <div class="search-footer">
+        <div class="search-footer-shortcuts">
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">↑</kbd>
+            <kbd class="search-footer-key">↓</kbd>
+            <span>navigate</span>
+          </div>
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">Enter</kbd>
+            <span>select</span>
+          </div>
+          <div class="search-footer-shortcut">
+            <kbd class="search-footer-key">Esc</kbd>
+            <span>close</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scope">
+    <aside class="hamburger-menu">
+  <div class="hamburger-menu-header">Site Map</div>
+  <nav class="hamburger-menu-nav">
+    <ul>
+      <li>
+        <div class="item-content" onclick="window.location.href='../../index.html'">
+          <span class="link">Home</span>
+        </div>
+      </li>
+      <li>
+        <div class="item-content" onclick="window.location.href='../../main.html'">
+          <span class="link">Main Docs</span>
+        </div>
+      </li>
+      <li class="has-children">
+        <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/index.html'}">
+          <span class="triangle"></span>
+          <span class="link">CLN Driver</span>
+        </div>
+        <ul class="children">
+          <li>
+            <div class="item-content" onclick="window.location.href='../../cln-driver/license.html'">
+              <span class="link">License</span>
+            </div>
+          </li>
+          <li>
+            <div class="item-content" onclick="window.location.href='../../cln-driver/sponsors.html'">
+              <span class="link">Sponsors</span>
+            </div>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Hardware</span>
+            </div>
+            <ul class="children">
+              <li class="has-children">
+                <div class="item-content">
+                  <span class="triangle"></span>
+                  <span class="folder-only">Cln17</span>
+                </div>
+                <ul class="children">
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/enclosure/index.html'}">
+                      <span class="link">Enclosure</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v1.0 [obsolete]/index.html'}">
+                      <span class="link">V1.0 [obsolete]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v1.5 [obsolete]/index.html'}">
+                      <span class="link">V1.5 [obsolete]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.0 [nrfnd]/index.html'}">
+                      <span class="link">V2.0 [nrfnd]</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.1/index.html'}">
+                      <span class="link">V2.1</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/hardware/cln17/v2.5/index.html'}">
+                      <span class="link">V2.5</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Wiki</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/applications.html'">
+                  <span class="link">Applications</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/design-foundations.html'">
+                  <span class="link">Design Foundations</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/features.html'">
+                  <span class="link">Features</span>
+                </div>
+              </li>
+              <li class="has-children">
+                <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/index.html'}">
+                  <span class="triangle"></span>
+                  <span class="link">Cln17</span>
+                </div>
+                <ul class="children">
+                  <li>
+                    <div class="item-content" onclick="window.location.href='../../cln-driver/wiki/cln17/alternatives.html'">
+                      <span class="link">Alternatives</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v1.0/specification.html'}">
+                      <span class="link">V1.0 - Specification</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v1.5/specification.html'}">
+                      <span class="link">V1.5 - Specification</span>
+                    </div>
+                  </li>
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln17/v2.0/specification.html'}">
+                      <span class="link">V2.0 - Specification</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li class="has-children">
+                <div class="item-content">
+                  <span class="triangle"></span>
+                  <span class="folder-only">Cln234</span>
+                </div>
+                <ul class="children">
+                  <li class="">
+                    <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../cln-driver/wiki/cln234/v0.1/specification.html'}">
+                      <span class="link">V0.1 - Specification</span>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="has-children expanded">
+        <div class="item-content">
+          <span class="triangle"></span>
+          <span class="folder-only">Projects</span>
+        </div>
+        <ul class="children">
+          <li class="has-children expanded">
+            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-alpha/main.html'}">
+              <span class="triangle"></span>
+              <span class="link">Проект Alpha</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/api-specs.html'">
+                  <span class="link">Api Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cache-test.html'">
+                  <span class="link">Cache Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/checklist-showcase.html'">
+                  <span class="link">Checklist Showcase</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cln17-v1-spec.html'">
+                  <span class="link">Cln17 V1 Spec</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/cross-links-test.html'">
+                  <span class="link">Cross Links Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/examples.html'">
+                  <span class="link">Examples</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/github-links-test.html'">
+                  <span class="link">Github Links Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/hardware-specs.html'">
+                  <span class="link">Hardware Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/hidden-test.html'">
+                  <span class="link">Hidden Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/installation.html'">
+                  <span class="link">Installation</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/local-tool.html'">
+                  <span class="link">Local Tool</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/markdown_features.html'">
+                  <span class="link">MARKDOWN FEATURES</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/setup.html'">
+                  <span class="link">Setup</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/specs.html'">
+                  <span class="link">Specs</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-alpha/specs-test.html'">
+                  <span class="link">Specs Test</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content active" onclick="window.location.href='../../projects/project-alpha/troubleshooting.html'">
+                  <span class="link">Troubleshooting</span>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="has-children">
+            <div class="item-content">
+              <span class="triangle"></span>
+              <span class="folder-only">Проект Beta</span>
+            </div>
+            <ul class="children">
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-beta/api-reference.html'">
+                  <span class="link">API Reference</span>
+                </div>
+              </li>
+              <li>
+                <div class="item-content" onclick="window.location.href='../../projects/project-beta/overview.html'">
+                  <span class="link">Project Beta Overview</span>
+                </div>
+              </li>
+              <li class="has-children">
+                <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-beta/radix/index.html'}">
+                  <span class="triangle"></span>
+                  <span class="link">RadiX</span>
+                </div>
+                <ul class="children">
+                  <li>
+                    <div class="item-content" onclick="window.location.href='../../projects/project-beta/radix/license.html'">
+                      <span class="link">License</span>
+                    </div>
+                  </li>
+                  <li class="has-children">
+                    <div class="item-content">
+                      <span class="triangle"></span>
+                      <span class="folder-only">Wiki</span>
+                    </div>
+                    <ul class="children">
+                      <li>
+                        <div class="item-content" onclick="window.location.href='../../projects/project-beta/radix/wiki/design-foundations.html'">
+                          <span class="link">Design Foundations</span>
+                        </div>
+                      </li>
+                      <li class="has-children">
+                        <div class="item-content">
+                          <span class="triangle"></span>
+                          <span class="folder-only">Radix Drive</span>
+                        </div>
+                        <ul class="children">
+                          <li class="">
+                            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../projects/project-beta/radix/wiki/radix-drive/r1.0/specification.html'}">
+                              <span class="link">R1.0 - Specification</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="has-children">
+        <div class="item-content">
+          <span class="triangle"></span>
+          <span class="folder-only">Additional</span>
+        </div>
+        <ul class="children">
+          <li class="">
+            <div class="item-content" onclick="if(!event.target.classList.contains('triangle')){window.location.href='../../additional/sub-section/api.html'}">
+              <span class="link">Sub Section - Api</span>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+    <aside class="section-map">
+  <div class="section-map-header">Проект Alpha</div>
+  <div class="section-map-content">
+    <nav class="section-map-nav">
+      <ul>
+        <li>
+          <div class="item-content" onclick="window.location.href='api-specs.html'">
+            <span class="link">Api Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cache-test.html'">
+            <span class="link">Cache Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='checklist-showcase.html'">
+            <span class="link">Checklist Showcase</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cln17-v1-spec.html'">
+            <span class="link">Cln17 V1 Spec</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='cross-links-test.html'">
+            <span class="link">Cross Links Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='examples.html'">
+            <span class="link">Examples</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='github-links-test.html'">
+            <span class="link">Github Links Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='hardware-specs.html'">
+            <span class="link">Hardware Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='hidden-test.html'">
+            <span class="link">Hidden Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='installation.html'">
+            <span class="link">Installation</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='local-tool.html'">
+            <span class="link">Local Tool</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='main.html'">
+            <span class="link">Main</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='markdown_features.html'">
+            <span class="link">MARKDOWN FEATURES</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='setup.html'">
+            <span class="link">Setup</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='specs.html'">
+            <span class="link">Specs</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content" onclick="window.location.href='specs-test.html'">
+            <span class="link">Specs Test</span>
+          </div>
+        </li>
+        <li>
+          <div class="item-content active" onclick="window.location.href='troubleshooting.html'">
+            <span class="link">Troubleshooting</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+    <main>
+      
+      <h1>Troubleshooting Guide</h1>
+<section id="common-issues-2" class="section">
+<h2 id="common-issues-2" class="section-title heading-with-anchor">Common Issues<a href="#common-issues-2" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="motor-not-moving" class="heading-with-anchor">Motor Not Moving<a href="#motor-not-moving-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Symptoms:</strong></p>
+<ul>
+<li>Motor receives step signals but doesn’t rotate</li>
+<li>No response to position commands</li>
+<li>Motor feels locked or difficult to turn by hand</li>
+</ul>
+<p><strong>Possible Causes &amp; Solutions:</strong></p>
+<h4 id="power-supply-issues" class="heading-with-anchor">Power Supply Issues<a href="#power-supply-issues-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li><strong>Check voltage:</strong> Ensure 12-48V DC supply within specifications</li>
+<li><strong>Check current capacity:</strong> Minimum 3A recommended for full performance</li>
+<li><strong>Verify connections:</strong> Loose power connections can cause intermittent operation</li>
+</ul>
+<h4 id="motor-current-settings" class="heading-with-anchor">Motor Current Settings<a href="#motor-current-settings-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Check current setting
+GET CURRENT
+
+# Set appropriate current (typically 70-80% of motor rating)
+SET CURRENT 3000  # For 4A motor, use 3000mA
+</code></pre>
+<h4 id="enable-signal" class="heading-with-anchor">Enable Signal<a href="#enable-signal-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Verify motor is enabled
+GET STATUS
+
+# Enable motor if disabled
+SET ENABLE 1
+</code></pre>
+<h4 id="motor-wiring" class="heading-with-anchor">Motor Wiring<a href="#motor-wiring-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Verify correct phase connections (A+, A-, B+, B-)</li>
+<li>Check for short circuits or open connections</li>
+<li>Test motor resistance (typically 1-5Ω per phase)</li>
+</ul>
+<h3 id="position-errors" class="heading-with-anchor">Position Errors<a href="#position-errors-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Symptoms:</strong></p>
+<ul>
+<li>Motor position doesn’t match commanded position</li>
+<li>Gradual drift over time</li>
+<li>Large position errors after rapid movements</li>
+</ul>
+<p><strong>Diagnostic Steps:</strong></p>
+<h4 id="check-encoder-operation" class="heading-with-anchor">Check Encoder Operation<a href="#check-encoder-operation-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Read encoder position
+GET ENC_POS
+
+# Read motor position  
+GET MOTOR_POS
+
+# Compare values - should track closely
+</code></pre>
+<h4 id="verify-encoder-connections" class="heading-with-anchor">Verify Encoder Connections<a href="#verify-encoder-connections-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Check A/B channel signals with oscilloscope</li>
+<li>Ensure proper 5V power supply to encoder</li>
+<li>Verify cable shielding and grounding</li>
+</ul>
+<h4 id="mechanical-issues" class="heading-with-anchor">Mechanical Issues<a href="#mechanical-issues-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Check for binding or excessive friction</li>
+<li>Verify coupling alignment between motor and load</li>
+<li>Ensure adequate torque for the application</li>
+</ul>
+<h4 id="tuning-parameters" class="heading-with-anchor">Tuning Parameters<a href="#tuning-parameters-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Adjust position loop gains
+SET KP 100        # Proportional gain
+SET KI 10         # Integral gain  
+SET KD 5          # Derivative gain
+
+# Set position error limits
+SET POS_ERROR_LIMIT 50  # Steps
+</code></pre>
+<h3 id="communication-problems" class="heading-with-anchor">Communication Problems<a href="#communication-problems-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Symptoms:</strong></p>
+<ul>
+<li>No response to commands</li>
+<li>Garbled or incomplete responses</li>
+<li>Intermittent communication</li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<h4 id="uart-interface" class="heading-with-anchor">UART Interface<a href="#uart-interface-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Test basic communication
+GET STATUS
+
+# Check baud rate setting
+GET BAUDRATE
+
+# Reset to default if needed
+SET BAUDRATE 115200
+</code></pre>
+<h4 id="cable-issues" class="heading-with-anchor">Cable Issues<a href="#cable-issues-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Use shielded cable for long runs (&gt;1m)</li>
+<li>Check for proper ground connections</li>
+<li>Avoid running signal cables parallel to power cables</li>
+</ul>
+<h4 id="electrical-interference" class="heading-with-anchor">Electrical Interference<a href="#electrical-interference-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Add ferrite cores to signal cables</li>
+<li>Use twisted pair wiring for differential signals</li>
+<li>Ensure proper system grounding</li>
+</ul>
+<h3 id="overheating-issues" class="heading-with-anchor">Overheating Issues<a href="#overheating-issues-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Symptoms:</strong></p>
+<ul>
+<li>Thermal protection triggered</li>
+<li>Reduced performance at high currents</li>
+<li>Hot driver enclosure</li>
+</ul>
+<p><strong>Prevention &amp; Solutions:</strong></p>
+<h4 id="cooling-improvements" class="heading-with-anchor">Cooling Improvements<a href="#cooling-improvements-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Install external heatsink (recommended for &gt;4A continuous)</li>
+<li>Ensure adequate airflow around driver</li>
+<li>Mount driver vertically for better convection</li>
+</ul>
+<h4 id="current-optimization" class="heading-with-anchor">Current Optimization<a href="#current-optimization-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Reduce current when not moving
+SET IDLE_CURRENT 1000  # 50% of run current
+
+# Use current ramping for smooth operation
+SET CURRENT_RAMP 100   # mA per ms
+</code></pre>
+<h4 id="thermal-monitoring" class="heading-with-anchor">Thermal Monitoring<a href="#thermal-monitoring-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Check temperature
+GET TEMP
+
+# Set thermal limits
+SET TEMP_LIMIT 80      # Celsius
+</code></pre>
+<h3 id="encoder-faults" class="heading-with-anchor">Encoder Faults<a href="#encoder-faults-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Symptoms:</strong></p>
+<ul>
+<li>ENCODER_FAULT error code</li>
+<li>Erratic position readings</li>
+<li>Loss of closed-loop control</li>
+</ul>
+<p><strong>Diagnostic Procedure:</strong></p>
+<h4 id="signal-quality-check" class="heading-with-anchor">Signal Quality Check<a href="#signal-quality-check-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><p>Use oscilloscope to verify:</p>
+<ul>
+<li>Clean square wave signals on A/B channels</li>
+<li>Proper voltage levels (0V/5V or 0V/3.3V)</li>
+<li>90° phase relationship between channels</li>
+</ul>
+<h4 id="electrical-checks" class="heading-with-anchor">Electrical Checks<a href="#electrical-checks-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Check encoder power
+GET ENC_VOLTAGE  # Should be ~5V
+
+# Verify signal integrity
+GET ENC_SIGNALS  # Returns A/B state
+</code></pre>
+<h4 id="mechanical-alignment" class="heading-with-anchor">Mechanical Alignment<a href="#mechanical-alignment-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li>Ensure encoder shaft coupling is secure</li>
+<li>Check for excessive runout or vibration</li>
+<li>Verify encoder mounting is rigid</li>
+</ul>
+<h3 id="can-fd-network-issues" class="heading-with-anchor">CAN-FD Network Issues<a href="#can-fd-network-issues-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><p><strong>Symptoms:</strong></p>
+<ul>
+<li>Node not visible on network</li>
+<li>Message transmission failures</li>
+<li>Network errors or timeouts</li>
+</ul>
+<p><strong>Network Diagnostics:</strong></p>
+<h4 id="basic-connectivity" class="heading-with-anchor">Basic Connectivity<a href="#basic-connectivity-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Check node ID and network status
+GET NODE_ID
+GET CAN_STATUS
+
+# Verify termination settings
+GET TERMINATION
+</code></pre>
+<h4 id="bus-configuration" class="heading-with-anchor">Bus Configuration<a href="#bus-configuration-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><pre><code class="language-bash"># Set appropriate baud rate
+SET CAN_SPEED 500000   # 500 kbps
+
+# Enable/disable termination as needed
+SET TERMINATION 1      # Enable for end nodes
+SET TERMINATION 0      # Disable for intermediate nodes
+</code></pre>
+<h4 id="message-monitoring" class="heading-with-anchor">Message Monitoring<a href="#message-monitoring-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><p>Use CAN analyzer to check:</p>
+<ul>
+<li>Proper message formatting</li>
+<li>Correct node IDs</li>
+<li>No bus conflicts or collisions</li>
+</ul>
+</div></section>
+<section id="error-code-reference" class="section">
+<h2 id="error-code-reference" class="section-title heading-with-anchor">Error Code Reference<a href="#error-code-reference" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="system-errors" class="heading-with-anchor">System Errors<a href="#system-errors-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x01</td>
+<td>Overcurrent Protection</td>
+<td>Reduce current setting or check motor</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>Thermal Protection</td>
+<td>Improve cooling or reduce current</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>Encoder Fault</td>
+<td>Check encoder connections and signals</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>Position Error</td>
+<td>Verify mechanical system and tuning</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>Supply Voltage Fault</td>
+<td>Check power supply voltage</td>
+</tr>
+<tr>
+<td>0x20</td>
+<td>Motor Disconnected</td>
+<td>Verify motor connections</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="communication-errors" class="heading-with-anchor">Communication Errors<a href="#communication-errors-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+<th>Action Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x40</td>
+<td>UART Timeout</td>
+<td>Check cable and baud rate</td>
+</tr>
+<tr>
+<td>0x80</td>
+<td>CAN Bus Error</td>
+<td>Verify network configuration</td>
+</tr>
+<tr>
+<td>0x100</td>
+<td>Command Error</td>
+<td>Check command syntax</td>
+</tr>
+<tr>
+<td>0x200</td>
+<td>Parameter Error</td>
+<td>Verify parameter ranges</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></section>
+<section id="diagnostic-tools" class="section">
+<h2 id="diagnostic-tools" class="section-title heading-with-anchor">Diagnostic Tools<a href="#diagnostic-tools" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="built-in-diagnostics" class="heading-with-anchor">Built-in Diagnostics<a href="#built-in-diagnostics-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-bash"># Comprehensive system test
+CMD SELFTEST
+
+# Motor and encoder test
+CMD MOTOR_TEST
+
+# Communication test
+CMD COMM_TEST
+
+# Generate diagnostic report
+CMD DIAG_REPORT
+</code></pre>
+<h3 id="external-tools" class="heading-with-anchor">External Tools<a href="#external-tools-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><h4 id="oscilloscope-measurements" class="heading-with-anchor">Oscilloscope Measurements<a href="#oscilloscope-measurements-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li><strong>Step/Dir signals:</strong> Check timing and voltage levels</li>
+<li><strong>Encoder signals:</strong> Verify quadrature relationship</li>
+<li><strong>Power supply:</strong> Check for noise and regulation</li>
+</ul>
+<h4 id="multimeter-checks" class="heading-with-anchor">Multimeter Checks<a href="#multimeter-checks-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h4><ul>
+<li><strong>Motor resistance:</strong> 1-5Ω typical per phase</li>
+<li><strong>Supply voltage:</strong> Within ±5% of nominal</li>
+<li><strong>Ground continuity:</strong> &lt;1Ω resistance</li>
+</ul>
+<h3 id="performance-monitoring" class="heading-with-anchor">Performance Monitoring<a href="#performance-monitoring-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-bash"># Monitor key parameters
+GET PERFORMANCE
+
+# Returns:
+# - Step rate capability
+# - Position accuracy
+# - Thermal status
+# - Error history
+</code></pre>
+</div></section>
+<section id="preventive-maintenance" class="section">
+<h2 id="preventive-maintenance" class="section-title heading-with-anchor">Preventive Maintenance<a href="#preventive-maintenance" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<h3 id="regular-checks" class="heading-with-anchor">Regular Checks<a href="#regular-checks-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><ul>
+<li>Monthly temperature monitoring during operation</li>
+<li>Quarterly connection inspection and tightening</li>
+<li>Annual encoder alignment verification</li>
+</ul>
+<h3 id="firmware-updates" class="heading-with-anchor">Firmware Updates<a href="#firmware-updates-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-bash"># Check current firmware version
+GET VERSION
+
+# Update procedure (via bootloader)
+CMD BOOTLOADER
+# Follow update instructions in manual
+</code></pre>
+<h3 id="configuration-backup" class="heading-with-anchor">Configuration Backup<a href="#configuration-backup-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code class="language-bash"># Save current settings
+CMD SAVE_CONFIG
+
+# Export for backup
+CMD EXPORT_CONFIG &gt; backup.txt
+</code></pre>
+</div></section>
+<section id="getting-help" class="section">
+<h2 id="getting-help" class="section-title heading-with-anchor">Getting Help<a href="#getting-help" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h2>
+<div class="section-content">
+<p>If problems persist after following this guide:</p>
+<ol>
+<li><strong>Check Documentation:</strong> Review <a href="../../../projects/project-alpha/setup.html">setup guide</a> and <a href="../sub/api.html">API reference</a></li>
+<li><strong>Community Support:</strong> Visit our <a href="https://forum.creapunk.com">forum</a></li>
+<li><strong>Technical Support:</strong> Email <a href="mailto:support@creapunk.com">support@creapunk.com</a> with:
+<ul>
+<li>Detailed problem description</li>
+<li>System configuration</li>
+<li>Error codes and diagnostic output</li>
+<li>Photos/videos if applicable</li>
+</ul>
+</li>
+</ol>
+<h3 id="support-information-template" class="heading-with-anchor">Support Information Template<a href="#support-information-template-1" class="anchor-link" aria-label="Ссылка на раздел">🔗</a></h3><pre><code>System Information:
+- Driver Model: CLN17 v3.0
+- Firmware Version: [GET VERSION output]
+- Motor Type: [manufacturer/model]
+- Encoder Type: [manufacturer/model]
+- Power Supply: [voltage/current rating]
+
+Problem Description:
+- When does the issue occur?
+- What was the system doing when it started?
+- Any recent changes to setup or configuration?
+
+Diagnostic Output:
+[Include output from GET STATUS, CMD DIAG_REPORT]
+</code></pre>
+</div></section>
+
+    </main>
+    <footer class="footer">
+    <div class="footer-container">
+      <div class="copyright">
+        <span class="copyright-line1">Copyright © 2023-Present</span>
+        <span class="copyright-line2">creapunk, Anton Khrustalev</span>
+      </div>
+      
+      <div class="social-links">
+        <div class="social-pill email" 
+        style="--pill-color: #4A90E2; --pill-hover-color: #3A7BC8; color: #4A90E2;"
+        onclick="window.open('mailto:creapunktech@gmail.com', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+  </svg>
+        <span class="social-label">Email</span>
+      </div>
+        <div class="social-pill github" 
+        style="--pill-color: #FFFFFF; --pill-hover-color: #1a1a1a; color: #FFFFFF;"
+        onclick="window.open('https://github.com/creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+  </svg>
+        <span class="social-label">GitHub</span>
+      </div>
+        <div class="social-pill youtube" 
+        style="--pill-color: #FF0000; --pill-hover-color: #CC0000; color: #FF0000;"
+        onclick="window.open('https://youtube.com/@creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+        <span class="social-label">YouTube</span>
+      </div>
+        <div class="social-pill discord filled" 
+        style="--pill-color: #5865F2; --pill-hover-color: #4752C4; color: #5865F2;"
+        onclick="window.open('https://discord.gg/V4aJdTja8v', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+  </svg>
+        <span class="social-label">Discord</span>
+      </div>
+        <div class="social-pill kofi filled" 
+        style="--pill-color: #FF5E5B; --pill-hover-color: #E54E4B; color: #FF5E5B;"
+        onclick="window.open('https://ko-fi.com/creapunk', '_blank')">
+        <svg class="social-icon" width="var(--icon-size)" height="var(--icon-size)" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>
+  </svg>
+        <span class="social-label">Ko-Fi</span>
+      </div>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="../../assets/scripts/core.js"></script>
+  <script src="../../assets/scripts/code-blocks.js"></script>
+  <script src="../../assets/scripts/animations.js"></script>
+  <script src="../../assets/scripts/search.js"></script>
+  <script>
+// Google Analytics расширенное отслеживание
+(function() {
+    // Проверяем доступность gtag
+    if (typeof gtag === 'undefined') {
+        console.warn('Google Analytics не загружен');
+        return;
+    }
+
+    // Базовые функции отслеживания
+    window.trackEvent = function(eventName, parameters = {}) {
+        gtag('event', eventName, parameters);
+    };
+
+    window.trackPageView = function(pagePath, pageTitle) {
+        gtag('config', 'G-24MWSHH5RK', {
+            page_path: pagePath,
+            page_title: pageTitle
+        });
+    };
+
+    // Отслеживание внешних ссылок
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.href.includes(window.location.hostname)) {
+            gtag('event', 'click', {
+                event_category: 'outbound',
+                event_label: link.href,
+                transport_type: 'beacon'
+            });
+        }
+    });
+
+    // Отслеживание скачиваний
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href) {
+            const downloadExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip', '.rar', '.exe', '.dmg', '.apk'];
+            const isDownload = downloadExtensions.some(ext => link.href.toLowerCase().includes(ext));
+            
+            if (isDownload) {
+                const filename = link.href.split('/').pop();
+                gtag('event', 'file_download', {
+                    event_category: 'engagement',
+                    event_label: filename,
+                    file_extension: filename.split('.').pop()
+                });
+            }
+        }
+    });
+
+    // Отслеживание прокрутки
+    let scrollMilestones = [25, 50, 75, 90];
+    let trackedMilestones = new Set();
+    
+    function trackScrollDepth() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+        
+        scrollMilestones.forEach(milestone => {
+            if (scrollPercent >= milestone && !trackedMilestones.has(milestone)) {
+                trackedMilestones.add(milestone);
+                gtag('event', 'scroll', {
+                    event_category: 'engagement',
+                    event_label: milestone + '%',
+                    value: milestone
+                });
+            }
+        });
+    }
+    
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(trackScrollDepth, 250);
+    });
+
+    // Отслеживание времени на странице
+    const pageStartTime = Date.now();
+    let timeTrackingInterval;
+    
+    function startTimeTracking() {
+        timeTrackingInterval = setInterval(() => {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            
+            // Отправляем milestone каждые 30 секунд
+            if (timeSpent % 30 === 0) {
+                gtag('event', 'timing_complete', {
+                    name: 'page_read_time',
+                    value: timeSpent
+                });
+            }
+        }, 1000);
+    }
+    
+    // Отслеживание ухода со страницы
+    window.addEventListener('beforeunload', function() {
+        const totalTime = Math.round((Date.now() - pageStartTime) / 1000);
+        gtag('event', 'page_view_time', {
+            event_category: 'engagement',
+            event_label: 'session_duration',
+            value: totalTime,
+            transport_type: 'beacon'
+        });
+        
+        if (timeTrackingInterval) {
+            clearInterval(timeTrackingInterval);
+        }
+    });
+    
+    // Запускаем отслеживание времени
+    startTimeTracking();
+
+    // Отслеживание взаимодействий с проектами
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button, .btn');
+        if (button) {
+            const buttonText = button.textContent.trim();
+            const section = button.closest('section');
+            const sectionId = section ? section.id : 'unknown';
+            
+            gtag('event', 'button_click', {
+                event_category: 'interaction',
+                event_label: buttonText,
+                section: sectionId
+            });
+        }
+    });
+
+    // Отслеживание навигации по якорным ссылкам
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href^="#"]');
+        if (link) {
+            const targetSection = link.getAttribute('href').substring(1);
+            gtag('event', 'internal_navigation', {
+                event_category: 'navigation',
+                event_label: targetSection
+            });
+        }
+    });
+
+})();</script>
+</body>
+</html>

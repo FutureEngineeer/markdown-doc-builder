@@ -1,0 +1,1747 @@
+{
+  "root": {
+    "hierarchy": [
+      {
+        "Home": {
+          "path": "home.md",
+          "description": "Главная страница сайта"
+        }
+      },
+      {
+        "Main Docs": {
+          "path": "main.md",
+          "description": "Полная документация проекта"
+        }
+      },
+      {
+        "CLN Driver": {
+          "path": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+          "section": true,
+          "description": "CLN ClosedLoop Nema Driver"
+        }
+      },
+      {
+        "Projects": {
+          "section": true,
+          "sub": [
+            {
+              "Проект Alpha": {
+                "path": "project-alpha/",
+                "alias": "project-alpha",
+                "section": true
+              }
+            },
+            {
+              "Проект Beta": {
+                "path": "project-beta/",
+                "alias": "project-beta"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "Additional": {
+          "section": true,
+          "sub": [
+            {
+              "Sub Section": "sub/"
+            }
+          ]
+        }
+      }
+    ],
+    "_path": "website/doc-config.yaml",
+    "_dirPath": "website",
+    "_relativePath": "",
+    "_basePath": "website"
+  },
+  "tree": {
+    "type": "hierarchy",
+    "config": {
+      "hierarchy": [
+        {
+          "Home": {
+            "path": "home.md",
+            "description": "Главная страница сайта"
+          }
+        },
+        {
+          "Main Docs": {
+            "path": "main.md",
+            "description": "Полная документация проекта"
+          }
+        },
+        {
+          "CLN Driver": {
+            "path": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+            "section": true,
+            "description": "CLN ClosedLoop Nema Driver"
+          }
+        },
+        {
+          "Projects": {
+            "section": true,
+            "sub": [
+              {
+                "Проект Alpha": {
+                  "path": "project-alpha/",
+                  "alias": "project-alpha",
+                  "section": true
+                }
+              },
+              {
+                "Проект Beta": {
+                  "path": "project-beta/",
+                  "alias": "project-beta"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "Additional": {
+            "section": true,
+            "sub": [
+              {
+                "Sub Section": "sub/"
+              }
+            ]
+          }
+        }
+      ],
+      "_path": "website/doc-config.yaml",
+      "_dirPath": "website",
+      "_relativePath": "",
+      "_basePath": "website"
+    },
+    "children": [
+      {
+        "type": "file",
+        "title": "Home",
+        "alias": "home",
+        "file": "home.md",
+        "path": "website/home.md",
+        "relativePath": "home.md",
+        "baseName": "home",
+        "isReadme": false,
+        "description": "Главная страница сайта"
+      },
+      {
+        "type": "file",
+        "title": "Main Docs",
+        "alias": "main-docs",
+        "file": "main.md",
+        "path": "website/main.md",
+        "relativePath": "main.md",
+        "baseName": "main",
+        "isReadme": false,
+        "description": "Полная документация проекта"
+      },
+      {
+        "type": "repository",
+        "title": "CLN Driver",
+        "alias": "cln-driver",
+        "url": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+        "section": true,
+        "description": "CLN ClosedLoop Nema Driver"
+      },
+      {
+        "type": "section",
+        "title": "Projects",
+        "alias": "projects",
+        "section": true,
+        "children": [
+          {
+            "type": "folder",
+            "title": "Проект Alpha",
+            "alias": "project-alpha",
+            "folder": "project-alpha",
+            "path": "website/project-alpha",
+            "relativePath": "project-alpha",
+            "section": true,
+            "children": [
+              {
+                "type": "file",
+                "file": "MARKDOWN_FEATURES.md",
+                "path": "website/project-alpha/MARKDOWN_FEATURES.md",
+                "relativePath": "project-alpha/MARKDOWN_FEATURES.md",
+                "baseName": "MARKDOWN_FEATURES",
+                "isReadme": false,
+                "title": "MARKDOWN FEATURES",
+                "alias": "markdown_features",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "api-specs.md",
+                "path": "website/project-alpha/api-specs.md",
+                "relativePath": "project-alpha/api-specs.md",
+                "baseName": "api-specs",
+                "isReadme": false,
+                "title": "Api Specs",
+                "alias": "api-specs",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "cache-test.md",
+                "path": "website/project-alpha/cache-test.md",
+                "relativePath": "project-alpha/cache-test.md",
+                "baseName": "cache-test",
+                "isReadme": false,
+                "title": "Cache Test",
+                "alias": "cache-test",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "checklist-showcase.md",
+                "path": "website/project-alpha/checklist-showcase.md",
+                "relativePath": "project-alpha/checklist-showcase.md",
+                "baseName": "checklist-showcase",
+                "isReadme": false,
+                "title": "Checklist Showcase",
+                "alias": "checklist-showcase",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "cln17-v1-spec.md",
+                "path": "website/project-alpha/cln17-v1-spec.md",
+                "relativePath": "project-alpha/cln17-v1-spec.md",
+                "baseName": "cln17-v1-spec",
+                "isReadme": false,
+                "title": "Cln17 V1 Spec",
+                "alias": "cln17-v1-spec",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "cross-links-test.md",
+                "path": "website/project-alpha/cross-links-test.md",
+                "relativePath": "project-alpha/cross-links-test.md",
+                "baseName": "cross-links-test",
+                "isReadme": false,
+                "title": "Cross Links Test",
+                "alias": "cross-links-test",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "examples.md",
+                "path": "website/project-alpha/examples.md",
+                "relativePath": "project-alpha/examples.md",
+                "baseName": "examples",
+                "isReadme": false,
+                "title": "Examples",
+                "alias": "examples",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "github-links-test.md",
+                "path": "website/project-alpha/github-links-test.md",
+                "relativePath": "project-alpha/github-links-test.md",
+                "baseName": "github-links-test",
+                "isReadme": false,
+                "title": "Github Links Test",
+                "alias": "github-links-test",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "hardware-specs.md",
+                "path": "website/project-alpha/hardware-specs.md",
+                "relativePath": "project-alpha/hardware-specs.md",
+                "baseName": "hardware-specs",
+                "isReadme": false,
+                "title": "Hardware Specs",
+                "alias": "hardware-specs",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "hidden-test.md",
+                "path": "website/project-alpha/hidden-test.md",
+                "relativePath": "project-alpha/hidden-test.md",
+                "baseName": "hidden-test",
+                "isReadme": false,
+                "title": "Hidden Test",
+                "alias": "hidden-test",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "installation.md",
+                "path": "website/project-alpha/installation.md",
+                "relativePath": "project-alpha/installation.md",
+                "baseName": "installation",
+                "isReadme": false,
+                "title": "Installation",
+                "alias": "installation",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "local-tool.md",
+                "path": "website/project-alpha/local-tool.md",
+                "relativePath": "project-alpha/local-tool.md",
+                "baseName": "local-tool",
+                "isReadme": false,
+                "title": "Local Tool",
+                "alias": "local-tool",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "main.md",
+                "path": "website/project-alpha/main.md",
+                "relativePath": "project-alpha/main.md",
+                "baseName": "main",
+                "isReadme": false,
+                "title": "Main",
+                "alias": "main",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "setup.md",
+                "path": "website/project-alpha/setup.md",
+                "relativePath": "project-alpha/setup.md",
+                "baseName": "setup",
+                "isReadme": false,
+                "title": "Setup",
+                "alias": "setup",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "specs-test.md",
+                "path": "website/project-alpha/specs-test.md",
+                "relativePath": "project-alpha/specs-test.md",
+                "baseName": "specs-test",
+                "isReadme": false,
+                "title": "Specs Test",
+                "alias": "specs-test",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "specs.md",
+                "path": "website/project-alpha/specs.md",
+                "relativePath": "project-alpha/specs.md",
+                "baseName": "specs",
+                "isReadme": false,
+                "title": "Specs",
+                "alias": "specs",
+                "inHierarchy": false
+              },
+              {
+                "type": "file",
+                "file": "troubleshooting.md",
+                "path": "website/project-alpha/troubleshooting.md",
+                "relativePath": "project-alpha/troubleshooting.md",
+                "baseName": "troubleshooting",
+                "isReadme": false,
+                "title": "Troubleshooting",
+                "alias": "troubleshooting",
+                "inHierarchy": false
+              }
+            ],
+            "config": {
+              "hierarchy": [
+                {
+                  "Home": {
+                    "path": "home.md",
+                    "description": "Главная страница сайта"
+                  }
+                },
+                {
+                  "Main Docs": {
+                    "path": "main.md",
+                    "description": "Полная документация проекта"
+                  }
+                },
+                {
+                  "CLN Driver": {
+                    "path": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+                    "section": true,
+                    "description": "CLN ClosedLoop Nema Driver"
+                  }
+                },
+                {
+                  "Projects": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Проект Alpha": {
+                          "path": "project-alpha/",
+                          "alias": "project-alpha",
+                          "section": true
+                        }
+                      },
+                      {
+                        "Проект Beta": {
+                          "path": "project-beta/",
+                          "alias": "project-beta"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Additional": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Sub Section": "sub/"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_path": "website/doc-config.yaml",
+              "_dirPath": "website",
+              "_relativePath": "",
+              "_basePath": "website"
+            }
+          },
+          {
+            "type": "folder",
+            "title": "Проект Beta",
+            "alias": "project-beta",
+            "folder": "project-beta",
+            "path": "website/project-beta",
+            "relativePath": "project-beta",
+            "section": false,
+            "children": [
+              {
+                "type": "file",
+                "title": "Project Beta Overview",
+                "alias": "project-beta-overview",
+                "file": "overview.md",
+                "path": "website/project-beta/overview.md",
+                "relativePath": "project-beta/overview.md",
+                "baseName": "overview",
+                "isReadme": false,
+                "description": "Main documentation for Project Beta"
+              },
+              {
+                "type": "file",
+                "title": "API Reference",
+                "alias": "api-reference",
+                "file": "api-reference.md",
+                "path": "website/project-beta/api-reference.md",
+                "relativePath": "project-beta/api-reference.md",
+                "baseName": "api-reference",
+                "isReadme": false,
+                "description": "API documentation for Project Beta"
+              },
+              {
+                "type": "repository",
+                "title": "RadiX",
+                "alias": "radix",
+                "url": "https://github.com/creapunk/RadiX",
+                "section": true,
+                "description": "RadiX Project repository"
+              }
+            ],
+            "config": {
+              "hierarchy": [
+                {
+                  "Project Beta Overview": {
+                    "path": "overview.md",
+                    "description": "Main documentation for Project Beta"
+                  }
+                },
+                {
+                  "API Reference": {
+                    "path": "api-reference.md",
+                    "description": "API documentation for Project Beta"
+                  }
+                },
+                {
+                  "RadiX": {
+                    "path": "https://github.com/creapunk/RadiX",
+                    "description": "RadiX Project repository",
+                    "section": true
+                  }
+                }
+              ],
+              "_path": "website/project-beta/doc-config.yaml",
+              "_dirPath": "website/project-beta",
+              "_relativePath": "project-beta"
+            }
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "Additional",
+        "alias": "additional",
+        "section": true,
+        "children": [
+          {
+            "type": "folder",
+            "title": "Sub Section",
+            "alias": "sub-section",
+            "folder": "sub",
+            "path": "website/sub",
+            "relativePath": "sub",
+            "section": false,
+            "children": [
+              {
+                "type": "file",
+                "file": "api.md",
+                "path": "website/sub/api.md",
+                "relativePath": "sub/api.md",
+                "baseName": "api",
+                "isReadme": false,
+                "title": "Api",
+                "alias": "api",
+                "inHierarchy": false
+              }
+            ],
+            "config": {
+              "hierarchy": [
+                {
+                  "Home": {
+                    "path": "home.md",
+                    "description": "Главная страница сайта"
+                  }
+                },
+                {
+                  "Main Docs": {
+                    "path": "main.md",
+                    "description": "Полная документация проекта"
+                  }
+                },
+                {
+                  "CLN Driver": {
+                    "path": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+                    "section": true,
+                    "description": "CLN ClosedLoop Nema Driver"
+                  }
+                },
+                {
+                  "Projects": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Проект Alpha": {
+                          "path": "project-alpha/",
+                          "alias": "project-alpha",
+                          "section": true
+                        }
+                      },
+                      {
+                        "Проект Beta": {
+                          "path": "project-beta/",
+                          "alias": "project-beta"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Additional": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Sub Section": "sub/"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_path": "website/doc-config.yaml",
+              "_dirPath": "website",
+              "_relativePath": "",
+              "_basePath": "website"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "sections": {
+    "project-beta": {
+      "hierarchy": [
+        {
+          "Project Beta Overview": {
+            "path": "overview.md",
+            "description": "Main documentation for Project Beta"
+          }
+        },
+        {
+          "API Reference": {
+            "path": "api-reference.md",
+            "description": "API documentation for Project Beta"
+          }
+        },
+        {
+          "RadiX": {
+            "path": "https://github.com/creapunk/RadiX",
+            "description": "RadiX Project repository",
+            "section": true
+          }
+        }
+      ],
+      "_path": "website/project-beta/doc-config.yaml",
+      "_dirPath": "website/project-beta",
+      "_relativePath": "project-beta"
+    }
+  },
+  "allFiles": [
+    {
+      "name": "MARKDOWN_FEATURES.md",
+      "relativePath": "project-alpha/MARKDOWN_FEATURES.md",
+      "baseName": "MARKDOWN_FEATURES",
+      "isReadme": false
+    },
+    {
+      "name": "api-specs.md",
+      "relativePath": "project-alpha/api-specs.md",
+      "baseName": "api-specs",
+      "isReadme": false
+    },
+    {
+      "name": "cache-test.md",
+      "relativePath": "project-alpha/cache-test.md",
+      "baseName": "cache-test",
+      "isReadme": false
+    },
+    {
+      "name": "checklist-showcase.md",
+      "relativePath": "project-alpha/checklist-showcase.md",
+      "baseName": "checklist-showcase",
+      "isReadme": false
+    },
+    {
+      "name": "cln17-v1-spec.md",
+      "relativePath": "project-alpha/cln17-v1-spec.md",
+      "baseName": "cln17-v1-spec",
+      "isReadme": false
+    },
+    {
+      "name": "cross-links-test.md",
+      "relativePath": "project-alpha/cross-links-test.md",
+      "baseName": "cross-links-test",
+      "isReadme": false
+    },
+    {
+      "name": "examples.md",
+      "relativePath": "project-alpha/examples.md",
+      "baseName": "examples",
+      "isReadme": false
+    },
+    {
+      "name": "github-links-test.md",
+      "relativePath": "project-alpha/github-links-test.md",
+      "baseName": "github-links-test",
+      "isReadme": false
+    },
+    {
+      "name": "hardware-specs.md",
+      "relativePath": "project-alpha/hardware-specs.md",
+      "baseName": "hardware-specs",
+      "isReadme": false
+    },
+    {
+      "name": "hidden-test.md",
+      "relativePath": "project-alpha/hidden-test.md",
+      "baseName": "hidden-test",
+      "isReadme": false
+    },
+    {
+      "name": "installation.md",
+      "relativePath": "project-alpha/installation.md",
+      "baseName": "installation",
+      "isReadme": false
+    },
+    {
+      "name": "local-tool.md",
+      "relativePath": "project-alpha/local-tool.md",
+      "baseName": "local-tool",
+      "isReadme": false
+    },
+    {
+      "name": "main.md",
+      "relativePath": "project-alpha/main.md",
+      "baseName": "main",
+      "isReadme": false
+    },
+    {
+      "name": "setup.md",
+      "relativePath": "project-alpha/setup.md",
+      "baseName": "setup",
+      "isReadme": false
+    },
+    {
+      "name": "specs-test.md",
+      "relativePath": "project-alpha/specs-test.md",
+      "baseName": "specs-test",
+      "isReadme": false
+    },
+    {
+      "name": "specs.md",
+      "relativePath": "project-alpha/specs.md",
+      "baseName": "specs",
+      "isReadme": false
+    },
+    {
+      "name": "troubleshooting.md",
+      "relativePath": "project-alpha/troubleshooting.md",
+      "baseName": "troubleshooting",
+      "isReadme": false
+    },
+    {
+      "name": "api.md",
+      "relativePath": "sub/api.md",
+      "baseName": "api",
+      "isReadme": false
+    }
+  ],
+  "allRepositories": [
+    {
+      "alias": "cln-driver",
+      "url": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+      "owner": "creapunk",
+      "repo": "CLN-ClosedLoopNemaDriver",
+      "title": "CLN Driver",
+      "filesCount": 29
+    },
+    {
+      "alias": "radix",
+      "url": "https://github.com/creapunk/RadiX",
+      "owner": "creapunk",
+      "repo": "RadiX",
+      "title": "RadiX",
+      "filesCount": 5
+    }
+  ],
+  "fileStructure": {
+    "root": [
+      {
+        "type": "file",
+        "source": "home.md",
+        "output": "index.html",
+        "title": "Home",
+        "alias": "home",
+        "inSidebar": true,
+        "isIndex": true
+      },
+      {
+        "type": "file",
+        "source": "main.md",
+        "output": "main.html",
+        "title": "Main Docs",
+        "alias": "main-docs",
+        "inSidebar": true,
+        "isIndex": false
+      },
+      {
+        "type": "section",
+        "title": "CLN Driver",
+        "alias": "cln-driver",
+        "isSection": true,
+        "isRepository": true,
+        "source": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+        "output": "cln-driver",
+        "repoInfo": {
+          "url": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+          "alias": "cln-driver",
+          "owner": "creapunk",
+          "repo": "CLN-ClosedLoopNemaDriver",
+          "title": "CLN Driver",
+          "projectData": {
+            "projectDir": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver",
+            "files": [
+              {
+                "originalPath": "hardware/CLN17/Enclosure/README.MD",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/Enclosure/README.MD",
+                "localRelativePath": "hardware/CLN17/Enclosure/README.MD",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/Enclosure/README.MD",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/Enclosure/README.MD",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+                "localRelativePath": "hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+                "localRelativePath": "hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "hardware/CLN17/V2.0 [NRFND]/README.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/README.md",
+                "localRelativePath": "hardware/CLN17/V2.0 [NRFND]/README.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/README.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.0 [NRFND]/README.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "hardware/CLN17/V2.1/README.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.1/README.md",
+                "localRelativePath": "hardware/CLN17/V2.1/README.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.1/README.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.1/README.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "hardware/CLN17/V2.5/README.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.5/README.md",
+                "localRelativePath": "hardware/CLN17/V2.5/README.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.5/README.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.5/README.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "license.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/license.md",
+                "localRelativePath": "license.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/license.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/license.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "readme.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/readme.md",
+                "localRelativePath": "readme.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/readme.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/readme.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "sponsors.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/sponsors.md",
+                "localRelativePath": "sponsors.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/sponsors.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/sponsors.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/CLN17/V1.0/specification.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.0/specification.md",
+                "localRelativePath": "wiki/CLN17/V1.0/specification.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.0/specification.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/V1.0/specification.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/CLN17/V1.5/specification.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.5/specification.md",
+                "localRelativePath": "wiki/CLN17/V1.5/specification.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.5/specification.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/V1.5/specification.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/CLN17/V2.0/specification.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V2.0/specification.md",
+                "localRelativePath": "wiki/CLN17/V2.0/specification.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V2.0/specification.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/V2.0/specification.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/CLN17/alternatives.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/alternatives.md",
+                "localRelativePath": "wiki/CLN17/alternatives.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/alternatives.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/alternatives.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/CLN17/readme.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/readme.md",
+                "localRelativePath": "wiki/CLN17/readme.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/readme.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/readme.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/CLN234/V0.1/specification.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN234/V0.1/specification.md",
+                "localRelativePath": "wiki/CLN234/V0.1/specification.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN234/V0.1/specification.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN234/V0.1/specification.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/applications.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/applications.md",
+                "localRelativePath": "wiki/applications.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/applications.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/applications.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/assets/CLN17.jpg",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17.jpg",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17.jpg",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17.jpg",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17.jpg",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "wiki/assets/contributors/JLCPCB.png",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/contributors/JLCPCB.png",
+                "type": "image",
+                "isDuplicate": false
+              },
+              {
+                "originalPath": "wiki/assets/sponsors/JLCPCB.png",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+                "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+                "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/sponsors/JLCPCB.png",
+                "type": "image",
+                "isDuplicate": true
+              },
+              {
+                "originalPath": "wiki/design-foundations.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/design-foundations.md",
+                "localRelativePath": "wiki/design-foundations.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/design-foundations.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/design-foundations.md",
+                "type": "markdown"
+              },
+              {
+                "originalPath": "wiki/features.md",
+                "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/features.md",
+                "localRelativePath": "wiki/features.md",
+                "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/features.md",
+                "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/features.md",
+                "type": "markdown"
+              }
+            ],
+            "owner": "creapunk",
+            "repo": "CLN-ClosedLoopNemaDriver",
+            "branch": "main",
+            "alias": "cln-driver",
+            "timestamp": "2025-12-13T12:46:23.977Z"
+          },
+          "files": [
+            {
+              "originalPath": "hardware/CLN17/Enclosure/README.MD",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/Enclosure/README.MD",
+              "localRelativePath": "hardware/CLN17/Enclosure/README.MD",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/Enclosure/README.MD",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/Enclosure/README.MD",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.0 [OBSOLETE]/CLN17-V1.0-block-diagram.png",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+              "localRelativePath": "hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.0 [OBSOLETE]/README.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-BOARD-DIAGRAM.PNG",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.5 [OBSOLETE]/CLN17-V1.5-block-diagram.png",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+              "localRelativePath": "hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V1.5 [OBSOLETE]/README.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-BOARD-DIAGRAM.PNG",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.0 [NRFND]/CLN17-V2.0-block-diagram.png",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "hardware/CLN17/V2.0 [NRFND]/README.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/README.md",
+              "localRelativePath": "hardware/CLN17/V2.0 [NRFND]/README.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.0 [NRFND]/README.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.0 [NRFND]/README.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "hardware/CLN17/V2.1/README.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.1/README.md",
+              "localRelativePath": "hardware/CLN17/V2.1/README.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.1/README.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.1/README.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "hardware/CLN17/V2.5/README.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.5/README.md",
+              "localRelativePath": "hardware/CLN17/V2.5/README.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/hardware/CLN17/V2.5/README.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/hardware/CLN17/V2.5/README.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "license.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/license.md",
+              "localRelativePath": "license.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/license.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/license.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "readme.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/readme.md",
+              "localRelativePath": "readme.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/readme.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/readme.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "sponsors.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/sponsors.md",
+              "localRelativePath": "sponsors.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/sponsors.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/sponsors.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/CLN17/V1.0/specification.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.0/specification.md",
+              "localRelativePath": "wiki/CLN17/V1.0/specification.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.0/specification.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/V1.0/specification.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/CLN17/V1.5/specification.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.5/specification.md",
+              "localRelativePath": "wiki/CLN17/V1.5/specification.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V1.5/specification.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/V1.5/specification.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/CLN17/V2.0/specification.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V2.0/specification.md",
+              "localRelativePath": "wiki/CLN17/V2.0/specification.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/V2.0/specification.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/V2.0/specification.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/CLN17/alternatives.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/alternatives.md",
+              "localRelativePath": "wiki/CLN17/alternatives.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/alternatives.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/alternatives.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/CLN17/readme.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/readme.md",
+              "localRelativePath": "wiki/CLN17/readme.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN17/readme.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN17/readme.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/CLN234/V0.1/specification.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN234/V0.1/specification.md",
+              "localRelativePath": "wiki/CLN234/V0.1/specification.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/CLN234/V0.1/specification.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/CLN234/V0.1/specification.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/applications.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/applications.md",
+              "localRelativePath": "wiki/applications.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/applications.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/applications.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/assets/CLN17.jpg",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17.jpg",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17.jpg",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17.jpg",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17.jpg",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17/V1.5/CLN17-V1.5-PHOTO.JPG",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17/V2.0/CLN17-V2.0-PHOTO.JPG",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/CLN17/V3.0/CLN17V3.0-Spin.gif",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "wiki/assets/contributors/JLCPCB.png",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/contributors/JLCPCB.png",
+              "type": "image",
+              "isDuplicate": false
+            },
+            {
+              "originalPath": "wiki/assets/sponsors/JLCPCB.png",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+              "localRelativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+              "relativePath": "assets/images/creapunk-CLN-ClosedLoopNemaDriver/wiki/assets/contributors/JLCPCB.png",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/assets/sponsors/JLCPCB.png",
+              "type": "image",
+              "isDuplicate": true
+            },
+            {
+              "originalPath": "wiki/design-foundations.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/design-foundations.md",
+              "localRelativePath": "wiki/design-foundations.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/design-foundations.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/design-foundations.md",
+              "type": "markdown"
+            },
+            {
+              "originalPath": "wiki/features.md",
+              "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-CLN-ClosedLoopNemaDriver/wiki/features.md",
+              "localRelativePath": "wiki/features.md",
+              "relativePath": "creapunk-CLN-ClosedLoopNemaDriver/wiki/features.md",
+              "url": "https://raw.githubusercontent.com/creapunk/CLN-ClosedLoopNemaDriver/main/wiki/features.md",
+              "type": "markdown"
+            }
+          ]
+        },
+        "children": []
+      },
+      {
+        "type": "section",
+        "title": "Projects",
+        "alias": "projects",
+        "isSection": true,
+        "output": "projects",
+        "children": [
+          {
+            "type": "folder",
+            "source": "project-alpha",
+            "output": "projects/project-alpha",
+            "title": "Проект Alpha",
+            "alias": "project-alpha",
+            "isSection": true,
+            "hasIndex": false,
+            "files": [
+              {
+                "type": "file",
+                "source": "project-alpha/MARKDOWN_FEATURES.md",
+                "output": "projects/project-alpha/markdown_features.html",
+                "title": "MARKDOWN FEATURES",
+                "alias": "markdown_features",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/api-specs.md",
+                "output": "projects/project-alpha/api-specs.html",
+                "title": "Api Specs",
+                "alias": "api-specs",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/cache-test.md",
+                "output": "projects/project-alpha/cache-test.html",
+                "title": "Cache Test",
+                "alias": "cache-test",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/checklist-showcase.md",
+                "output": "projects/project-alpha/checklist-showcase.html",
+                "title": "Checklist Showcase",
+                "alias": "checklist-showcase",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/cln17-v1-spec.md",
+                "output": "projects/project-alpha/cln17-v1-spec.html",
+                "title": "Cln17 V1 Spec",
+                "alias": "cln17-v1-spec",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/cross-links-test.md",
+                "output": "projects/project-alpha/cross-links-test.html",
+                "title": "Cross Links Test",
+                "alias": "cross-links-test",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/examples.md",
+                "output": "projects/project-alpha/examples.html",
+                "title": "Examples",
+                "alias": "examples",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/github-links-test.md",
+                "output": "projects/project-alpha/github-links-test.html",
+                "title": "Github Links Test",
+                "alias": "github-links-test",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/hardware-specs.md",
+                "output": "projects/project-alpha/hardware-specs.html",
+                "title": "Hardware Specs",
+                "alias": "hardware-specs",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/hidden-test.md",
+                "output": "projects/project-alpha/hidden-test.html",
+                "title": "Hidden Test",
+                "alias": "hidden-test",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/installation.md",
+                "output": "projects/project-alpha/installation.html",
+                "title": "Installation",
+                "alias": "installation",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/local-tool.md",
+                "output": "projects/project-alpha/local-tool.html",
+                "title": "Local Tool",
+                "alias": "local-tool",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/main.md",
+                "output": "projects/project-alpha/main.html",
+                "title": "Main",
+                "alias": "main",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/setup.md",
+                "output": "projects/project-alpha/setup.html",
+                "title": "Setup",
+                "alias": "setup",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/specs-test.md",
+                "output": "projects/project-alpha/specs-test.html",
+                "title": "Specs Test",
+                "alias": "specs-test",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/specs.md",
+                "output": "projects/project-alpha/specs.html",
+                "title": "Specs",
+                "alias": "specs",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-alpha/troubleshooting.md",
+                "output": "projects/project-alpha/troubleshooting.html",
+                "title": "Troubleshooting",
+                "alias": "troubleshooting",
+                "inSidebar": true,
+                "isIndex": false
+              }
+            ],
+            "relativePath": "project-alpha",
+            "config": {
+              "hierarchy": [
+                {
+                  "Home": {
+                    "path": "home.md",
+                    "description": "Главная страница сайта"
+                  }
+                },
+                {
+                  "Main Docs": {
+                    "path": "main.md",
+                    "description": "Полная документация проекта"
+                  }
+                },
+                {
+                  "CLN Driver": {
+                    "path": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+                    "section": true,
+                    "description": "CLN ClosedLoop Nema Driver"
+                  }
+                },
+                {
+                  "Projects": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Проект Alpha": {
+                          "path": "project-alpha/",
+                          "alias": "project-alpha",
+                          "section": true
+                        }
+                      },
+                      {
+                        "Проект Beta": {
+                          "path": "project-beta/",
+                          "alias": "project-beta"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Additional": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Sub Section": "sub/"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_path": "website/doc-config.yaml",
+              "_dirPath": "website",
+              "_relativePath": "",
+              "_basePath": "website"
+            }
+          },
+          {
+            "type": "folder",
+            "source": "project-beta",
+            "output": "projects/project-beta",
+            "title": "Проект Beta",
+            "alias": "project-beta",
+            "isSection": false,
+            "hasIndex": false,
+            "files": [
+              {
+                "type": "file",
+                "source": "project-beta/overview.md",
+                "output": "projects/project-beta/overview.html",
+                "title": "Project Beta Overview",
+                "alias": "project-beta-overview",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "file",
+                "source": "project-beta/api-reference.md",
+                "output": "projects/project-beta/api-reference.html",
+                "title": "API Reference",
+                "alias": "api-reference",
+                "inSidebar": true,
+                "isIndex": false
+              },
+              {
+                "type": "section",
+                "title": "RadiX",
+                "alias": "radix",
+                "isSection": true,
+                "isRepository": true,
+                "source": "https://github.com/creapunk/RadiX",
+                "output": "projects/project-beta/radix",
+                "repoInfo": {
+                  "url": "https://github.com/creapunk/RadiX",
+                  "alias": "radix",
+                  "owner": "creapunk",
+                  "repo": "RadiX",
+                  "title": "RadiX",
+                  "projectData": {
+                    "projectDir": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX",
+                    "files": [
+                      {
+                        "originalPath": "LICENSE.MD",
+                        "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/LICENSE.MD",
+                        "localRelativePath": "LICENSE.MD",
+                        "relativePath": "creapunk-RadiX/LICENSE.MD",
+                        "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/LICENSE.MD",
+                        "type": "markdown"
+                      },
+                      {
+                        "originalPath": "README.MD",
+                        "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/README.MD",
+                        "localRelativePath": "README.MD",
+                        "relativePath": "creapunk-RadiX/README.MD",
+                        "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/README.MD",
+                        "type": "markdown"
+                      },
+                      {
+                        "originalPath": "wiki/RadiX-Drive/R1.0/specification.md",
+                        "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/wiki/RadiX-Drive/R1.0/specification.md",
+                        "localRelativePath": "wiki/RadiX-Drive/R1.0/specification.md",
+                        "relativePath": "creapunk-RadiX/wiki/RadiX-Drive/R1.0/specification.md",
+                        "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/wiki/RadiX-Drive/R1.0/specification.md",
+                        "type": "markdown"
+                      },
+                      {
+                        "originalPath": "wiki/assets/RadiX-Drive.png",
+                        "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-RadiX/wiki/assets/RadiX-Drive.png",
+                        "localRelativePath": "creapunk-RadiX/wiki/assets/RadiX-Drive.png",
+                        "relativePath": "assets/images/creapunk-RadiX/wiki/assets/RadiX-Drive.png",
+                        "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/wiki/assets/RadiX-Drive.png",
+                        "type": "image",
+                        "isDuplicate": false
+                      },
+                      {
+                        "originalPath": "wiki/design-foundations.md",
+                        "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/wiki/design-foundations.md",
+                        "localRelativePath": "wiki/design-foundations.md",
+                        "relativePath": "creapunk-RadiX/wiki/design-foundations.md",
+                        "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/wiki/design-foundations.md",
+                        "type": "markdown"
+                      }
+                    ],
+                    "owner": "creapunk",
+                    "repo": "RadiX",
+                    "branch": "main",
+                    "alias": "radix",
+                    "timestamp": "2025-12-13T12:46:24.754Z"
+                  },
+                  "files": [
+                    {
+                      "originalPath": "LICENSE.MD",
+                      "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/LICENSE.MD",
+                      "localRelativePath": "LICENSE.MD",
+                      "relativePath": "creapunk-RadiX/LICENSE.MD",
+                      "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/LICENSE.MD",
+                      "type": "markdown"
+                    },
+                    {
+                      "originalPath": "README.MD",
+                      "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/README.MD",
+                      "localRelativePath": "README.MD",
+                      "relativePath": "creapunk-RadiX/README.MD",
+                      "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/README.MD",
+                      "type": "markdown"
+                    },
+                    {
+                      "originalPath": "wiki/RadiX-Drive/R1.0/specification.md",
+                      "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/wiki/RadiX-Drive/R1.0/specification.md",
+                      "localRelativePath": "wiki/RadiX-Drive/R1.0/specification.md",
+                      "relativePath": "creapunk-RadiX/wiki/RadiX-Drive/R1.0/specification.md",
+                      "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/wiki/RadiX-Drive/R1.0/specification.md",
+                      "type": "markdown"
+                    },
+                    {
+                      "originalPath": "wiki/assets/RadiX-Drive.png",
+                      "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/dist/assets/images/creapunk-RadiX/wiki/assets/RadiX-Drive.png",
+                      "localRelativePath": "creapunk-RadiX/wiki/assets/RadiX-Drive.png",
+                      "relativePath": "assets/images/creapunk-RadiX/wiki/assets/RadiX-Drive.png",
+                      "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/wiki/assets/RadiX-Drive.png",
+                      "type": "image",
+                      "isDuplicate": false
+                    },
+                    {
+                      "originalPath": "wiki/design-foundations.md",
+                      "localPath": "/home/runner/work/markdown-doc-builder/markdown-doc-builder/temp/creapunk-RadiX/wiki/design-foundations.md",
+                      "localRelativePath": "wiki/design-foundations.md",
+                      "relativePath": "creapunk-RadiX/wiki/design-foundations.md",
+                      "url": "https://raw.githubusercontent.com/creapunk/RadiX/main/wiki/design-foundations.md",
+                      "type": "markdown"
+                    }
+                  ]
+                },
+                "children": []
+              }
+            ],
+            "relativePath": "project-beta",
+            "config": {
+              "hierarchy": [
+                {
+                  "Project Beta Overview": {
+                    "path": "overview.md",
+                    "description": "Main documentation for Project Beta"
+                  }
+                },
+                {
+                  "API Reference": {
+                    "path": "api-reference.md",
+                    "description": "API documentation for Project Beta"
+                  }
+                },
+                {
+                  "RadiX": {
+                    "path": "https://github.com/creapunk/RadiX",
+                    "description": "RadiX Project repository",
+                    "section": true
+                  }
+                }
+              ],
+              "_path": "website/project-beta/doc-config.yaml",
+              "_dirPath": "website/project-beta",
+              "_relativePath": "project-beta"
+            }
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "title": "Additional",
+        "alias": "additional",
+        "isSection": true,
+        "output": "additional",
+        "children": [
+          {
+            "type": "folder",
+            "source": "sub",
+            "output": "additional/sub-section",
+            "title": "Sub Section",
+            "alias": "sub-section",
+            "isSection": false,
+            "hasIndex": false,
+            "files": [
+              {
+                "type": "file",
+                "source": "sub/api.md",
+                "output": "additional/sub-section/api.html",
+                "title": "Api",
+                "alias": "api",
+                "inSidebar": true,
+                "isIndex": false
+              }
+            ],
+            "relativePath": "sub",
+            "config": {
+              "hierarchy": [
+                {
+                  "Home": {
+                    "path": "home.md",
+                    "description": "Главная страница сайта"
+                  }
+                },
+                {
+                  "Main Docs": {
+                    "path": "main.md",
+                    "description": "Полная документация проекта"
+                  }
+                },
+                {
+                  "CLN Driver": {
+                    "path": "https://github.com/creapunk/CLN-ClosedLoopNemaDriver",
+                    "section": true,
+                    "description": "CLN ClosedLoop Nema Driver"
+                  }
+                },
+                {
+                  "Projects": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Проект Alpha": {
+                          "path": "project-alpha/",
+                          "alias": "project-alpha",
+                          "section": true
+                        }
+                      },
+                      {
+                        "Проект Beta": {
+                          "path": "project-beta/",
+                          "alias": "project-beta"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "Additional": {
+                    "section": true,
+                    "sub": [
+                      {
+                        "Sub Section": "sub/"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "_path": "website/doc-config.yaml",
+              "_dirPath": "website",
+              "_relativePath": "",
+              "_basePath": "website"
+            }
+          }
+        ]
+      }
+    ],
+    "folders": {}
+  }
+}
